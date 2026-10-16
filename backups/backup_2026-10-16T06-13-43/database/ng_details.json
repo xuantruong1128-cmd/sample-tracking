@@ -1,0 +1,434 @@
+[
+  {
+    "id": "c2e858cf-bdaf-405c-9f67-148b0efad3f1",
+    "production_run_id": "360c8561-2a49-461a-82d7-9ebf94f57986",
+    "defect_id": null,
+    "defect_code": "DEF-OTH-01",
+    "defect_name": "Lỗi khác",
+    "ng_qty": 1,
+    "defect_description": "setting",
+    "photo_urls": [],
+    "created_at": "2026-10-13T17:22:37.920908+00:00",
+    "cause": "setting",
+    "remark": null,
+    "updated_at": "2026-10-13T17:22:37.920908+00:00"
+  },
+  {
+    "id": "586a2711-8a78-4820-b478-b24d6029f805",
+    "production_run_id": "6f88859a-f661-457c-8a29-c5f5c7b90839",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:23:31.078717+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:23:31.078717+00:00"
+  },
+  {
+    "id": "49376195-42f9-4e20-bd12-eaf4761b685a",
+    "production_run_id": "7a805c2f-a943-4196-aaed-d29f5fb739d1",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:25:18.16327+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:25:18.16327+00:00"
+  },
+  {
+    "id": "43087efb-90e1-46d2-8125-cda117fc8e77",
+    "production_run_id": "62fbb5b3-6776-49bf-a5f5-9b70b6b75f60",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:27:21.287461+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:27:21.287461+00:00"
+  },
+  {
+    "id": "6eb93574-2502-4f67-aecd-f8f826252ec8",
+    "production_run_id": "536d552d-1131-4972-a9d0-6a63073c8b9b",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:30:03.654313+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:30:03.654313+00:00"
+  },
+  {
+    "id": "83a3cf03-08c1-4bc6-b355-695dcb0ee915",
+    "production_run_id": "c5890cfa-9c70-4099-b405-13fd25748cad",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:31:04.843461+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:31:04.843461+00:00"
+  },
+  {
+    "id": "f82fe126-e199-4e0f-8704-f99a998e8c30",
+    "production_run_id": "731a94ca-a631-4d34-b9a7-e2ddca55c012",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:37:38.673336+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:37:38.673336+00:00"
+  },
+  {
+    "id": "75bf12db-73c2-45ae-b6aa-e47f4ff5e79d",
+    "production_run_id": "137bbe50-d030-4e94-be45-8d7855eaa9d2",
+    "defect_id": null,
+    "defect_code": "NG-CHAMFER",
+    "defect_name": "Vát mép không đều",
+    "ng_qty": 2,
+    "defect_description": "Góc dao bị lệch 0.5 độ",
+    "photo_urls": [],
+    "created_at": "2026-10-15T12:39:19.343287+00:00",
+    "cause": "Góc dao bị lệch 0.5 độ",
+    "remark": "Đã căn chỉnh lại dao",
+    "updated_at": "2026-10-15T12:39:19.343287+00:00"
+  },
+  {
+    "id": "d5582dc2-4bc2-4254-b582-317db2994890",
+    "production_run_id": "17413d4e-595e-461a-aa61-49f4c9099cd3",
+    "defect_id": null,
+    "defect_code": "DEF-DIM-01",
+    "defect_name": "Sai kích thước chiều dài",
+    "ng_qty": 2,
+    "defect_description": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "photo_urls": [
+      "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_dim_defect.jpg"
+    ],
+    "created_at": "2026-10-15T13:20:31.61077+00:00",
+    "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+    "updated_at": "2026-10-15T13:20:31.61077+00:00"
+  },
+  {
+    "id": "6677d517-ca83-4184-9adf-03b535800de5",
+    "production_run_id": "17413d4e-595e-461a-aa61-49f4c9099cd3",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-01",
+    "defect_name": "Bavia mép cạnh đáy",
+    "ng_qty": 1,
+    "defect_description": "Bước tiến dao F quá lớn khi ra dao",
+    "photo_urls": [
+      "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_burr_defect.jpg"
+    ],
+    "created_at": "2026-10-15T13:20:31.61077+00:00",
+    "cause": "Bước tiến dao F quá lớn khi ra dao",
+    "remark": "Giảm feedrate góc bo xuống 80%",
+    "updated_at": "2026-10-15T13:20:31.61077+00:00"
+  },
+  {
+    "id": "2e4a4652-85f6-4d40-bf0b-78df068fc69b",
+    "production_run_id": "254519c0-4256-4b8d-ac5c-22c82cf60fe0",
+    "defect_id": null,
+    "defect_code": "DEF-THR-01",
+    "defect_name": "Lỗi ren gãy mũi taro",
+    "ng_qty": 2,
+    "defect_description": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "photo_urls": [
+      "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP20_tap_broken.jpg"
+    ],
+    "created_at": "2026-10-15T13:20:32.132631+00:00",
+    "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+    "updated_at": "2026-10-15T13:20:32.132631+00:00"
+  },
+  {
+    "id": "d2890e76-0033-48bb-ac9a-008a5b3966c9",
+    "production_run_id": "f6bbfee6-da41-4619-90fe-3dfd492cfa7c",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-02",
+    "defect_name": "Xước bề mặt làm việc",
+    "ng_qty": 1,
+    "defect_description": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "photo_urls": [
+      "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP40_scratch.jpg"
+    ],
+    "created_at": "2026-10-15T13:20:33.05447+00:00",
+    "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+    "updated_at": "2026-10-15T13:20:33.05447+00:00"
+  },
+  {
+    "id": "c7d0c32a-13a7-4c28-9f2c-f7f77e54ba71",
+    "production_run_id": "52e24fe0-2c78-443c-ae2f-9d2eeed80321",
+    "defect_id": null,
+    "defect_code": "DEF-DIM-01",
+    "defect_name": "Sai kích thước chiều dài",
+    "ng_qty": 2,
+    "defect_description": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "photo_urls": [
+      "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_dim_defect.jpg"
+    ],
+    "created_at": "2026-10-15T13:28:25.072142+00:00",
+    "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+    "updated_at": "2026-10-15T13:28:25.072142+00:00"
+  },
+  {
+    "id": "909eb1f6-e877-4a13-b093-f12c73bdee75",
+    "production_run_id": "52e24fe0-2c78-443c-ae2f-9d2eeed80321",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-01",
+    "defect_name": "Bavia mép cạnh đáy",
+    "ng_qty": 1,
+    "defect_description": "Bước tiến dao F quá lớn khi ra dao",
+    "photo_urls": [
+      "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_burr_defect.jpg"
+    ],
+    "created_at": "2026-10-15T13:28:25.072142+00:00",
+    "cause": "Bước tiến dao F quá lớn khi ra dao",
+    "remark": "Giảm feedrate góc bo xuống 80%",
+    "updated_at": "2026-10-15T13:28:25.072142+00:00"
+  },
+  {
+    "id": "acf77442-b682-49e9-9d26-8a610bdac116",
+    "production_run_id": "f7797912-d283-4c17-bbef-bedd05c5ec13",
+    "defect_id": null,
+    "defect_code": "DEF-THR-01",
+    "defect_name": "Lỗi ren gãy mũi taro",
+    "ng_qty": 2,
+    "defect_description": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "photo_urls": [
+      "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP20_tap_broken.jpg"
+    ],
+    "created_at": "2026-10-15T13:28:25.497489+00:00",
+    "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+    "updated_at": "2026-10-15T13:28:25.497489+00:00"
+  },
+  {
+    "id": "c83f89b5-f55a-4773-8e57-bd00e3c1210d",
+    "production_run_id": "3f279dd7-77fe-4051-9621-e88ba151606a",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-02",
+    "defect_name": "Xước bề mặt làm việc",
+    "ng_qty": 1,
+    "defect_description": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "photo_urls": [
+      "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP40_scratch.jpg"
+    ],
+    "created_at": "2026-10-15T13:28:25.977978+00:00",
+    "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+    "updated_at": "2026-10-15T13:28:25.977978+00:00"
+  },
+  {
+    "id": "6f39e9a9-36c3-4e9c-903f-afce2d03a97e",
+    "production_run_id": "67ac3c5f-86f6-452e-b0ad-7942d7d98a71",
+    "defect_id": null,
+    "defect_code": "DEF-DIM-01",
+    "defect_name": "Sai kích thước chiều dài",
+    "ng_qty": 2,
+    "defect_description": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "photo_urls": [
+      "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_dim_defect.jpg"
+    ],
+    "created_at": "2026-10-15T15:41:33.813637+00:00",
+    "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+    "updated_at": "2026-10-15T15:41:33.813637+00:00"
+  },
+  {
+    "id": "446ac352-69e5-43fc-945b-d2a44fa742a9",
+    "production_run_id": "67ac3c5f-86f6-452e-b0ad-7942d7d98a71",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-01",
+    "defect_name": "Bavia mép cạnh đáy",
+    "ng_qty": 1,
+    "defect_description": "Bước tiến dao F quá lớn khi ra dao",
+    "photo_urls": [
+      "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_burr_defect.jpg"
+    ],
+    "created_at": "2026-10-15T15:41:33.813637+00:00",
+    "cause": "Bước tiến dao F quá lớn khi ra dao",
+    "remark": "Giảm feedrate góc bo xuống 80%",
+    "updated_at": "2026-10-15T15:41:33.813637+00:00"
+  },
+  {
+    "id": "4eba4286-0623-49de-bd5c-00fbac4deb16",
+    "production_run_id": "f9879407-4284-4fa0-b490-a739fd21cc8a",
+    "defect_id": null,
+    "defect_code": "DEF-THR-01",
+    "defect_name": "Lỗi ren gãy mũi taro",
+    "ng_qty": 2,
+    "defect_description": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "photo_urls": [
+      "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP20_tap_broken.jpg"
+    ],
+    "created_at": "2026-10-15T15:41:34.246043+00:00",
+    "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+    "updated_at": "2026-10-15T15:41:34.246043+00:00"
+  },
+  {
+    "id": "90561aff-545e-4e55-bfa4-a53b12c78fd3",
+    "production_run_id": "50c695e6-f00e-42a6-b97d-22f8132ff9e9",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-02",
+    "defect_name": "Xước bề mặt làm việc",
+    "ng_qty": 1,
+    "defect_description": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "photo_urls": [
+      "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP40_scratch.jpg"
+    ],
+    "created_at": "2026-10-15T15:41:34.715216+00:00",
+    "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+    "updated_at": "2026-10-15T15:41:34.715216+00:00"
+  },
+  {
+    "id": "545c1877-4a71-407a-913c-1ac5b54fa736",
+    "production_run_id": "90947719-bb77-4b61-90c1-cc9826b30381",
+    "defect_id": null,
+    "defect_code": "DEF-DIM-01",
+    "defect_name": "Sai kích thước chiều dài",
+    "ng_qty": 2,
+    "defect_description": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "photo_urls": [
+      "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_dim_defect.jpg"
+    ],
+    "created_at": "2026-10-15T16:57:01.540165+00:00",
+    "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+    "updated_at": "2026-10-15T16:57:01.540165+00:00"
+  },
+  {
+    "id": "f22d76df-c39b-4c78-a5de-b692ebfdb756",
+    "production_run_id": "90947719-bb77-4b61-90c1-cc9826b30381",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-01",
+    "defect_name": "Bavia mép cạnh đáy",
+    "ng_qty": 1,
+    "defect_description": "Bước tiến dao F quá lớn khi ra dao",
+    "photo_urls": [
+      "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_burr_defect.jpg"
+    ],
+    "created_at": "2026-10-15T16:57:01.540165+00:00",
+    "cause": "Bước tiến dao F quá lớn khi ra dao",
+    "remark": "Giảm feedrate góc bo xuống 80%",
+    "updated_at": "2026-10-15T16:57:01.540165+00:00"
+  },
+  {
+    "id": "17b91ca5-e0df-4d2f-82bf-b02732af51a9",
+    "production_run_id": "8c169864-97cb-46a9-8000-02a536912382",
+    "defect_id": null,
+    "defect_code": "DEF-THR-01",
+    "defect_name": "Lỗi ren gãy mũi taro",
+    "ng_qty": 2,
+    "defect_description": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "photo_urls": [
+      "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP20_tap_broken.jpg"
+    ],
+    "created_at": "2026-10-15T16:57:02.101775+00:00",
+    "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+    "updated_at": "2026-10-15T16:57:02.101775+00:00"
+  },
+  {
+    "id": "dad793ac-a231-4f3f-97fe-60962735d918",
+    "production_run_id": "bdc1f316-0191-4409-99d5-aa2a4452c9de",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-02",
+    "defect_name": "Xước bề mặt làm việc",
+    "ng_qty": 1,
+    "defect_description": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "photo_urls": [
+      "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP40_scratch.jpg"
+    ],
+    "created_at": "2026-10-15T16:57:02.616013+00:00",
+    "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+    "updated_at": "2026-10-15T16:57:02.616013+00:00"
+  },
+  {
+    "id": "1cb92b8b-beed-4a5c-888a-2b37557903ab",
+    "production_run_id": "06ff4685-b221-402a-8251-9e7998eca38e",
+    "defect_id": null,
+    "defect_code": "DEF-DIM-01",
+    "defect_name": "Sai kích thước chiều dài",
+    "ng_qty": 2,
+    "defect_description": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "photo_urls": [
+      "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_dim_defect.jpg"
+    ],
+    "created_at": "2026-10-16T13:10:11.738201+00:00",
+    "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+    "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+    "updated_at": "2026-10-16T13:10:11.738201+00:00"
+  },
+  {
+    "id": "a7dbbcd0-13f1-4c6f-9b7f-cc7cb239a6c9",
+    "production_run_id": "06ff4685-b221-402a-8251-9e7998eca38e",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-01",
+    "defect_name": "Bavia mép cạnh đáy",
+    "ng_qty": 1,
+    "defect_description": "Bước tiến dao F quá lớn khi ra dao",
+    "photo_urls": [
+      "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_burr_defect.jpg"
+    ],
+    "created_at": "2026-10-16T13:10:11.738201+00:00",
+    "cause": "Bước tiến dao F quá lớn khi ra dao",
+    "remark": "Giảm feedrate góc bo xuống 80%",
+    "updated_at": "2026-10-16T13:10:11.738201+00:00"
+  },
+  {
+    "id": "74515f8b-237b-4d0e-b1c9-5f30ac5ae3d6",
+    "production_run_id": "2e77b26f-9ed8-48cb-a4f3-f2475200b557",
+    "defect_id": null,
+    "defect_code": "DEF-THR-01",
+    "defect_name": "Lỗi ren gãy mũi taro",
+    "ng_qty": 2,
+    "defect_description": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "photo_urls": [
+      "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP20_tap_broken.jpg"
+    ],
+    "created_at": "2026-10-16T13:10:12.11958+00:00",
+    "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+    "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+    "updated_at": "2026-10-16T13:10:12.11958+00:00"
+  },
+  {
+    "id": "e96cb64a-94f8-4aae-9f17-6e9bd03b53de",
+    "production_run_id": "34c223c7-16eb-43c1-8c9b-726b88659d8e",
+    "defect_id": null,
+    "defect_code": "DEF-SRF-02",
+    "defect_name": "Xước bề mặt làm việc",
+    "ng_qty": 1,
+    "defect_description": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "photo_urls": [
+      "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP40_scratch.jpg"
+    ],
+    "created_at": "2026-10-16T13:10:12.575899+00:00",
+    "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+    "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+    "updated_at": "2026-10-16T13:10:12.575899+00:00"
+  }
+]

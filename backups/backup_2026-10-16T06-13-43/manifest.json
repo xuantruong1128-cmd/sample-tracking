@@ -1,0 +1,459 @@
+{
+  "timestamp": "2026-10-16T06:13:43.161Z",
+  "supabase_url": "https://hosppagbopdghlupnhlr.supabase.co",
+  "database_tables": {
+    "profiles": {
+      "records": 7,
+      "size_bytes": 3282,
+      "sha256": "1aad604a2e4576f5a84fc5da7f1c2437663baff929da503636026474ae2d8a3e"
+    },
+    "jobs": {
+      "records": 17,
+      "size_bytes": 95869,
+      "sha256": "3f4cdea233e5e845cd93dae2817c5faf382586ae2ca468cad473cd055977e7ac"
+    },
+    "job_operations": {
+      "records": 45,
+      "size_bytes": 41037,
+      "sha256": "92f7b1e9f17d980d492af9958205468c1bd2a7abb43dd10bc944baf90a6e758a"
+    },
+    "production_runs": {
+      "records": 39,
+      "size_bytes": 21597,
+      "sha256": "5f9a37e7448317c010d36afcf81be716cf6671368179525ef4ba6b7cd147f9d8"
+    },
+    "ng_details": {
+      "records": 28,
+      "size_bytes": 17371,
+      "sha256": "f7b646a27cc2d027c2052c4e1f8b8e25c2ad8a59c763f2411a741b42d4783932"
+    },
+    "qa_checks": {
+      "records": 17,
+      "size_bytes": 8977,
+      "sha256": "634031269474421220be406f67c62179fb7765d8b94be7f3533f63f96533898c"
+    },
+    "pe_engineering_reviews": {
+      "records": 20,
+      "size_bytes": 13971,
+      "sha256": "34aa766624e9f9723059c6c3f165a375697fd66bda7c7ba5be27bfce0649f1c1"
+    },
+    "engineering_documents": {
+      "records": 32,
+      "size_bytes": 21705,
+      "sha256": "8c3aaafce94cb3d50da5e9b0bc17cbf7f0705843092bad2d35de065571583798"
+    },
+    "operation_sample_photos": {
+      "records": 20,
+      "size_bytes": 10555,
+      "sha256": "aff606f664c22374ef16ee0edb8bab73c59f5ddf9de4437251013df4ab3c0c7c"
+    },
+    "sample_final_reports": {
+      "records": 8,
+      "size_bytes": 95868,
+      "sha256": "f57218192fd6287a962ab4a888e301e26f42dc8da46eb60686cc48e170a2b0e6"
+    },
+    "job_code_sequences": {
+      "records": 1,
+      "size_bytes": 112,
+      "sha256": "cddfdfe1b1f9cf977979e84adb6946b76e533528cc42f9d7b22b5971c8f8b2c4"
+    },
+    "audit_logs": {
+      "records": 1000,
+      "size_bytes": 1055262,
+      "sha256": "9d34e2e41632d37b552425768659d0ce260636dca7370c87242902df92be5eb8"
+    }
+  },
+  "storage_files": [
+    {
+      "path": "35bafa41-bd45-4ef8-a977-bd0456e136c5/DRAWING/Maintenance_Daily_Report.png",
+      "size_bytes": 353094,
+      "sha256": "ad23a7dc9fc265f66d345678b72fe32b465959c5e3faefc17dff14e5abaa65df"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+      "size_bytes": 124,
+      "sha256": "bd581de3476a06a324454726138427144e6e0c1f1480d63be6c48a6c6527715b"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/final_report/BRACKET-500-F7 - JOB-F7-REAL-736060.pdf",
+      "size_bytes": 5489,
+      "sha256": "8ba4b9111b561d8b1c88af8576a869e7a96dc4324c2d2735734c695285f1713b"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/final_report/BRACKET-500-F7 - JOB-F7-REAL-736060.zip",
+      "size_bytes": 9517,
+      "sha256": "340a45d56b0e40759d72184858cf661bc7bced6be293cdc46a1deb73913670e7"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_burr_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_dim_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP20_tap_broken.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP40_scratch.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP10_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP20_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP30_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP40_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+      "size_bytes": 124,
+      "sha256": "bd581de3476a06a324454726138427144e6e0c1f1480d63be6c48a6c6527715b"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/final_report/BRACKET-500-F7 - JOB-F7-REAL-746370.pdf",
+      "size_bytes": 5490,
+      "sha256": "379867e694eecdc527eeac68ddf37204cf122d92152297d20c3d1775462fa262"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/final_report/BRACKET-500-F7 - JOB-F7-REAL-746370.zip",
+      "size_bytes": 9516,
+      "sha256": "5e6186747c3870329738053c597e8de8bec0165c8e1bcc76cf9a002acb9c8055"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_burr_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_dim_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP20_tap_broken.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP40_scratch.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP10_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP20_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP30_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP40_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+      "size_bytes": 124,
+      "sha256": "bd581de3476a06a324454726138427144e6e0c1f1480d63be6c48a6c6527715b"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/final_report/BRACKET-500-F7 - JOB-F7-REAL-056719.pdf",
+      "size_bytes": 5492,
+      "sha256": "4ab550f01dd401e59a3d026ae755d1d3c8c1d1dd78f4b719aa9ead562a6dec4f"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/final_report/BRACKET-500-F7 - JOB-F7-REAL-056719.zip",
+      "size_bytes": 9514,
+      "sha256": "c93eea8efbd66c83f338c94e3f40f3730c4794dbc0ce6ae99ba0fad4183b2440"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_burr_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_dim_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP20_tap_broken.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP40_scratch.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP10_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP20_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP30_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP40_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+      "size_bytes": 124,
+      "sha256": "bd581de3476a06a324454726138427144e6e0c1f1480d63be6c48a6c6527715b"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/final_report/BRACKET-500-F7 - JOB-F7-REAL-265486.pdf",
+      "size_bytes": 5499,
+      "sha256": "506091e3722b312ee7e45b7a01860a951204339bf78c3d8f39ca14f2d83ca285"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/final_report/BRACKET-500-F7 - JOB-F7-REAL-265486.zip",
+      "size_bytes": 9521,
+      "sha256": "f6d133919ab239f5bb2c02cf01a2f8582fa55d3a1889650b14b11d471d212d6c"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_burr_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_dim_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP20_tap_broken.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP40_scratch.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP10_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP20_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP30_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP40_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+      "size_bytes": 317,
+      "sha256": "a6abd43bdb0962b5d01e1d225879a0b6c4fa3c943aa5f917b017b49a6497564b"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+      "size_bytes": 124,
+      "sha256": "bd581de3476a06a324454726138427144e6e0c1f1480d63be6c48a6c6527715b"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/final_report/BRACKET-500-F7 - JOB-F7-REAL-275197.pdf",
+      "size_bytes": 5202,
+      "sha256": "0af88c3a7e0454b286e794ffb39635bbf00724500893d78b0741b47bf853b631"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/final_report/BRACKET-500-F7 - JOB-F7-REAL-275197.zip",
+      "size_bytes": 9229,
+      "sha256": "5804abaf0c7300e72f993d2dfb8d72d10d306a4235d47ec8139a75d7e73c133b"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_burr_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_dim_defect.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP20_tap_broken.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP40_scratch.jpg",
+      "size_bytes": 134,
+      "sha256": "9650f149d622055c4b495e65e9148ebfc5e61b1bb00e83538e76afe48c496eaf"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP10_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP20_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP30_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP40_sample.png",
+      "size_bytes": 68,
+      "sha256": "63ef318d96b5d0d0ceba6e04a4e622b1158335cdc67c49e27839132c6f655058"
+    },
+    {
+      "path": "ee6e06ee-bc4a-45c0-b08f-d00d6604c1d7/final_report/PART-RPT_MV93Q177 - TEST-JOB-313157.pdf",
+      "size_bytes": 3595,
+      "sha256": "f9115343ed3ec77ca14ec506490e747f2fd14653a935403784f2c31df05c9ce9"
+    },
+    {
+      "path": "ee6e06ee-bc4a-45c0-b08f-d00d6604c1d7/final_report/PART-RPT_MV93Q177 - TEST-JOB-313157.zip",
+      "size_bytes": 4144,
+      "sha256": "58deded3b72d1a264e698cb88a6a222052d2be6a3eceb32b51f2fb97b381efd6"
+    }
+  ],
+  "status": "COMPLETED"
+}

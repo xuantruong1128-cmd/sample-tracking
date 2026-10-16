@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "release_tag": "v1.0.0",
+  "release_date": "2026-10-16T13:15:00+07:00",
+  "project_name": "Sample Tracking System",
+  "release_type": "Production Go-Live V1.0",
+  "status": "READY_FOR_PRODUCTION_PROVISIONING",
+  "summary": "Production V1.0 baseline ready for live manufacturing sample tracking. Verified with 100% test passing across unit, security, and live UAT suites.",
+  "features": [
+    "Phone-number authentication (Vietnamese mobile prefixes) with virtual domain @sampletracking.local",
+    "Mandatory password change on first login",
+    "Admin full permissions across all modules: Close Job, Generate Report, Retry, View, Download PDF & ZIP",
+    "PE-MFG Leader Close Job, Final Report generation, View, Download PDF & ZIP",
+    "File System Access API streaming 'Save As' with prompt user folder selection and graceful cancel",
+    "Cross-browser fallback for browsers lacking File System Access API with user settings instructions",
+    "Standardized report naming: {ItemNumber} - {JobTicketNumber}.pdf/.zip",
+    "Planning Job creation & routing definition (OP10, OP20, etc.) with automatic YYYYMM-### numbering",
+    "PE-MFG production recording (OK, NG details, KIV tracking) and compact desktop layout",
+    "Operation sample photos gallery and NG defect photos",
+    "Engineering Documents management (Drawings, Checksheets, Settings, Charts)",
+    "QA Inspection check per operation with pass/fail/conditional controls",
+    "Gate B fail-closed RLS security and unforgeable immutable audit logging",
+    "Production database & private Storage backup utility with SHA-256 manifest verification"
+  ],
+  "verification": {
+    "vitest_unit_tests": {
+      "total": 457,
+      "passed": 457,
+      "failed": 0,
+      "status": "PASS"
+    },
+    "gate_b_uat_security_tests": {
+      "total": 34,
+      "passed": 34,
+      "failed": 0,
+      "status": "PASS"
+    },
+    "production_smoke_health_checks": {
+      "total": 22,
+      "passed": 22,
+      "failed": 0,
+      "status": "PASS"
+    },
+    "production_build": {
+      "status": "PASS",
+      "bundler": "vite v8.3.4",
+      "typescript": "tsc -b PASS (0 errors)",
+      "spa_redirects": "dist/_redirects verified",
+      "secret_leak_check": "0 service_role secrets found in dist"
+    }
+  },
+  "environments": {
+    "test_supabase": "hosppagbopdghlupnhlr.supabase.co",
+    "test_cloudflare": "https://sample-tracking-89b.pages.dev",
+    "prod_supabase": "PENDING_CREATION_BY_OWNER",
+    "prod_cloudflare": "PENDING_DEPLOYMENT_BY_OWNER"
+  },
+  "real_data_isolation": {
+    "identified_real_jobs_in_test": [
+      {
+        "job_no": "202610-024",
+        "part_no": "IVC-TX-SJ-005-001",
+        "part_name": "IVC-TX-SJ-005-001",
+        "customer": "C",
+        "order_qty": 100,
+        "status": "ACTIVE",
+        "created_at": "2026-10-13T12:12:55.614728+00:00",
+        "action": "HELD_IN_TEST_DO_NOT_MIGRATE_WITHOUT_EXPLICIT_APPROVAL"
+      }
+    ]
+  }
+}

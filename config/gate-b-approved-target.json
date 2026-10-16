@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "INDEPENDENT APPROVAL SPECIFICATION FOR DISPOSABLE GATE B DATABASE. Canonical project reference field: approvedProjectRef. Legacy field approvedProjectId is strictly forbidden and rejected.",
+  "approvedProjectRef": "hosppagbopdghlupnhlr",
+  "approvedHostname": "hosppagbopdghlupnhlr.supabase.co",
+  "isDisposable": true,
+  "approvedBy": "Project Owner",
+  "approvedAt": "2026-10-12T07:23:33Z"
+}

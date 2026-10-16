@@ -1,0 +1,94 @@
+{
+  "archive_name": "BRACKET-500-F7 - JOB-F7-REAL-056719.zip",
+  "generated_at": "2026-10-16T06:10:16.186Z",
+  "job_no": "JOB-F7-REAL-056719",
+  "part_no": "BRACKET-500-F7",
+  "master_pdf": "BRACKET-500-F7 - JOB-F7-REAL-056719.pdf",
+  "files": [
+    {
+      "folder": "/",
+      "file_name": "BRACKET-500-F7 - JOB-F7-REAL-056719.pdf",
+      "size": 5490,
+      "sha256": "d8fbdb67eb39be1ecd171c896786269ae424ab55a0bbf62f88bd06e19bb373a9"
+    },
+    {
+      "folder": "drawings",
+      "file_name": "DWG_BRACKET_REV_B.pdf",
+      "size": 317,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/DWG_BRACKET_REV_B.pdf"
+    },
+    {
+      "folder": "check_sheets",
+      "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+      "size": 317,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf"
+    },
+    {
+      "folder": "settings",
+      "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+      "size": 124,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx"
+    },
+    {
+      "folder": "check_sheets",
+      "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+      "size": 134,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg"
+    },
+    {
+      "folder": "other_documents",
+      "file_name": "HEAT_TREATMENT_CHART.pdf",
+      "size": 317,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/HEAT_TREATMENT_CHART.pdf"
+    },
+    {
+      "folder": "sample_photos",
+      "file_name": "OP10_OP10_surface_finish.png",
+      "size": 68,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP10_sample.png"
+    },
+    {
+      "folder": "ng_photos",
+      "file_name": "OP10_NG_DEF-DIM-01_1.jpg",
+      "size": 134,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_dim_defect.jpg"
+    },
+    {
+      "folder": "ng_photos",
+      "file_name": "OP10_NG_DEF-SRF-01_1.jpg",
+      "size": 134,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_burr_defect.jpg"
+    },
+    {
+      "folder": "sample_photos",
+      "file_name": "OP20_OP20_surface_finish.png",
+      "size": 68,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP20_sample.png"
+    },
+    {
+      "folder": "ng_photos",
+      "file_name": "OP20_NG_DEF-THR-01_1.jpg",
+      "size": 134,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP20_tap_broken.jpg"
+    },
+    {
+      "folder": "sample_photos",
+      "file_name": "OP30_OP30_surface_finish.png",
+      "size": 68,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP30_sample.png"
+    },
+    {
+      "folder": "sample_photos",
+      "file_name": "OP40_OP40_surface_finish.png",
+      "size": 68,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP40_sample.png"
+    },
+    {
+      "folder": "ng_photos",
+      "file_name": "OP40_NG_DEF-SRF-02_1.jpg",
+      "size": 134,
+      "storage_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP40_scratch.jpg"
+    }
+  ],
+  "missing_files": []
+}

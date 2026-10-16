@@ -1,0 +1,2333 @@
+[
+  {
+    "id": "d30134c0-3cb8-4b19-a8e2-03290d99b699",
+    "job_no": "TEST-CLOSE-1791802139646",
+    "part_no": "P-01",
+    "part_name": "Test Part",
+    "customer": "TEST",
+    "order_qty": 10,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-15",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-12T17:48:09.940266+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-12T17:48:09.648319+00:00",
+    "updated_at": "2026-10-12T17:48:09.940266+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "ac84d2d0-b6af-48fc-8f21-a82ba0d967c6",
+    "job_no": "202610-024",
+    "part_no": "IVC-TX-SJ-005-001",
+    "part_name": "IVC-TX-SJ-005-001",
+    "customer": "C",
+    "order_qty": 100,
+    "material": "SUS430F",
+    "planned_start_date": "2026-10-13",
+    "planned_finish_date": "2026-10-20",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": "ebfe7095-d0f3-4f2b-aa8d-7f5b01f8ec5d",
+    "created_at": "2026-10-13T12:12:55.614728+00:00",
+    "updated_at": "2026-10-13T12:12:55.614728+00:00",
+    "material_spec": "D10.05h9",
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "dbe36ca9-919e-490c-8766-b2250b77261b",
+    "job_no": "TEST-V2-715125",
+    "part_no": "PART-TEST-V2",
+    "part_name": "Workflow V2 Test Part",
+    "customer": "TEST-CUST",
+    "order_qty": 100,
+    "material": "AL6061",
+    "planned_start_date": "2026-10-13",
+    "planned_finish_date": "2026-10-14",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-13T16:27:45.064164+00:00",
+    "updated_at": "2026-10-13T16:27:45.064164+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "abb1d662-2369-49b4-a702-818b0ec75da8",
+    "job_no": "TEST-V2-050923",
+    "part_no": "PART-TEST-V2",
+    "part_name": "Workflow V2 Test Part",
+    "customer": "TEST-CUST",
+    "order_qty": 100,
+    "material": "AL6061",
+    "planned_start_date": "2026-10-13",
+    "planned_finish_date": "2026-10-14",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-13T16:33:23.82815+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-13T16:33:20.862658+00:00",
+    "updated_at": "2026-10-13T16:33:26.928461+00:00",
+    "material_spec": null,
+    "close_warnings": [
+      {
+        "type": "REMAINING_KIV",
+        "count": 2
+      },
+      {
+        "type": "MISSING_QA",
+        "count": 1
+      }
+    ],
+    "close_reason": "Chấp nhận xuất hàng đợt 1 với 18 pcs hoàn tất, 2 pcs KIV xử lý ở đơn hàng tiếp theo.",
+    "final_snapshot": {
+      "job_no": "TEST-V2-050923",
+      "part_no": "PART-TEST-V2",
+      "customer": "TEST-CUST",
+      "closed_at": "2026-10-13T16:33:23.82815",
+      "order_qty": 100,
+      "close_reason": "Chấp nhận xuất hàng đợt 1 với 18 pcs hoàn tất, 2 pcs KIV xử lý ở đơn hàng tiếp theo.",
+      "remaining_kiv": 2,
+      "closed_by_name": "Test PE Leader",
+      "missing_qa_ops": 1,
+      "qa_ng_kiv_checks": 0,
+      "operations_summary": [
+        {
+          "status": "CLOSED",
+          "snapshot": {
+            "ng_qty": 2,
+            "ok_qty": 15,
+            "kiv_qty": 5,
+            "closed_at": "2026-10-13T16:33:21.601064",
+            "machine_id": "AA08",
+            "closed_by_name": "Test PE Leader",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 45
+          },
+          "closed_at": "2026-10-13T16:33:21.601064+00:00",
+          "step_order": 10,
+          "operation_name": "OP10 - CNC Milling",
+          "workcenter_code": "MC-CNC"
+        },
+        {
+          "status": "CLOSED",
+          "snapshot": {
+            "ng_qty": 0,
+            "ok_qty": 18,
+            "kiv_qty": 2,
+            "closed_at": "2026-10-13T16:33:23.555889",
+            "machine_id": "BB02",
+            "closed_by_name": "Test PE Leader",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 30
+          },
+          "closed_at": "2026-10-13T16:33:23.555889+00:00",
+          "step_order": 20,
+          "operation_name": "OP20 - Finishing",
+          "workcenter_code": "MC-FINISH"
+        }
+      ]
+    }
+  },
+  {
+    "id": "53e656e6-3c90-4191-9028-ff080e4e22bd",
+    "job_no": "R1-JOB-14-r1_mv7fp0r7",
+    "part_no": "PART-14",
+    "part_name": "Test R1 Part",
+    "customer": "TEST-CUST",
+    "order_qty": 100,
+    "material": "AL6061",
+    "planned_start_date": "2026-10-14",
+    "planned_finish_date": "2026-10-20",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-14T08:30:45.200805+00:00",
+    "updated_at": "2026-10-14T08:30:51.001018+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "2378acd3-8a40-4952-af39-58a291e53ae3",
+    "job_no": "TEST-JOB-859195",
+    "part_no": "PART-RPT_MV93GB0B",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:23:30.564843+00:00",
+    "updated_at": "2026-10-15T12:23:30.564843+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "7435e582-16d7-4d07-a4bb-43dac81ff8b8",
+    "job_no": "TEST-JOB-966604",
+    "part_no": "PART-RPT_MV93IM95",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:25:17.787983+00:00",
+    "updated_at": "2026-10-15T12:25:17.787983+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "995ae150-3cd1-4f2d-a2ba-b5603ac6ef40",
+    "job_no": "TEST-JOB-089613",
+    "part_no": "PART-RPT_MV93L96V",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:27:20.809796+00:00",
+    "updated_at": "2026-10-15T12:27:20.809796+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "e9356942-4203-4793-bdd2-2049345812aa",
+    "job_no": "TEST-JOB-252080",
+    "part_no": "PART-RPT_MV93OQ8A",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "ACTIVE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": null,
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:30:03.24994+00:00",
+    "updated_at": "2026-10-15T12:30:03.24994+00:00",
+    "material_spec": null,
+    "close_warnings": [],
+    "close_reason": null,
+    "final_snapshot": null
+  },
+  {
+    "id": "ee6e06ee-bc4a-45c0-b08f-d00d6604c1d7",
+    "job_no": "TEST-JOB-313157",
+    "part_no": "PART-RPT_MV93Q177",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T12:31:06.416073+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:31:04.326473+00:00",
+    "updated_at": "2026-10-15T12:31:06.416073+00:00",
+    "material_spec": null,
+    "close_warnings": [
+      "2 công đoạn chưa hoàn tất QA độc lập"
+    ],
+    "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+    "final_snapshot": {
+      "job_id": "ee6e06ee-bc4a-45c0-b08f-d00d6604c1d7",
+      "job_no": "TEST-JOB-313157",
+      "part_no": "PART-RPT_MV93Q177",
+      "customer": "Live Verification Customer",
+      "material": "SUS304",
+      "closed_at": "2026-10-15T12:31:06.416073",
+      "order_qty": 50,
+      "part_name": "Live Test Report Bracket",
+      "created_at": "2026-10-15T12:31:04.326473+00:00",
+      "evaluation": {
+        "result": "PASS",
+        "evaluated_at": "2026-10-15T12:31:06.416073",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": null,
+        "overall_assessment": "Sản phẩm mẫu đạt chuẩn kỹ thuật, dung sai đáp ứng hoàn hảo.",
+        "improvements_required": null
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:31:05.617313+00:00",
+          "qa_checks": [],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Góc dao bị lệch 0.5 độ",
+              "remark": "Đã căn chỉnh lại dao",
+              "defect_qty": 2,
+              "photo_urls": [],
+              "defect_code": "NG-CHAMFER",
+              "defect_name": "Vát mép không đều"
+            }
+          ],
+          "pe_reviews": [],
+          "step_order": 10,
+          "operation_id": "096e1fa7-3eeb-4b55-b3cb-5ab1386e0f40",
+          "sample_photos": [],
+          "operation_name": "Phay Khỏa Mặt",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 45
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:31:05.730068+00:00",
+          "qa_checks": [],
+          "machine_no": "DRILL-02",
+          "ng_details": [],
+          "pe_reviews": [],
+          "step_order": 20,
+          "operation_id": "83f93eba-0b87-459f-8650-e9207a7541c3",
+          "sample_photos": [],
+          "operation_name": "Khoan & Taro",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 30
+          },
+          "workcenter_code": "DRILL"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+      "delivery_date": "2026-10-22",
+      "material_spec": null,
+      "remaining_kiv": 0,
+      "close_warnings": [
+        "2 công đoạn chưa hoàn tất QA độc lập"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 2,
+      "qa_ng_kiv_checks": 0,
+      "planned_start_date": "2026-10-15",
+      "planned_finish_date": "2026-10-22",
+      "engineering_documents": [
+        {
+          "remark": "",
+          "version": "v1",
+          "category": "Drawing",
+          "file_name": "sample_drawing.pdf",
+          "file_path": "ee6e06ee-bc4a-45c0-b08f-d00d6604c1d7/DOCUMENTS/sample_drawing.pdf",
+          "file_size": 200,
+          "operation_id": "096e1fa7-3eeb-4b55-b3cb-5ab1386e0f40",
+          "uploader_name": "Admin Test"
+        }
+      ]
+    }
+  },
+  {
+    "id": "2d8cb8fe-2306-46bf-8ffd-6a9797b72f80",
+    "job_no": "TEST-JOB-707033",
+    "part_no": "PART-RPT_MV93YHFY",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T12:37:41.226992+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:37:38.201199+00:00",
+    "updated_at": "2026-10-15T12:37:41.226992+00:00",
+    "material_spec": null,
+    "close_warnings": [
+      "2 công đoạn chưa hoàn tất QA độc lập"
+    ],
+    "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+    "final_snapshot": {
+      "job_id": "2d8cb8fe-2306-46bf-8ffd-6a9797b72f80",
+      "job_no": "TEST-JOB-707033",
+      "part_no": "PART-RPT_MV93YHFY",
+      "customer": "Live Verification Customer",
+      "material": "SUS304",
+      "closed_at": "2026-10-15T12:37:41.226992",
+      "order_qty": 50,
+      "part_name": "Live Test Report Bracket",
+      "created_at": "2026-10-15T12:37:38.201199+00:00",
+      "evaluation": {
+        "result": "PASS",
+        "evaluated_at": "2026-10-15T12:37:41.226992",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": null,
+        "overall_assessment": "Sản phẩm mẫu đạt chuẩn kỹ thuật, dung sai đáp ứng hoàn hảo.",
+        "improvements_required": null
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:37:40.257652+00:00",
+          "qa_checks": [],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Góc dao bị lệch 0.5 độ",
+              "remark": "Đã căn chỉnh lại dao",
+              "defect_qty": 2,
+              "photo_urls": [],
+              "defect_code": "NG-CHAMFER",
+              "defect_name": "Vát mép không đều"
+            }
+          ],
+          "pe_reviews": [],
+          "step_order": 10,
+          "operation_id": "33f63794-4432-4726-8ed7-7aabd9a051c6",
+          "sample_photos": [],
+          "operation_name": "Phay Khỏa Mặt",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 45
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:37:40.576919+00:00",
+          "qa_checks": [],
+          "machine_no": "DRILL-02",
+          "ng_details": [],
+          "pe_reviews": [],
+          "step_order": 20,
+          "operation_id": "98d0967d-dfc9-4c4b-a78e-b2aacea3af88",
+          "sample_photos": [],
+          "operation_name": "Khoan & Taro",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 30
+          },
+          "workcenter_code": "DRILL"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+      "delivery_date": "2026-10-22",
+      "material_spec": null,
+      "remaining_kiv": 0,
+      "close_warnings": [
+        "2 công đoạn chưa hoàn tất QA độc lập"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 2,
+      "qa_ng_kiv_checks": 0,
+      "planned_start_date": "2026-10-15",
+      "planned_finish_date": "2026-10-22",
+      "engineering_documents": [
+        {
+          "remark": "",
+          "version": "v1",
+          "category": "Drawing",
+          "file_name": "sample_drawing.pdf",
+          "file_path": "2d8cb8fe-2306-46bf-8ffd-6a9797b72f80/DOCUMENTS/sample_drawing.pdf",
+          "file_size": 200,
+          "operation_id": "33f63794-4432-4726-8ed7-7aabd9a051c6",
+          "uploader_name": "Admin Test"
+        }
+      ]
+    }
+  },
+  {
+    "id": "e5004d32-0ebb-44f1-a0b7-c1d3c4512df6",
+    "job_no": "TEST-JOB-807831",
+    "part_no": "PART-RPT_MV940NEE",
+    "part_name": "Live Test Report Bracket",
+    "customer": "Live Verification Customer",
+    "order_qty": 50,
+    "material": "SUS304",
+    "planned_start_date": "2026-10-15",
+    "planned_finish_date": "2026-10-22",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T12:39:20.999405+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T12:39:18.977131+00:00",
+    "updated_at": "2026-10-15T12:39:20.999405+00:00",
+    "material_spec": null,
+    "close_warnings": [
+      "2 công đoạn chưa hoàn tất QA độc lập"
+    ],
+    "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+    "final_snapshot": {
+      "job_id": "e5004d32-0ebb-44f1-a0b7-c1d3c4512df6",
+      "job_no": "TEST-JOB-807831",
+      "part_no": "PART-RPT_MV940NEE",
+      "customer": "Live Verification Customer",
+      "material": "SUS304",
+      "closed_at": "2026-10-15T12:39:20.999405",
+      "order_qty": 50,
+      "part_name": "Live Test Report Bracket",
+      "created_at": "2026-10-15T12:39:18.977131+00:00",
+      "evaluation": {
+        "result": "PASS",
+        "evaluated_at": "2026-10-15T12:39:20.999405",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": null,
+        "overall_assessment": "Sản phẩm mẫu đạt chuẩn kỹ thuật, dung sai đáp ứng hoàn hảo.",
+        "improvements_required": null
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:39:20.232087+00:00",
+          "qa_checks": [],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Góc dao bị lệch 0.5 độ",
+              "remark": "Đã căn chỉnh lại dao",
+              "defect_qty": 2,
+              "photo_urls": [],
+              "defect_code": "NG-CHAMFER",
+              "defect_name": "Vát mép không đều"
+            }
+          ],
+          "pe_reviews": [],
+          "step_order": 10,
+          "operation_id": "50f40eb5-a75e-4bf8-b805-76baf4b2c592",
+          "sample_photos": [],
+          "operation_name": "Phay Khỏa Mặt",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 45
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T12:39:20.395183+00:00",
+          "qa_checks": [],
+          "machine_no": "DRILL-02",
+          "ng_details": [],
+          "pe_reviews": [],
+          "step_order": 20,
+          "operation_id": "3be09912-1601-4005-be44-d295e00b0888",
+          "sample_photos": [],
+          "operation_name": "Khoan & Taro",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 48,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 30
+          },
+          "workcenter_code": "DRILL"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB theo kế hoạch nghiệm thu sản xuất mẫu đợt 1",
+      "delivery_date": "2026-10-22",
+      "material_spec": null,
+      "remaining_kiv": 0,
+      "close_warnings": [
+        "2 công đoạn chưa hoàn tất QA độc lập"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 2,
+      "qa_ng_kiv_checks": 0,
+      "planned_start_date": "2026-10-15",
+      "planned_finish_date": "2026-10-22",
+      "engineering_documents": [
+        {
+          "remark": "",
+          "version": "v1",
+          "category": "Drawing",
+          "file_name": "sample_drawing.pdf",
+          "file_path": "e5004d32-0ebb-44f1-a0b7-c1d3c4512df6/DOCUMENTS/sample_drawing.pdf",
+          "file_size": 200,
+          "operation_id": "50f40eb5-a75e-4bf8-b805-76baf4b2c592",
+          "uploader_name": "Admin Test"
+        }
+      ]
+    }
+  },
+  {
+    "id": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f",
+    "job_no": "JOB-F7-REAL-275197",
+    "part_no": "BRACKET-500-F7",
+    "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+    "customer": "NIDEC PRECISION JAPAN",
+    "order_qty": 100,
+    "material": "SKD11 / Cold Work Die Steel",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-18",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T13:20:35.005148+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T13:20:26.30819+00:00",
+    "updated_at": "2026-10-15T13:20:35.005148+00:00",
+    "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+    "close_warnings": [
+      "4 pcs KIV còn tồn đọng",
+      "1 kết quả kiểm tra QA trạng thái KIV"
+    ],
+    "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+    "final_snapshot": {
+      "job_id": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f",
+      "job_no": "JOB-F7-REAL-275197",
+      "part_no": "BRACKET-500-F7",
+      "customer": "NIDEC PRECISION JAPAN",
+      "material": "SKD11 / Cold Work Die Steel",
+      "closed_at": "2026-10-15T13:20:35.005148",
+      "order_qty": 100,
+      "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+      "created_at": "2026-10-15T13:20:26.30819+00:00",
+      "evaluation": {
+        "result": "CONDITIONAL",
+        "evaluated_at": "2026-10-15T13:20:35.005148",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": "1 chi tiết tại OP40 đang được giữ tại phòng QA để đo kiểm tra độ nhám 3D bằng kính hiển vi quang học.",
+        "overall_assessment": "Lô sản xuất mẫu 100 pcs cơ bản đáp ứng các tiêu chuẩn dung sai hình học và độ cứng kỹ thuật. Tuy nhiên còn phát sinh 1 số lỗi phoi tại công đoạn khoan taro và 1 chi tiết KIV cần kiểm tra máy đo quang học. Đề xuất chuyển giao sang sản xuất thử nghiệm đợt 2 (Trial 2) có kiểm soát.",
+        "improvements_required": "1. Cải tiến chương trình phay giảm rung động góc thoát dao.\n2. Bổ sung chu trình thổi khí áp lực cao làm sạch phoi lỗ taro M8.\n3. Hiệu chuẩn lại đá mài bóng và kiểm tra hệ thống lọc nước làm mát bàn từ."
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:20:34.130939+00:00",
+          "qa_checks": [],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+              "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+              "defect_qty": 2,
+              "photo_urls": [
+                "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_dim_defect.jpg"
+              ],
+              "defect_code": "DEF-DIM-01",
+              "defect_name": "Sai kích thước chiều dài"
+            },
+            {
+              "cause": "Bước tiến dao F quá lớn khi ra dao",
+              "remark": "Giảm feedrate góc bo xuống 80%",
+              "defect_qty": 1,
+              "photo_urls": [
+                "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP10_burr_defect.jpg"
+              ],
+              "defect_code": "DEF-SRF-01",
+              "defect_name": "Bavia mép cạnh đáy"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:20:33.175609+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Công đoạn phay thô đạt dung sai hình học cơ bản. Cần bổ sung kiểm tra độ đảo dao và bù mòn chip định kỳ sau 80 chi tiết để triệt tiêu sai số kích thước Z.",
+              "improvement_required": "Hiệu chỉnh macro bù mòn dao tự động"
+            }
+          ],
+          "step_order": 10,
+          "operation_id": "ce8b9eeb-b37f-4634-a143-b17f9b4841fe",
+          "sample_photos": [
+            {
+              "file_name": "OP10_surface_finish.png",
+              "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP10_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Phay thô & khỏa 6 mặt chuẩn",
+          "production_run": {
+            "ng_qty": 3,
+            "ok_qty": 95,
+            "kiv_qty": 2,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-12",
+            "cycle_time_seconds": 58.5
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:20:34.285984+00:00",
+          "qa_checks": [],
+          "machine_no": "DRILL-02",
+          "ng_details": [
+            {
+              "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+              "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+              "defect_qty": 2,
+              "photo_urls": [
+                "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP20_tap_broken.jpg"
+              ],
+              "defect_code": "DEF-THR-01",
+              "defect_name": "Lỗi ren gãy mũi taro"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:20:33.315963+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Đã áp dụng chu trình khoan bẻ phoi ngắt quãng (G73) để giảm thiểu rủi ro nghẹt phoi khi taro ren M8x1.25. Lực siết mâm cặp collet đạt tiêu chuẩn.",
+              "improvement_required": "Bổ sung đầu phun khí áp lực cao 6 bar làm sạch lỗ ren trước taro"
+            }
+          ],
+          "step_order": 20,
+          "operation_id": "29fcbcb6-c62b-4f5b-bd3d-cf8ed8af38d0",
+          "sample_photos": [
+            {
+              "file_name": "OP20_surface_finish.png",
+              "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP20_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Khoan & Taro ren M8 sâu 25mm",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 92,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 44
+          },
+          "workcenter_code": "DRILL"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:20:34.429478+00:00",
+          "qa_checks": [],
+          "machine_no": "VAC-FURNACE-01",
+          "ng_details": [],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:20:33.431735+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Nhiệt độ tôi chân không 1030°C, làm nguội khí Nitơ áp lực 5 bar, ram 2 lần ở 540°C trong 4 giờ. Độ cứng đồng đều toàn bộ phôi đạt 52.5 - 53.5 HRC.",
+              "improvement_required": ""
+            }
+          ],
+          "step_order": 30,
+          "operation_id": "8384b5d3-b147-4e45-8f24-b5a62bd92476",
+          "sample_photos": [
+            {
+              "file_name": "OP30_surface_finish.png",
+              "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP30_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Nhiệt luyện chân không & Ram 2 lần",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 92,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "VAC-FURNACE-01",
+            "production_date": "2026-10-14",
+            "cycle_time_seconds": 180
+          },
+          "workcenter_code": "HEAT"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:20:34.571278+00:00",
+          "qa_checks": [],
+          "machine_no": "GRIND-01",
+          "ng_details": [
+            {
+              "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+              "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+              "defect_qty": 1,
+              "photo_urls": [
+                "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/NG_PHOTOS/OP40_scratch.jpg"
+              ],
+              "defect_code": "DEF-SRF-02",
+              "defect_name": "Xước bề mặt làm việc"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:20:33.535091+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Độ nhám mài phẳng đạt Ra 0.38 (tiêu chuẩn yêu cầu Ra <= 0.4). Độ phẳng và song song 2 mặt đầu kiểm tra trên bàn rà đạt 0.004mm.",
+              "improvement_required": "Định kỳ cân bằng động đá mài sau mỗi ca làm việc"
+            }
+          ],
+          "step_order": 40,
+          "operation_id": "df6008e4-0f14-4ed8-a82f-288d7ba9ec70",
+          "sample_photos": [
+            {
+              "file_name": "OP40_surface_finish.png",
+              "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/SAMPLE_PHOTOS/OP40_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Mài phẳng chính xác & Hoàn thiện",
+          "production_run": {
+            "ng_qty": 1,
+            "ok_qty": 90,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "GRIND-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 86.2
+          },
+          "workcenter_code": "GRIND"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+      "delivery_date": "2026-10-18",
+      "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+      "remaining_kiv": 4,
+      "close_warnings": [
+        "4 pcs KIV còn tồn đọng",
+        "1 kết quả kiểm tra QA trạng thái KIV"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 4,
+      "qa_ng_kiv_checks": 0,
+      "planned_start_date": "2026-10-10",
+      "planned_finish_date": "2026-10-18",
+      "engineering_documents": [
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Drawing",
+          "file_name": "DWG_BRACKET_REV_B.pdf",
+          "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+          "file_size": 317,
+          "operation_id": "ce8b9eeb-b37f-4634-a143-b17f9b4841fe",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_size": 317,
+          "operation_id": "29fcbcb6-c62b-4f5b-bd3d-cf8ed8af38d0",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Setting",
+          "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_size": 124,
+          "operation_id": "ce8b9eeb-b37f-4634-a143-b17f9b4841fe",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_size": 134,
+          "operation_id": "df6008e4-0f14-4ed8-a82f-288d7ba9ec70",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Other",
+          "file_name": "HEAT_TREATMENT_CHART.pdf",
+          "file_path": "ee3bff0a-4ec8-4679-b6a4-2575a243d57f/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+          "file_size": 317,
+          "operation_id": "8384b5d3-b147-4e45-8f24-b5a62bd92476",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0",
+    "job_no": "JOB-F7-REAL-746370",
+    "part_no": "BRACKET-500-F7",
+    "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+    "customer": "NIDEC PRECISION JAPAN",
+    "order_qty": 100,
+    "material": "SKD11 / Cold Work Die Steel",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-18",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T13:28:27.912481+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T13:28:17.491483+00:00",
+    "updated_at": "2026-10-15T13:28:27.912481+00:00",
+    "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+    "close_warnings": [
+      "4 pcs KIV còn tồn đọng",
+      "1 kết quả kiểm tra QA trạng thái KIV"
+    ],
+    "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+    "final_snapshot": {
+      "job_id": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0",
+      "job_no": "JOB-F7-REAL-746370",
+      "part_no": "BRACKET-500-F7",
+      "customer": "NIDEC PRECISION JAPAN",
+      "material": "SKD11 / Cold Work Die Steel",
+      "closed_at": "2026-10-15T13:28:27.912481",
+      "order_qty": 100,
+      "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+      "created_at": "2026-10-15T13:28:17.491483+00:00",
+      "evaluation": {
+        "result": "CONDITIONAL",
+        "evaluated_at": "2026-10-15T13:28:27.912481",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": "1 chi tiết tại OP40 đang được giữ tại phòng QA để đo kiểm tra độ nhám 3D bằng kính hiển vi quang học.",
+        "overall_assessment": "Lô sản xuất mẫu 100 pcs cơ bản đáp ứng các tiêu chuẩn dung sai hình học và độ cứng kỹ thuật. Tuy nhiên còn phát sinh 1 số lỗi phoi tại công đoạn khoan taro và 1 chi tiết KIV cần kiểm tra máy đo quang học. Đề xuất chuyển giao sang sản xuất thử nghiệm đợt 2 (Trial 2) có kiểm soát.",
+        "improvements_required": "1. Cải tiến chương trình phay giảm rung động góc thoát dao.\n2. Bổ sung chu trình thổi khí áp lực cao làm sạch phoi lỗ taro M8.\n3. Hiệu chuẩn lại đá mài bóng và kiểm tra hệ thống lọc nước làm mát bàn từ."
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:28:27.133227+00:00",
+          "qa_checks": [
+            {
+              "notes": "Kích thước khỏa mặt đầu 9/10 mẫu đạt, 1 mẫu bavia đã được cạo sửa hoàn tất.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "OK",
+              "created_at": "2026-10-15T13:28:26.56885+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+              "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+              "defect_qty": 2,
+              "photo_urls": [
+                "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_dim_defect.jpg"
+              ],
+              "defect_code": "DEF-DIM-01",
+              "defect_name": "Sai kích thước chiều dài"
+            },
+            {
+              "cause": "Bước tiến dao F quá lớn khi ra dao",
+              "remark": "Giảm feedrate góc bo xuống 80%",
+              "defect_qty": 1,
+              "photo_urls": [
+                "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP10_burr_defect.jpg"
+              ],
+              "defect_code": "DEF-SRF-01",
+              "defect_name": "Bavia mép cạnh đáy"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:28:26.102697+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Công đoạn phay thô đạt dung sai hình học cơ bản. Cần bổ sung kiểm tra độ đảo dao và bù mòn chip định kỳ sau 80 chi tiết để triệt tiêu sai số kích thước Z.",
+              "improvement_required": "Hiệu chỉnh macro bù mòn dao tự động"
+            }
+          ],
+          "step_order": 10,
+          "operation_id": "cb191003-b4f8-462b-914d-702d23e1049e",
+          "sample_photos": [
+            {
+              "file_name": "OP10_surface_finish.png",
+              "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP10_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Phay thô & khỏa 6 mặt chuẩn",
+          "production_run": {
+            "ng_qty": 3,
+            "ok_qty": 95,
+            "kiv_qty": 2,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-12",
+            "cycle_time_seconds": 58.5
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:28:27.293678+00:00",
+          "qa_checks": [
+            {
+              "notes": "Dưỡng ren Go/No-Go M8-6H kiểm tra vừa vặn 100%, ren sạch không bavia.",
+              "ng_qty": 0,
+              "ok_qty": 10,
+              "result": "OK",
+              "created_at": "2026-10-15T13:28:26.728752+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "DRILL-02",
+          "ng_details": [
+            {
+              "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+              "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+              "defect_qty": 2,
+              "photo_urls": [
+                "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP20_tap_broken.jpg"
+              ],
+              "defect_code": "DEF-THR-01",
+              "defect_name": "Lỗi ren gãy mũi taro"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:28:26.217652+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Đã áp dụng chu trình khoan bẻ phoi ngắt quãng (G73) để giảm thiểu rủi ro nghẹt phoi khi taro ren M8x1.25. Lực siết mâm cặp collet đạt tiêu chuẩn.",
+              "improvement_required": "Bổ sung đầu phun khí áp lực cao 6 bar làm sạch lỗ ren trước taro"
+            }
+          ],
+          "step_order": 20,
+          "operation_id": "efcc64fb-dbc8-4eba-b2ff-951bc35f285f",
+          "sample_photos": [
+            {
+              "file_name": "OP20_surface_finish.png",
+              "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP20_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Khoan & Taro ren M8 sâu 25mm",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 92,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 44
+          },
+          "workcenter_code": "DRILL"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:28:27.422684+00:00",
+          "qa_checks": [
+            {
+              "notes": "Đo độ cứng Rockwell C 5 điểm ngẫu nhiên: 53.0, 52.8, 53.4, 52.7, 53.1 HRC.",
+              "ng_qty": 0,
+              "ok_qty": 5,
+              "result": "OK",
+              "created_at": "2026-10-15T13:28:26.854002+00:00",
+              "sample_size": 5
+            }
+          ],
+          "machine_no": "VAC-FURNACE-01",
+          "ng_details": [],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:28:26.348463+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Nhiệt độ tôi chân không 1030°C, làm nguội khí Nitơ áp lực 5 bar, ram 2 lần ở 540°C trong 4 giờ. Độ cứng đồng đều toàn bộ phôi đạt 52.5 - 53.5 HRC.",
+              "improvement_required": ""
+            }
+          ],
+          "step_order": 30,
+          "operation_id": "7eb0e561-9d6b-4343-a23e-4279f39ac41c",
+          "sample_photos": [
+            {
+              "file_name": "OP30_surface_finish.png",
+              "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP30_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Nhiệt luyện chân không & Ram 2 lần",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 92,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "VAC-FURNACE-01",
+            "production_date": "2026-10-14",
+            "cycle_time_seconds": 180
+          },
+          "workcenter_code": "HEAT"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T13:28:27.543988+00:00",
+          "qa_checks": [
+            {
+              "notes": "1 chi tiết nghi ngờ độ nhám biên mép, chuyển cách ly KIV chờ đo máy quang học 3D.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "KIV",
+              "created_at": "2026-10-15T13:28:27.017661+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "GRIND-01",
+          "ng_details": [
+            {
+              "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+              "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+              "defect_qty": 1,
+              "photo_urls": [
+                "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/NG_PHOTOS/OP40_scratch.jpg"
+              ],
+              "defect_code": "DEF-SRF-02",
+              "defect_name": "Xước bề mặt làm việc"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T13:28:26.45763+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Độ nhám mài phẳng đạt Ra 0.38 (tiêu chuẩn yêu cầu Ra <= 0.4). Độ phẳng và song song 2 mặt đầu kiểm tra trên bàn rà đạt 0.004mm.",
+              "improvement_required": "Định kỳ cân bằng động đá mài sau mỗi ca làm việc"
+            }
+          ],
+          "step_order": 40,
+          "operation_id": "a17b8b73-d9c1-4833-84a6-90a6c0dccad3",
+          "sample_photos": [
+            {
+              "file_name": "OP40_surface_finish.png",
+              "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/SAMPLE_PHOTOS/OP40_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Mài phẳng chính xác & Hoàn thiện",
+          "production_run": {
+            "ng_qty": 1,
+            "ok_qty": 90,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "GRIND-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 86.2
+          },
+          "workcenter_code": "GRIND"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+      "delivery_date": "2026-10-18",
+      "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+      "remaining_kiv": 4,
+      "close_warnings": [
+        "4 pcs KIV còn tồn đọng",
+        "1 kết quả kiểm tra QA trạng thái KIV"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 0,
+      "qa_ng_kiv_checks": 1,
+      "planned_start_date": "2026-10-10",
+      "planned_finish_date": "2026-10-18",
+      "engineering_documents": [
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Drawing",
+          "file_name": "DWG_BRACKET_REV_B.pdf",
+          "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+          "file_size": 317,
+          "operation_id": "cb191003-b4f8-462b-914d-702d23e1049e",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_size": 317,
+          "operation_id": "efcc64fb-dbc8-4eba-b2ff-951bc35f285f",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Setting",
+          "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_size": 124,
+          "operation_id": "cb191003-b4f8-462b-914d-702d23e1049e",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_size": 134,
+          "operation_id": "a17b8b73-d9c1-4833-84a6-90a6c0dccad3",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Other",
+          "file_name": "HEAT_TREATMENT_CHART.pdf",
+          "file_path": "b6ba7b34-b135-454c-a9d1-5920d0d2c8d0/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+          "file_size": 317,
+          "operation_id": "7eb0e561-9d6b-4343-a23e-4279f39ac41c",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "911376ef-78b3-4f68-9663-07242c34efbb",
+    "job_no": "JOB-F7-REAL-736060",
+    "part_no": "BRACKET-500-F7",
+    "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+    "customer": "NIDEC PRECISION JAPAN",
+    "order_qty": 100,
+    "material": "SKD11 / Cold Work Die Steel",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-18",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T15:41:36.573826+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T15:41:27.074664+00:00",
+    "updated_at": "2026-10-15T15:41:36.573826+00:00",
+    "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+    "close_warnings": [
+      "4 pcs KIV còn tồn đọng",
+      "1 kết quả kiểm tra QA trạng thái KIV"
+    ],
+    "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+    "final_snapshot": {
+      "job_id": "911376ef-78b3-4f68-9663-07242c34efbb",
+      "job_no": "JOB-F7-REAL-736060",
+      "part_no": "BRACKET-500-F7",
+      "customer": "NIDEC PRECISION JAPAN",
+      "material": "SKD11 / Cold Work Die Steel",
+      "closed_at": "2026-10-15T15:41:36.573826",
+      "order_qty": 100,
+      "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+      "created_at": "2026-10-15T15:41:27.074664+00:00",
+      "evaluation": {
+        "result": "CONDITIONAL",
+        "evaluated_at": "2026-10-15T15:41:36.573826",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": "1 chi tiết tại OP40 đang được giữ tại phòng QA để đo kiểm tra độ nhám 3D bằng kính hiển vi quang học.",
+        "overall_assessment": "Lô sản xuất mẫu 100 pcs cơ bản đáp ứng các tiêu chuẩn dung sai hình học và độ cứng kỹ thuật. Tuy nhiên còn phát sinh 1 số lỗi phoi tại công đoạn khoan taro và 1 chi tiết KIV cần kiểm tra máy đo quang học. Đề xuất chuyển giao sang sản xuất thử nghiệm đợt 2 (Trial 2) có kiểm soát.",
+        "improvements_required": "1. Cải tiến chương trình phay giảm rung động góc thoát dao.\n2. Bổ sung chu trình thổi khí áp lực cao làm sạch phoi lỗ taro M8.\n3. Hiệu chuẩn lại đá mài bóng và kiểm tra hệ thống lọc nước làm mát bàn từ."
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T15:41:35.801371+00:00",
+          "qa_checks": [
+            {
+              "notes": "Kích thước khỏa mặt đầu 9/10 mẫu đạt, 1 mẫu bavia đã được cạo sửa hoàn tất.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "OK",
+              "created_at": "2026-10-15T15:41:35.315846+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+              "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+              "defect_qty": 2,
+              "photo_urls": [
+                "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_dim_defect.jpg"
+              ],
+              "defect_code": "DEF-DIM-01",
+              "defect_name": "Sai kích thước chiều dài"
+            },
+            {
+              "cause": "Bước tiến dao F quá lớn khi ra dao",
+              "remark": "Giảm feedrate góc bo xuống 80%",
+              "defect_qty": 1,
+              "photo_urls": [
+                "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP10_burr_defect.jpg"
+              ],
+              "defect_code": "DEF-SRF-01",
+              "defect_name": "Bavia mép cạnh đáy"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T15:41:34.819373+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Công đoạn phay thô đạt dung sai hình học cơ bản. Cần bổ sung kiểm tra độ đảo dao và bù mòn chip định kỳ sau 80 chi tiết để triệt tiêu sai số kích thước Z.",
+              "improvement_required": "Hiệu chỉnh macro bù mòn dao tự động"
+            }
+          ],
+          "step_order": 10,
+          "operation_id": "7a4fa4bb-0bc7-46a1-9708-ff0cd247bd1e",
+          "sample_photos": [
+            {
+              "file_name": "OP10_surface_finish.png",
+              "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP10_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Phay thô & khỏa 6 mặt chuẩn",
+          "production_run": {
+            "ng_qty": 3,
+            "ok_qty": 95,
+            "kiv_qty": 2,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-12",
+            "cycle_time_seconds": 58.5
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T15:41:35.940186+00:00",
+          "qa_checks": [
+            {
+              "notes": "Dưỡng ren Go/No-Go M8-6H kiểm tra vừa vặn 100%, ren sạch không bavia.",
+              "ng_qty": 0,
+              "ok_qty": 10,
+              "result": "OK",
+              "created_at": "2026-10-15T15:41:35.446425+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "DRILL-02",
+          "ng_details": [
+            {
+              "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+              "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+              "defect_qty": 2,
+              "photo_urls": [
+                "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP20_tap_broken.jpg"
+              ],
+              "defect_code": "DEF-THR-01",
+              "defect_name": "Lỗi ren gãy mũi taro"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T15:41:34.952177+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Đã áp dụng chu trình khoan bẻ phoi ngắt quãng (G73) để giảm thiểu rủi ro nghẹt phoi khi taro ren M8x1.25. Lực siết mâm cặp collet đạt tiêu chuẩn.",
+              "improvement_required": "Bổ sung đầu phun khí áp lực cao 6 bar làm sạch lỗ ren trước taro"
+            }
+          ],
+          "step_order": 20,
+          "operation_id": "be6b0358-d619-4a48-b4d7-bef84f936e6b",
+          "sample_photos": [
+            {
+              "file_name": "OP20_surface_finish.png",
+              "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP20_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Khoan & Taro ren M8 sâu 25mm",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 92,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 44
+          },
+          "workcenter_code": "DRILL"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T15:41:36.052354+00:00",
+          "qa_checks": [
+            {
+              "notes": "Đo độ cứng Rockwell C 5 điểm ngẫu nhiên: 53.0, 52.8, 53.4, 52.7, 53.1 HRC.",
+              "ng_qty": 0,
+              "ok_qty": 5,
+              "result": "OK",
+              "created_at": "2026-10-15T15:41:35.568338+00:00",
+              "sample_size": 5
+            }
+          ],
+          "machine_no": "VAC-FURNACE-01",
+          "ng_details": [],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T15:41:35.087753+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Nhiệt độ tôi chân không 1030°C, làm nguội khí Nitơ áp lực 5 bar, ram 2 lần ở 540°C trong 4 giờ. Độ cứng đồng đều toàn bộ phôi đạt 52.5 - 53.5 HRC.",
+              "improvement_required": ""
+            }
+          ],
+          "step_order": 30,
+          "operation_id": "33b8ea86-39aa-48be-8a0b-b8652302bb1e",
+          "sample_photos": [
+            {
+              "file_name": "OP30_surface_finish.png",
+              "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP30_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Nhiệt luyện chân không & Ram 2 lần",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 92,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "VAC-FURNACE-01",
+            "production_date": "2026-10-14",
+            "cycle_time_seconds": 180
+          },
+          "workcenter_code": "HEAT"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T15:41:36.162187+00:00",
+          "qa_checks": [
+            {
+              "notes": "1 chi tiết nghi ngờ độ nhám biên mép, chuyển cách ly KIV chờ đo máy quang học 3D.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "KIV",
+              "created_at": "2026-10-15T15:41:35.672976+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "GRIND-01",
+          "ng_details": [
+            {
+              "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+              "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+              "defect_qty": 1,
+              "photo_urls": [
+                "911376ef-78b3-4f68-9663-07242c34efbb/NG_PHOTOS/OP40_scratch.jpg"
+              ],
+              "defect_code": "DEF-SRF-02",
+              "defect_name": "Xước bề mặt làm việc"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T15:41:35.207885+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Độ nhám mài phẳng đạt Ra 0.38 (tiêu chuẩn yêu cầu Ra <= 0.4). Độ phẳng và song song 2 mặt đầu kiểm tra trên bàn rà đạt 0.004mm.",
+              "improvement_required": "Định kỳ cân bằng động đá mài sau mỗi ca làm việc"
+            }
+          ],
+          "step_order": 40,
+          "operation_id": "45c4d477-c4e5-4a60-bef0-60e51e6c3bbf",
+          "sample_photos": [
+            {
+              "file_name": "OP40_surface_finish.png",
+              "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/SAMPLE_PHOTOS/OP40_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Mài phẳng chính xác & Hoàn thiện",
+          "production_run": {
+            "ng_qty": 1,
+            "ok_qty": 90,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "GRIND-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 86.2
+          },
+          "workcenter_code": "GRIND"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+      "delivery_date": "2026-10-18",
+      "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+      "remaining_kiv": 4,
+      "close_warnings": [
+        "4 pcs KIV còn tồn đọng",
+        "1 kết quả kiểm tra QA trạng thái KIV"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 0,
+      "qa_ng_kiv_checks": 1,
+      "planned_start_date": "2026-10-10",
+      "planned_finish_date": "2026-10-18",
+      "engineering_documents": [
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Drawing",
+          "file_name": "DWG_BRACKET_REV_B.pdf",
+          "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+          "file_size": 317,
+          "operation_id": "7a4fa4bb-0bc7-46a1-9708-ff0cd247bd1e",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_size": 317,
+          "operation_id": "be6b0358-d619-4a48-b4d7-bef84f936e6b",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Setting",
+          "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_size": 124,
+          "operation_id": "7a4fa4bb-0bc7-46a1-9708-ff0cd247bd1e",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_size": 134,
+          "operation_id": "45c4d477-c4e5-4a60-bef0-60e51e6c3bbf",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Other",
+          "file_name": "HEAT_TREATMENT_CHART.pdf",
+          "file_path": "911376ef-78b3-4f68-9663-07242c34efbb/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+          "file_size": 317,
+          "operation_id": "33b8ea86-39aa-48be-8a0b-b8652302bb1e",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc",
+    "job_no": "JOB-F7-REAL-265486",
+    "part_no": "BRACKET-500-F7",
+    "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+    "customer": "NIDEC PRECISION JAPAN",
+    "order_qty": 100,
+    "material": "SKD11 / Cold Work Die Steel",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-18",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-15T16:57:04.698991+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-15T16:56:56.434307+00:00",
+    "updated_at": "2026-10-15T16:57:04.698991+00:00",
+    "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+    "close_warnings": [
+      "4 pcs KIV còn tồn đọng",
+      "1 kết quả kiểm tra QA trạng thái KIV"
+    ],
+    "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+    "final_snapshot": {
+      "job_id": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc",
+      "job_no": "JOB-F7-REAL-265486",
+      "part_no": "BRACKET-500-F7",
+      "customer": "NIDEC PRECISION JAPAN",
+      "material": "SKD11 / Cold Work Die Steel",
+      "closed_at": "2026-10-15T16:57:04.698991",
+      "order_qty": 100,
+      "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+      "created_at": "2026-10-15T16:56:56.434307+00:00",
+      "evaluation": {
+        "result": "CONDITIONAL",
+        "evaluated_at": "2026-10-15T16:57:04.698991",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": "1 chi tiết tại OP40 đang được giữ tại phòng QA để đo kiểm tra độ nhám 3D bằng kính hiển vi quang học.",
+        "overall_assessment": "Lô sản xuất mẫu 100 pcs cơ bản đáp ứng các tiêu chuẩn dung sai hình học và độ cứng kỹ thuật. Tuy nhiên còn phát sinh 1 số lỗi phoi tại công đoạn khoan taro và 1 chi tiết KIV cần kiểm tra máy đo quang học. Đề xuất chuyển giao sang sản xuất thử nghiệm đợt 2 (Trial 2) có kiểm soát.",
+        "improvements_required": "1. Cải tiến chương trình phay giảm rung động góc thoát dao.\n2. Bổ sung chu trình thổi khí áp lực cao làm sạch phoi lỗ taro M8.\n3. Hiệu chuẩn lại đá mài bóng và kiểm tra hệ thống lọc nước làm mát bàn từ."
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T16:57:03.905671+00:00",
+          "qa_checks": [
+            {
+              "notes": "Kích thước khỏa mặt đầu 9/10 mẫu đạt, 1 mẫu bavia đã được cạo sửa hoàn tất.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "OK",
+              "created_at": "2026-10-15T16:57:03.189586+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+              "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+              "defect_qty": 2,
+              "photo_urls": [
+                "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_dim_defect.jpg"
+              ],
+              "defect_code": "DEF-DIM-01",
+              "defect_name": "Sai kích thước chiều dài"
+            },
+            {
+              "cause": "Bước tiến dao F quá lớn khi ra dao",
+              "remark": "Giảm feedrate góc bo xuống 80%",
+              "defect_qty": 1,
+              "photo_urls": [
+                "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP10_burr_defect.jpg"
+              ],
+              "defect_code": "DEF-SRF-01",
+              "defect_name": "Bavia mép cạnh đáy"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T16:57:02.743522+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Công đoạn phay thô đạt dung sai hình học cơ bản. Cần bổ sung kiểm tra độ đảo dao và bù mòn chip định kỳ sau 80 chi tiết để triệt tiêu sai số kích thước Z.",
+              "improvement_required": "Hiệu chỉnh macro bù mòn dao tự động"
+            }
+          ],
+          "step_order": 10,
+          "operation_id": "510b2c37-486b-4518-a5bc-439970763336",
+          "sample_photos": [
+            {
+              "file_name": "OP10_surface_finish.png",
+              "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP10_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Phay thô & khỏa 6 mặt chuẩn",
+          "production_run": {
+            "ng_qty": 3,
+            "ok_qty": 95,
+            "kiv_qty": 2,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-12",
+            "cycle_time_seconds": 58.5
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T16:57:04.042989+00:00",
+          "qa_checks": [
+            {
+              "notes": "Dưỡng ren Go/No-Go M8-6H kiểm tra vừa vặn 100%, ren sạch không bavia.",
+              "ng_qty": 0,
+              "ok_qty": 10,
+              "result": "OK",
+              "created_at": "2026-10-15T16:57:03.492435+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "DRILL-02",
+          "ng_details": [
+            {
+              "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+              "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+              "defect_qty": 2,
+              "photo_urls": [
+                "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP20_tap_broken.jpg"
+              ],
+              "defect_code": "DEF-THR-01",
+              "defect_name": "Lỗi ren gãy mũi taro"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T16:57:02.865693+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Đã áp dụng chu trình khoan bẻ phoi ngắt quãng (G73) để giảm thiểu rủi ro nghẹt phoi khi taro ren M8x1.25. Lực siết mâm cặp collet đạt tiêu chuẩn.",
+              "improvement_required": "Bổ sung đầu phun khí áp lực cao 6 bar làm sạch lỗ ren trước taro"
+            }
+          ],
+          "step_order": 20,
+          "operation_id": "fe773bf5-b66e-4ab5-b4e6-51691249da69",
+          "sample_photos": [
+            {
+              "file_name": "OP20_surface_finish.png",
+              "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP20_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Khoan & Taro ren M8 sâu 25mm",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 92,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 44
+          },
+          "workcenter_code": "DRILL"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T16:57:04.177759+00:00",
+          "qa_checks": [
+            {
+              "notes": "Đo độ cứng Rockwell C 5 điểm ngẫu nhiên: 53.0, 52.8, 53.4, 52.7, 53.1 HRC.",
+              "ng_qty": 0,
+              "ok_qty": 5,
+              "result": "OK",
+              "created_at": "2026-10-15T16:57:03.634811+00:00",
+              "sample_size": 5
+            }
+          ],
+          "machine_no": "VAC-FURNACE-01",
+          "ng_details": [],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T16:57:02.954557+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Nhiệt độ tôi chân không 1030°C, làm nguội khí Nitơ áp lực 5 bar, ram 2 lần ở 540°C trong 4 giờ. Độ cứng đồng đều toàn bộ phôi đạt 52.5 - 53.5 HRC.",
+              "improvement_required": ""
+            }
+          ],
+          "step_order": 30,
+          "operation_id": "956f8398-be75-4d7d-b15d-1f114bff3203",
+          "sample_photos": [
+            {
+              "file_name": "OP30_surface_finish.png",
+              "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP30_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Nhiệt luyện chân không & Ram 2 lần",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 92,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "VAC-FURNACE-01",
+            "production_date": "2026-10-14",
+            "cycle_time_seconds": 180
+          },
+          "workcenter_code": "HEAT"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-15T16:57:04.316005+00:00",
+          "qa_checks": [
+            {
+              "notes": "1 chi tiết nghi ngờ độ nhám biên mép, chuyển cách ly KIV chờ đo máy quang học 3D.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "KIV",
+              "created_at": "2026-10-15T16:57:03.773917+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "GRIND-01",
+          "ng_details": [
+            {
+              "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+              "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+              "defect_qty": 1,
+              "photo_urls": [
+                "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/NG_PHOTOS/OP40_scratch.jpg"
+              ],
+              "defect_code": "DEF-SRF-02",
+              "defect_name": "Xước bề mặt làm việc"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-15T16:57:03.062196+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Độ nhám mài phẳng đạt Ra 0.38 (tiêu chuẩn yêu cầu Ra <= 0.4). Độ phẳng và song song 2 mặt đầu kiểm tra trên bàn rà đạt 0.004mm.",
+              "improvement_required": "Định kỳ cân bằng động đá mài sau mỗi ca làm việc"
+            }
+          ],
+          "step_order": 40,
+          "operation_id": "3e4317e4-c078-4d91-bd75-c0f606fa9ecd",
+          "sample_photos": [
+            {
+              "file_name": "OP40_surface_finish.png",
+              "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/SAMPLE_PHOTOS/OP40_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Mài phẳng chính xác & Hoàn thiện",
+          "production_run": {
+            "ng_qty": 1,
+            "ok_qty": 90,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "GRIND-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 86.2
+          },
+          "workcenter_code": "GRIND"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+      "delivery_date": "2026-10-18",
+      "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+      "remaining_kiv": 4,
+      "close_warnings": [
+        "4 pcs KIV còn tồn đọng",
+        "1 kết quả kiểm tra QA trạng thái KIV"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 0,
+      "qa_ng_kiv_checks": 1,
+      "planned_start_date": "2026-10-10",
+      "planned_finish_date": "2026-10-18",
+      "engineering_documents": [
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Drawing",
+          "file_name": "DWG_BRACKET_REV_B.pdf",
+          "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+          "file_size": 317,
+          "operation_id": "510b2c37-486b-4518-a5bc-439970763336",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_size": 317,
+          "operation_id": "fe773bf5-b66e-4ab5-b4e6-51691249da69",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Setting",
+          "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_size": 124,
+          "operation_id": "510b2c37-486b-4518-a5bc-439970763336",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_size": 134,
+          "operation_id": "3e4317e4-c078-4d91-bd75-c0f606fa9ecd",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Other",
+          "file_name": "HEAT_TREATMENT_CHART.pdf",
+          "file_path": "df9548a3-8cd1-4bb8-9513-c636c6ce2cbc/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+          "file_size": 317,
+          "operation_id": "956f8398-be75-4d7d-b15d-1f114bff3203",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        }
+      ]
+    }
+  },
+  {
+    "id": "dda2f311-28b9-40ca-86d3-f5d552677de0",
+    "job_no": "JOB-F7-REAL-056719",
+    "part_no": "BRACKET-500-F7",
+    "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+    "customer": "NIDEC PRECISION JAPAN",
+    "order_qty": 100,
+    "material": "SKD11 / Cold Work Die Steel",
+    "planned_start_date": "2026-10-10",
+    "planned_finish_date": "2026-10-18",
+    "status": "CLOSE",
+    "pe_owner_id": null,
+    "pe_delegates": [],
+    "closed_at": "2026-10-16T13:10:14.537633+00:00",
+    "closed_by": null,
+    "created_by": null,
+    "created_at": "2026-10-16T13:10:07.014247+00:00",
+    "updated_at": "2026-10-16T13:10:14.537633+00:00",
+    "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+    "close_warnings": [
+      "4 pcs KIV còn tồn đọng",
+      "1 kết quả kiểm tra QA trạng thái KIV"
+    ],
+    "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+    "final_snapshot": {
+      "job_id": "dda2f311-28b9-40ca-86d3-f5d552677de0",
+      "job_no": "JOB-F7-REAL-056719",
+      "part_no": "BRACKET-500-F7",
+      "customer": "NIDEC PRECISION JAPAN",
+      "material": "SKD11 / Cold Work Die Steel",
+      "closed_at": "2026-10-16T13:10:14.537633",
+      "order_qty": 100,
+      "part_name": "Gia Công Thân Gá Đỡ Cụm Trục Chính (Main Spindle Bracket)",
+      "created_at": "2026-10-16T13:10:07.014247+00:00",
+      "evaluation": {
+        "result": "CONDITIONAL",
+        "evaluated_at": "2026-10-16T13:10:14.537633",
+        "evaluator_name": "Admin System",
+        "evaluator_role": "Admin",
+        "unresolved_issues": "1 chi tiết tại OP40 đang được giữ tại phòng QA để đo kiểm tra độ nhám 3D bằng kính hiển vi quang học.",
+        "overall_assessment": "Lô sản xuất mẫu 100 pcs cơ bản đáp ứng các tiêu chuẩn dung sai hình học và độ cứng kỹ thuật. Tuy nhiên còn phát sinh 1 số lỗi phoi tại công đoạn khoan taro và 1 chi tiết KIV cần kiểm tra máy đo quang học. Đề xuất chuyển giao sang sản xuất thử nghiệm đợt 2 (Trial 2) có kiểm soát.",
+        "improvements_required": "1. Cải tiến chương trình phay giảm rung động góc thoát dao.\n2. Bổ sung chu trình thổi khí áp lực cao làm sạch phoi lỗ taro M8.\n3. Hiệu chuẩn lại đá mài bóng và kiểm tra hệ thống lọc nước làm mát bàn từ."
+      },
+      "operations": [
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-16T13:10:13.742109+00:00",
+          "qa_checks": [
+            {
+              "notes": "Kích thước khỏa mặt đầu 9/10 mẫu đạt, 1 mẫu bavia đã được cạo sửa hoàn tất.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "OK",
+              "created_at": "2026-10-16T13:10:13.198094+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "CNC-MILL-01",
+          "ng_details": [
+            {
+              "cause": "Mòn dao phay mặt đầu sau 120 chi tiết",
+              "remark": "Thay chip dao mới, bù trừ dao Z +0.03mm",
+              "defect_qty": 2,
+              "photo_urls": [
+                "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_dim_defect.jpg"
+              ],
+              "defect_code": "DEF-DIM-01",
+              "defect_name": "Sai kích thước chiều dài"
+            },
+            {
+              "cause": "Bước tiến dao F quá lớn khi ra dao",
+              "remark": "Giảm feedrate góc bo xuống 80%",
+              "defect_qty": 1,
+              "photo_urls": [
+                "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP10_burr_defect.jpg"
+              ],
+              "defect_code": "DEF-SRF-01",
+              "defect_name": "Bavia mép cạnh đáy"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-16T13:10:12.700836+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Công đoạn phay thô đạt dung sai hình học cơ bản. Cần bổ sung kiểm tra độ đảo dao và bù mòn chip định kỳ sau 80 chi tiết để triệt tiêu sai số kích thước Z.",
+              "improvement_required": "Hiệu chỉnh macro bù mòn dao tự động"
+            }
+          ],
+          "step_order": 10,
+          "operation_id": "34d74b19-7d91-4c36-ab3e-c5a33971bc7f",
+          "sample_photos": [
+            {
+              "file_name": "OP10_surface_finish.png",
+              "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP10_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Phay thô & khỏa 6 mặt chuẩn",
+          "production_run": {
+            "ng_qty": 3,
+            "ok_qty": 95,
+            "kiv_qty": 2,
+            "remarks": null,
+            "machine_id": "CNC-MILL-01",
+            "production_date": "2026-10-12",
+            "cycle_time_seconds": 58.5
+          },
+          "workcenter_code": "CNC"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-16T13:10:13.879005+00:00",
+          "qa_checks": [
+            {
+              "notes": "Dưỡng ren Go/No-Go M8-6H kiểm tra vừa vặn 100%, ren sạch không bavia.",
+              "ng_qty": 0,
+              "ok_qty": 10,
+              "result": "OK",
+              "created_at": "2026-10-16T13:10:13.347062+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "DRILL-02",
+          "ng_details": [
+            {
+              "cause": "Kẹt phoi trong lỗ sâu khi taro bước 2",
+              "remark": "Thổi sạch phoi trước khi taro đảo chiều",
+              "defect_qty": 2,
+              "photo_urls": [
+                "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP20_tap_broken.jpg"
+              ],
+              "defect_code": "DEF-THR-01",
+              "defect_name": "Lỗi ren gãy mũi taro"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-16T13:10:12.822338+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Đã áp dụng chu trình khoan bẻ phoi ngắt quãng (G73) để giảm thiểu rủi ro nghẹt phoi khi taro ren M8x1.25. Lực siết mâm cặp collet đạt tiêu chuẩn.",
+              "improvement_required": "Bổ sung đầu phun khí áp lực cao 6 bar làm sạch lỗ ren trước taro"
+            }
+          ],
+          "step_order": 20,
+          "operation_id": "66170ba3-202f-4c84-89be-74b2515e6019",
+          "sample_photos": [
+            {
+              "file_name": "OP20_surface_finish.png",
+              "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP20_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Khoan & Taro ren M8 sâu 25mm",
+          "production_run": {
+            "ng_qty": 2,
+            "ok_qty": 92,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "DRILL-02",
+            "production_date": "2026-10-13",
+            "cycle_time_seconds": 44
+          },
+          "workcenter_code": "DRILL"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-16T13:10:13.992073+00:00",
+          "qa_checks": [
+            {
+              "notes": "Đo độ cứng Rockwell C 5 điểm ngẫu nhiên: 53.0, 52.8, 53.4, 52.7, 53.1 HRC.",
+              "ng_qty": 0,
+              "ok_qty": 5,
+              "result": "OK",
+              "created_at": "2026-10-16T13:10:13.47219+00:00",
+              "sample_size": 5
+            }
+          ],
+          "machine_no": "VAC-FURNACE-01",
+          "ng_details": [],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-16T13:10:12.948791+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Nhiệt độ tôi chân không 1030°C, làm nguội khí Nitơ áp lực 5 bar, ram 2 lần ở 540°C trong 4 giờ. Độ cứng đồng đều toàn bộ phôi đạt 52.5 - 53.5 HRC.",
+              "improvement_required": ""
+            }
+          ],
+          "step_order": 30,
+          "operation_id": "666cd5e8-ee86-4a99-b246-1dd3e3534a40",
+          "sample_photos": [
+            {
+              "file_name": "OP30_surface_finish.png",
+              "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP30_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Nhiệt luyện chân không & Ram 2 lần",
+          "production_run": {
+            "ng_qty": 0,
+            "ok_qty": 92,
+            "kiv_qty": 0,
+            "remarks": null,
+            "machine_id": "VAC-FURNACE-01",
+            "production_date": "2026-10-14",
+            "cycle_time_seconds": 180
+          },
+          "workcenter_code": "HEAT"
+        },
+        {
+          "status": "CLOSED",
+          "closed_at": "2026-10-16T13:10:14.10385+00:00",
+          "qa_checks": [
+            {
+              "notes": "1 chi tiết nghi ngờ độ nhám biên mép, chuyển cách ly KIV chờ đo máy quang học 3D.",
+              "ng_qty": 1,
+              "ok_qty": 9,
+              "result": "KIV",
+              "created_at": "2026-10-16T13:10:13.599507+00:00",
+              "sample_size": 10
+            }
+          ],
+          "machine_no": "GRIND-01",
+          "ng_details": [
+            {
+              "cause": "Hạt đá mài rơi rớt trong quá trình gá đặt bàn từ",
+              "remark": "Đã vệ sinh lọc dung dịch tưới nguội",
+              "defect_qty": 1,
+              "photo_urls": [
+                "dda2f311-28b9-40ca-86d3-f5d552677de0/NG_PHOTOS/OP40_scratch.jpg"
+              ],
+              "defect_code": "DEF-SRF-02",
+              "defect_name": "Xước bề mặt làm việc"
+            }
+          ],
+          "pe_reviews": [
+            {
+              "created_at": "2026-10-16T13:10:13.071301+00:00",
+              "review_result": "OK",
+              "reviewer_name": "Trần Văn Lãnh Đạo (PE Leader)",
+              "reviewer_role": "PE-MFG",
+              "engineering_comment": "Độ nhám mài phẳng đạt Ra 0.38 (tiêu chuẩn yêu cầu Ra <= 0.4). Độ phẳng và song song 2 mặt đầu kiểm tra trên bàn rà đạt 0.004mm.",
+              "improvement_required": "Định kỳ cân bằng động đá mài sau mỗi ca làm việc"
+            }
+          ],
+          "step_order": 40,
+          "operation_id": "ebc9178d-b82a-4d1e-8c6e-4ec1ce8d7d2f",
+          "sample_photos": [
+            {
+              "file_name": "OP40_surface_finish.png",
+              "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/SAMPLE_PHOTOS/OP40_sample.png",
+              "file_size": 68,
+              "mime_type": "image/png",
+              "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+            }
+          ],
+          "operation_name": "Mài phẳng chính xác & Hoàn thiện",
+          "production_run": {
+            "ng_qty": 1,
+            "ok_qty": 90,
+            "kiv_qty": 1,
+            "remarks": null,
+            "machine_id": "GRIND-01",
+            "production_date": "2026-10-15",
+            "cycle_time_seconds": 86.2
+          },
+          "workcenter_code": "GRIND"
+        }
+      ],
+      "close_reason": "Chấp nhận đóng JOB sản xuất mẫu Trial 1 theo kết luận Đạt Có Điều Kiện (CONDITIONAL) của Hội Đồng Kỹ Thuật PE-MFG và QA.",
+      "delivery_date": "2026-10-18",
+      "material_spec": "HRC 52-54, Dung sai ±0.005mm",
+      "remaining_kiv": 4,
+      "close_warnings": [
+        "4 pcs KIV còn tồn đọng",
+        "1 kết quả kiểm tra QA trạng thái KIV"
+      ],
+      "closed_by_name": "Admin System",
+      "missing_qa_ops": 0,
+      "qa_ng_kiv_checks": 1,
+      "planned_start_date": "2026-10-10",
+      "planned_finish_date": "2026-10-18",
+      "engineering_documents": [
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Drawing",
+          "file_name": "DWG_BRACKET_REV_B.pdf",
+          "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/DWG_BRACKET_REV_B.pdf",
+          "file_size": 317,
+          "operation_id": "34d74b19-7d91-4c36-ab3e-c5a33971bc7f",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QC_INSPECTION_SHEET_LOT1.pdf",
+          "file_size": 317,
+          "operation_id": "66170ba3-202f-4c84-89be-74b2515e6019",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Setting",
+          "file_name": "TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/TOOLING_SETUP_CNC_MILL.xlsx",
+          "file_size": 124,
+          "operation_id": "34d74b19-7d91-4c36-ab3e-c5a33971bc7f",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Check Sheet",
+          "file_name": "QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/QA_CMM_INSPECTION_PHOTO.jpg",
+          "file_size": 134,
+          "operation_id": "ebc9178d-b82a-4d1e-8c6e-4ec1ce8d7d2f",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        },
+        {
+          "remark": "Tài liệu kỹ thuật nghiệm thu đợt 1",
+          "version": "v1.0",
+          "category": "Other",
+          "file_name": "HEAT_TREATMENT_CHART.pdf",
+          "file_path": "dda2f311-28b9-40ca-86d3-f5d552677de0/DOCUMENTS/HEAT_TREATMENT_CHART.pdf",
+          "file_size": 317,
+          "operation_id": "666cd5e8-ee86-4a99-b246-1dd3e3534a40",
+          "uploader_name": "Trần Văn Lãnh Đạo (PE Leader)"
+        }
+      ]
+    }
+  }
+]

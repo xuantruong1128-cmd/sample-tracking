@@ -1,0 +1,1202 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mC:/Sample report - AI[39m
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m1. Production Result Split Layout & Sample Photos Gallery[2m > [22m[2mrenders Left Parameters (Row 1 Machine|Date|CT, Row 2 OK|NG|KIV) and Right Sample Photos Gallery
+[22m[39mAn update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationExecutionPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationExecutionPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m1. Production Result Split Layout & Sample Photos Gallery[2m > [22m[2mSample Photos Gallery supports camera direct capture and file selection
+[22m[39mAn update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m1. Production Result Split Layout & Sample Photos Gallery[2m > [22m[2mlocks Sample Photos upload when parent JOB status is CLOSE, but allows after Close Operation
+[22m[39mAn update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m2. PE Engineering Review Functionality[2m > [22m[2mrenders PE Engineering Review section between Production Result and QA Inspection
+[22m[39mAn update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationExecutionPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationExecutionPanel inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationSamplePhotosGallery inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m2. PE Engineering Review Functionality[2m > [22m[2mallows PE Review after Close Operation, but locks when JOB is CLOSE
+[22m[39mAn update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to OperationPeReviewSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+[90mstderr[2m | src/test/operationUiDocumentsR1.test.tsx[2m > [22m[2mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m[2m3. Role Drawing Permissions & Engineering Documents Management[2m > [22m[2mblocks uploading documents when parent JOB is in CLOSE status
+[22m[39mAn update to EngineeringDocumentsSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to EngineeringDocumentsSection inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ [31m❯[39m src/test/operationUiDocumentsR1.test.tsx [2m([22m[2m14 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[33m 566[2mms[22m[39m
+   [31m❯[39m SAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE [2m(14)[22m
+     [31m❯[39m 1. Production Result Split Layout & Sample Photos Gallery [2m(4)[22m
+[31m       [31m×[31m renders Left Parameters (Row 1 Machine|Date|CT, Row 2 OK|NG|KIV) and Right Sample Photos Gallery[39m[32m 117[2mms[22m[39m
+       [32m✓[39m Sample Photos Gallery supports camera direct capture and file selection[32m 8[2mms[22m[39m
+[31m       [31m×[31m opens lightbox preview modal with signed URL when clicking a sample photo thumbnail[39m[32m 93[2mms[22m[39m
+       [32m✓[39m locks Sample Photos upload when parent JOB status is CLOSE, but allows after Close Operation[32m 6[2mms[22m[39m
+     [32m✓[39m 2. PE Engineering Review Functionality [2m(4)[22m
+       [32m✓[39m renders PE Engineering Review section between Production Result and QA Inspection[32m 38[2mms[22m[39m
+       [32m✓[39m submits a new PE Engineering Review with result, comment, improvement and appends to history[32m 157[2mms[22m[39m
+       [32m✓[39m PE Review does NOT modify OK/NG/KIV production baseline numbers[32m 1[2mms[22m[39m
+       [32m✓[39m allows PE Review after Close Operation, but locks when JOB is CLOSE[32m 26[2mms[22m[39m
+     [31m❯[39m 3. Role Drawing Permissions & Engineering Documents Management [2m(6)[22m
+       [32m✓[39m Drawing role has dedicated permissions: can upload documents, cannot touch planning/production/QA[32m 1[2mms[22m[39m
+[31m       [31m×[31m renders Engineering Documents section with Category and Operation filters[39m[32m 25[2mms[22m[39m
+       [32m✓[39m filters engineering documents correctly by category[32m 29[2mms[22m[39m
+       [32m✓[39m generates secure signed URL when user clicks Xem/Tải on an engineering document[32m 46[2mms[22m[39m
+[31m       [31m×[31m uploads new version of an existing document without overwriting original[39m[32m 9[2mms[22m[39m
+       [32m✓[39m blocks uploading documents when parent JOB is in CLOSE status[32m 7[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/test/operationUiDocumentsR1.test.tsx[2m > [22mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m1. Production Result Split Layout & Sample Photos Gallery[2m > [22mrenders Left Parameters (Row 1 Machine|Date|CT, Row 2 OK|NG|KIV) and Right Sample Photos Gallery
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the display value: 2.
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mclass[39m=[32m"w-full px-3 py-1.5 bg-slate-100 border border-slate-200 rounded-lg text-xs font-bold text-rose-700 focus:outline-none cursor-not-allowed select-none"[39m
+  [33mreadonly[39m=[32m""[39m
+  [33mtabindex[39m=[32m"-1"[39m
+  [33mtype[39m=[32m"number"[39m
+  [33mvalue[39m=[32m"2"[39m
+[36m/>[39m
+
+Ignored nodes: comments, script, style
+[36m<input[39m
+  [33mclass[39m=[32m"w-16 px-2 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-rose-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 disabled:bg-slate-100"[39m
+  [33mmin[39m=[32m"1"[39m
+  [33mrequired[39m=[32m""[39m
+  [33mstep[39m=[32m"1"[39m
+  [33mtype[39m=[32m"number"[39m
+  [33mvalue[39m=[32m"2"[39m
+[36m/>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"p-4 sm:p-5 space-y-6 bg-slate-50/50"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between pb-3 border-b border-slate-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-cpu w-4 h-4 text-blue-600"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 20v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M17 20v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M17 2v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 17h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 7h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 17h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 7h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 20v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 2v2"[39m
+              [36m/>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mx[39m=[32m"4"[39m
+                [33my[39m=[32m"4"[39m
+              [36m/>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"8"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<h4[39m
+              [33mclass[39m=[32m"text-xs font-bold text-slate-800 uppercase tracking-wider"[39m
+            [36m>[39m
+              [0mKết quả Sản xuất (PE–MFG Production Result)[0m
+            [36m</h4>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-4"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-12 gap-3.5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"lg:col-span-7 xl:col-span-8 space-y-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"grid grid-cols-1 sm:grid-cols-3 gap-3"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 mb-1"[39m
+                  [36m>[39m
+                    [0mMachine [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-red-500"[39m
+                    [36m>[39m
+                      [0m*[0m
+                    [36m</span>[39m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 disabled:cursor-not-allowed"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"text"[39m
+                    [33mvalue[39m=[32m"AA08"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 mb-1"[39m
+                  [36m>[39m
+                    [0mDate [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-red-500"[39m
+                    [36m>[39m
+                      [0m*[0m
+                    [36m</span>[39m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 disabled:cursor-not-allowed"[39m
+                    [33mrequired[39m=[32m""[39m
+                    [33mtype[39m=[32m"date"[39m
+                    [33mvalue[39m=[32m"2026-10-14"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 mb-1"[39m
+                  [36m>[39m
+                    [0mCT Actual [0m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-slate-400 font-normal"[39m
+                    [36m>[39m
+                      [0m(sec/pcs)[0m
+                    [36m</span>[39m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 disabled:cursor-not-allowed"[39m
+                    [33mmin[39m=[32m"0.01"[39m
+                    [33mstep[39m=[32m"0.01"[39m
+                    [33mtype[39m=[32m"number"[39m
+                    [33mvalue[39m=[32m"45"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+        ...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/test/operationUiDocumentsR1.test.tsx:[2m271:21[22m[39m
+    [90m269|[39m       // Verify Left parameters: Row 2
+    [90m270|[39m       expect(screen.getByDisplayValue('25')).toBeInTheDocument(); // OK
+    [90m271|[39m       expect(screen.getByDisplayValue('2')).toBeInTheDocument();  // N…
+    [90m   |[39m                     [31m^[39m
+    [90m272|[39m       expect(screen.getByDisplayValue('1')).toBeInTheDocument();  // K…
+    [90m273|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/operationUiDocumentsR1.test.tsx[2m > [22mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m1. Production Result Split Layout & Sample Photos Gallery[2m > [22mopens lightbox preview modal with signed URL when clicking a sample photo thumbnail
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: /Kỹ thuật viên PE/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<p[39m
+  [33mclass[39m=[32m"text-[9px] text-white truncate font-medium"[39m
+[36m>[39m
+  [0mKỹ thuật viên PE[0m
+[36m</p>[39m
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mKỹ thuật viên PE[0m
+[36m</strong>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"h-full flex flex-col justify-between p-3 bg-slate-50/70 border border-slate-200/80 rounded-lg"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between pb-2 border-b border-slate-200/70"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-1.5"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-image w-3.5 h-3.5 text-blue-600"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"3"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"9"[39m
+                [33mr[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-[11px] font-bold text-slate-800 uppercase tracking-wide"[39m
+            [36m>[39m
+              [0mẢnh sản phẩm mẫu (Sample Photos)[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m ảnh[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-2.5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"grid grid-cols-3 sm:grid-cols-4 gap-2"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"group relative aspect-square bg-slate-100 rounded-lg border border-slate-200 overflow-hidden shadow-2xs hover:shadow-sm transition"[39m
+            [36m>[39m
+              [36m<img[39m
+                [33malt[39m=[32m"sample_part_face_a.jpg"[39m
+                [33mclass[39m=[32m"w-full h-full object-cover cursor-pointer hover:scale-105 transition duration-200"[39m
+                [33msrc[39m=[32m"https://storage.test/signed_sample_photo.jpg"[39m
+              [36m/>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 pointer-events-none group-hover:pointer-events-auto"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"p-1 rounded bg-white/90 text-slate-800 hover:bg-white hover:text-blue-600 shadow-xs"[39m
+                  [33mtitle[39m=[32m"Phóng to ảnh"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-eye w-3.5 h-3.5"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"24"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"24"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"12"[39m
+                      [33mcy[39m=[32m"12"[39m
+                      [33mr[39m=[32m"3"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"p-1 rounded bg-white/90 text-slate-800 hover:bg-white hover:text-rose-600 shadow-xs"[39m
+                  [33mtitle[39m=[32m"Xóa ảnh"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-trash lucide-trash-2 w-3.5 h-3.5"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"24"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"24"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M10 11v6"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M14 11v6"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M3 6h18"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent p-1 pointer-events-none"[39m
+              [36m>[...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/test/operationUiDocumentsR1.test.tsx:[2m325:21[22m[39m
+    [90m323|[39m       });
+    [90m324|[39m       expect(screen.getByText('sample_part_face_a.jpg')).toBeInTheDocu…
+    [90m325|[39m       expect(screen.getByText(/Kỹ thuật viên PE/)).toBeInTheDocument();
+    [90m   |[39m                     [31m^[39m
+    [90m326|[39m     });
+    [90m327|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/operationUiDocumentsR1.test.tsx[2m > [22mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m3. Role Drawing Permissions & Engineering Documents Management[2m > [22mrenders Engineering Documents section with Category and Operation filters
+[31m[1mTestingLibraryElementError[22m[39m: Found multiple elements with the text: Bản vẽ (Drawing)
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<option[39m
+  [33mvalue[39m=[32m"Drawing"[39m
+[36m>[39m
+  [0mBản vẽ (Drawing)[0m
+[36m</option>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mclass[39m=[32m"inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200"[39m
+[36m>[39m
+  [0mBản vẽ (Drawing)[0m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4"[39m
+      [33mdata-testid[39m=[32m"engineering-documents-section"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-3"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"w-7 h-7 rounded-lg bg-cyan-50 text-cyan-700 flex items-center justify-center border border-cyan-200"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-file-text w-4 h-4"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 9H8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 13H8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 17H8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-bold text-slate-800 uppercase tracking-wider"[39m
+            [36m>[39m
+              [0mTài liệu Kỹ thuật (Engineering Documents)[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-[11px] text-slate-500"[39m
+            [36m>[39m
+              [0mBản vẽ gia công, Check Sheet tiêu chuẩn, Cài đặt thông số máy & Phiên bản[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold rounded-lg shadow-xs transition"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-plus w-3.5 h-3.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M5 12h14"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 5v14"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span>[39m
+            [0mTải tài liệu mới[0m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200/80 text-xs"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-slate-500 font-semibold"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-funnel lucide-filter w-3.5 h-3.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span>[39m
+            [0mLọc:[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-600 font-medium"[39m
+          [36m>[39m
+            [0mCông đoạn:[0m
+          [36m</span>[39m
+          [36m<select[39m
+            [33mclass[39m=[32m"px-2.5 py-1 bg-white border border-slate-300 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-cyan-600"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"ALL"[39m
+            [36m>[39m
+              [0mTất cả ([0m
+              [0m2[0m
+              [0m)[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"GENERAL"[39m
+            [36m>[39m
+              [0mChung cho JOB[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"op-1"[39m
+            [36m>[39m
+              [0mOP[0m
+              [0m10[0m
+              [0m — [0m
+              [0mPhay CNC mặt đầu[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-1"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-600 font-medium"[39m
+          [36m>[39m
+            [0mPhân loại:[0m
+          [36m</span>[39m
+          [36m<select[39m
+            [33mclass[39m=[32m"px-2.5 py-1 bg-white border border-slate-300 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-cyan-600"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"ALL"[39m
+            ...
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getElementError node_modules/@testing-library/dom/dist/query-helpers.js:[2m20:35[22m[39m
+[90m [2m❯[22m getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:[2m23:10[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m55:13[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/test/operationUiDocumentsR1.test.tsx:[2m492:21[22m[39m
+    [90m490|[39m       // Check document rows
+    [90m491|[39m       expect(screen.getByText('PART-DWG-REV-A.pdf')).toBeInTheDocument…
+    [90m492|[39m       expect(screen.getByText('Bản vẽ (Drawing)')).toBeInTheDocument();
+    [90m   |[39m                     [31m^[39m
+    [90m493|[39m       expect(screen.getByText('OP10-SETTING-SHEET.xlsx')).toBeInTheDoc…
+    [90m494|[39m       expect(screen.getByText('Setting Sheet')).toBeInTheDocument();
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m src/test/operationUiDocumentsR1.test.tsx[2m > [22mSAMPLE TRACKING — OPERATION UI & ENGINEERING DOCUMENTS R1 TEST SUITE[2m > [22m3. Role Drawing Permissions & Engineering Documents Management[2m > [22muploads new version of an existing document without overwriting original
+[31m[1mTestingLibraryElementError[22m[39m: Found a label with the text of: /Chọn tệp đính kèm/i, however no form control was found associated to that label. Make sure you're using the "for" attribute or "aria-labelledby" attribute correctly.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"[39m
+      [33mdata-testid[39m=[32m"upload-document-modal"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-4"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-start justify-between pb-3 border-b border-slate-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2.5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"w-8 h-8 rounded-lg bg-cyan-100 text-cyan-700 flex items-center justify-center"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-text w-4 h-4"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 9H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 13H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17H8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<h3[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mTải phiên bản mới cho: PART-DWG-REV-A.pdf[0m
+              [36m</h3>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-[11px] text-slate-500"[39m
+              [36m>[39m
+                [0mBản vẽ, Check Sheet tiêu chuẩn, Cài đặt máy & Tài liệu kỹ thuật[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-slate-400 hover:text-slate-600 p-1 rounded"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-x w-4 h-4"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 6 6 18"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 6 12 12"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-3.5 text-xs"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1"[39m
+            [36m>[39m
+              [0mPhạm vi áp dụng [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-red-500"[39m
+              [36m>[39m
+                [0m*[0m
+              [36m</span>[39m
+            [36m</label>[39m
+            [36m<select[39m
+              [33mclass[39m=[32m"w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-cyan-600 disabled:bg-slate-100"[39m
+              [33mdisabled[39m=[32m""[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"GENERAL"[39m
+              [36m>[39m
+                [0mChung cho toàn bộ JOB (General)[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"op-1"[39m
+              [36m>[39m
+                [0mOP[0m
+                [0m10[0m
+                [0m — [0m
+                [0mPhay CNC mặt đầu[0m
+                [0m ([0m
+                [0mMC-MILL-01[0m
+                [0m)[0m
+              [36m</option>[39m
+            [36m</select>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"grid grid-cols-1 sm:grid-cols-2 gap-3"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1"[39m
+              [36m>[39m
+                [0mPhân loại tài liệu [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-red-500"[39m
+                [36m>[39m
+                  [0m*[0m
+                [36m</span>[39m
+              [36m</label>[39m
+              [36m<select[39m
+                [33mclass[39m=[32m"w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 focus:outline-none focus:ring-1 focus:ring-cyan-600 disabled:bg-slate-100"[39m
+                [33mdisabled[39m=[32m""[39m
+              [36m>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"Drawing"[39m
+                [36m>[39m
+                  [0mBản vẽ (Drawing)[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"Check Sheet"[39m
+                [36m>[39m
+                  [0mCheck Sheet tiêu chuẩn[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"Setting"[39m
+                [36m>[39m
+                  [0mHướng dẫn cài đặt máy (Setting)[0m
+                [36m</option>[39m
+                [36m<option[39m
+                  [33mvalue[39m=[32m"Other"[39m
+                [36m>[39m
+                  [0mTài liệu kỹ thuật khác (Other)[0m
+                [36m</option>[39m
+              [36m</select>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1"[39m
+              [36m>[39m
+                [0mPhiên bản (Version) [0m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-red-500"[39m
+                [36m>[39m
+                  [0m*[0m
+                [36m</span>[39m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-1 focus:ring-cyan-600"[39m
+                [33mplaceholder[39m=[32m"v1, v2, Rev A..."[39m
+                [33mrequired[39m=[32m""[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m"v2"[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1"[39m
+            [36m>[39m
+              [0mChọn tệp đính kèm [0m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-red-500"[39m
+              [36m>[39m
+                [0m*[0m
+              [36m</span>[39m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:bg-slate-50 transition cursor-pointer relative"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maccept[39m=[32m".pdf,.jpg,.jpeg,.png,.webp,.xls,.xlsx,application/pdf,image/*,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"[39m
+                [33mclass[39m=[32m"absolute inset-0 w-full h-full opacity-0 cursor-pointer"[39m
+                [33mrequired[39m=[32m""[39m
+                [33mtype[39m=[32m"file"[39m
+              [36m/>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-upload w-6 h-6 text-slate-400 mx-auto mb-1"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 3v12"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m17 8-5-5-5 5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-700"[39m
+                [36m>[39m
+                  [0mKéo thả tệp hoặc bấm để chọn tệp[0m
+                [36m</p>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-[10px] text-slate-400 mt-0.5"[39m
+                [36m>[39m
+                  [0mHỗ trợ: PDF, JPG, PNG, WebP, XLS, XLSX (Tối đa 15MB)[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1"[39m
+            [36m>[39m
+              [0mGhi chú / Thay đổi phiên bản[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-cyan-600"[39m
+              [33mplaceholder[39m=[32m"Ví dụ: Cập nhật dung sai đường kính ngoài; bổ sung bước gá..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"px-3.5 py-2 border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mHủy[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center gap-1.5 px-4 py-2 bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold rounded-lg shadow-xs transition disabled:opacity-50"[39m
+              [33mdisabled[39m=[32m""[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-upload w-3.5 h-3.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 3v12"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m17 8-5-5-5 5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span>[39m
+                [0mXác nhận tải tài liệu[0m
+              [36m</span>[39m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</form>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+[90m [2m❯[22m Object.getElementError node_modules/@testing-library/dom/dist/config.js:[2m37:19[22m[39m
+[90m [2m❯[22m getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:[2m108:40[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m52:17[22m[39m
+[90m [2m❯[22m node_modules/@testing-library/dom/dist/query-helpers.js:[2m95:19[22m[39m
+[36m [2m❯[22m src/test/operationUiDocumentsR1.test.tsx:[2m584:32[22m[39m
+    [90m582|[39m       // Attach file
+    [90m583|[39m       const file = new File(['dummy content'], 'PART-DWG-REV-B.pdf', {…
+    [90m584|[39m       const fileInput = screen.getByLabelText(/Chọn tệp đính kèm/i).cl…
+    [90m   |[39m                                [31m^[39m
+    [90m585|[39m       if (fileInput) {
+    [90m586|[39m         fireEvent.change(fileInput, { target: { files: [file] } });
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m10 passed[39m[22m[90m (14)[39m
+[2m   Start at [22m 10:34:36
+[2m   Duration [22m 7.37s[2m (import 49%, environment 27%, setup 10%, tests 8%, transform 6%)[22m
+
