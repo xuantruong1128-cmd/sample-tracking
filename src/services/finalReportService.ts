@@ -20,6 +20,31 @@ export async function fetchFinalReport(
   }
 }
 
+/**
+ * Lightweight status check for polling, avoiding downloading heavy snapshot_data JSONB.
+ */
+export async function fetchFinalReportStatus(
+  jobId: string
+): Promise<{ status: string | null; error: string | null }> {
+  try {
+    const { data, error } = await supabase
+      .from('sample_final_reports')
+      .select('id, generation_status, error_message')
+      .eq('job_id', jobId)
+      .maybeSingle();
+
+    if (error) {
+      return { status: null, error: error.message };
+    }
+    return {
+      status: (data as any)?.generation_status || null,
+      error: (data as any)?.error_message || null,
+    };
+  } catch (err: any) {
+    return { status: null, error: err.message || 'Lỗi kiểm tra trạng thái báo cáo.' };
+  }
+}
+
 export async function triggerReportGeneration(
   jobId: string
 ): Promise<{ success: boolean; data?: any; error?: string }> {

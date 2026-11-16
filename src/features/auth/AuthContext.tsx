@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { ENV } from '../../lib/env';
 import type { AuthUser, Profile } from '../../types/auth';
 import { loginWithPhone, normalizePhone } from './authUtils';
+import { clearSignedUrlCache } from '../../lib/signedUrlCache';
+import { releaseDeviceSession, verifyCurrentDeviceSession } from '../../lib/deviceUtils';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -11,7 +13,7 @@ interface AuthContextType {
   error: string | null;
   login: (phone: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
+  refreshProfile: (force?: boolean) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,6 +22,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Ref to track user state without triggering effect re-runs
+  const userRef = useRef<AuthUser | null>(null);
+  userRef.current = user;
+
+  // Throttle focus-based profile re-checks to at most once per 60 seconds
+  const lastProfileCheckRef = useRef<number>(0);
 
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
     try {
@@ -35,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Backend access denial on deactivated account (F-12)
       if (!data.is_active) {
+        clearSignedUrlCache();
         await supabase.auth.signOut();
         return null;
       }
@@ -45,16 +55,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const refreshProfile = useCallback(async () => {
-    if (!user) return;
-    const profile = await fetchProfile(user.id);
+  const refreshProfile = useCallback(async (force = false) => {
+    const currentUser = userRef.current;
+    if (!currentUser) return;
+
+    const now = Date.now();
+    // Throttle checks to once every 60s unless explicitly forced
+    if (!force && now - lastProfileCheckRef.current < 60000) {
+      return;
+    }
+    lastProfileCheckRef.current = now;
+
+    const profile = await fetchProfile(currentUser.id);
     if (profile) {
-      setUser((prev) => (prev ? { ...prev, profile } : null));
+      // Actively verify device slot is still assigned to this device
+      const deviceCheck = await verifyCurrentDeviceSession();
+      if (!deviceCheck.valid) {
+        clearSignedUrlCache();
+        await supabase.auth.signOut();
+        setUser(null);
+        setError('Phiên đăng nhập đã kết thúc do tài khoản đã được đăng nhập trên thiết bị khác hoặc Quản trị viên đã thu hồi thiết bị.');
+        return;
+      }
+
+      setUser((prev) => {
+        if (!prev) return null;
+        // Referentially stable if fields haven't changed
+        if (
+          prev.profile &&
+          prev.profile.role === profile.role &&
+          prev.profile.is_active === profile.is_active &&
+          prev.profile.full_name === profile.full_name &&
+          prev.profile.phone === profile.phone
+        ) {
+          return prev;
+        }
+        return { ...prev, profile };
+      });
     } else {
       setUser(null);
       setError('Tài khoản của bạn đã bị vô hiệu hóa bởi Quản trị viên.');
     }
-  }, [user, fetchProfile]);
+  }, [fetchProfile]);
+
+  const refreshProfileRef = useRef(refreshProfile);
+  refreshProfileRef.current = refreshProfile;
 
   useEffect(() => {
     let mounted = true;
@@ -69,14 +114,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user && mounted) {
           const profile = await fetchProfile(session.user.id);
-          if (profile) {
+          if (profile && mounted) {
+            // Verify device slot validity (auto-claims vacant slot for existing logged-in users)
+            const deviceCheck = await verifyCurrentDeviceSession();
+            if (!deviceCheck.valid && mounted) {
+              clearSignedUrlCache();
+              await supabase.auth.signOut();
+              setUser(null);
+              setError('Phiên đăng nhập đã kết thúc do tài khoản đã được đăng nhập trên một thiết bị khác cùng loại.');
+              return;
+            }
+
             setUser({
               id: session.user.id,
               phone: profile.phone || normalizePhone(session.user.phone || ''),
               email: session.user.email,
               profile,
             });
-          } else {
+            lastProfileCheckRef.current = Date.now();
+          } else if (mounted) {
             setUser(null);
           }
         }
@@ -95,32 +151,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!mounted) return;
 
         if (event === 'SIGNED_OUT' || !session?.user) {
+          clearSignedUrlCache();
           setUser(null);
           setLoading(false);
           return;
         }
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          // If switching to a different user, clear cached signed URLs from previous session
+          const current = userRef.current;
+          if (current && session.user && current.id !== session.user.id) {
+            clearSignedUrlCache();
+          }
+
+          // If user is already loaded and session id matches, avoid duplicate fetch on redundant SIGNED_IN event
+          if (event === 'SIGNED_IN' && current && current.id === session.user.id && current.profile) {
+            setLoading(false);
+            return;
+          }
+
           const profile = await fetchProfile(session.user.id);
-          if (profile) {
+          if (profile && mounted) {
+            // Verify device slot validity (auto-claims vacant slot for existing logged-in users)
+            const deviceCheck = await verifyCurrentDeviceSession();
+            if (!deviceCheck.valid && mounted) {
+              clearSignedUrlCache();
+              await supabase.auth.signOut();
+              setUser(null);
+              setError('Phiên đăng nhập đã kết thúc do tài khoản đã được đăng nhập trên một thiết bị khác cùng loại.');
+              return;
+            }
+
             setUser({
               id: session.user.id,
               phone: profile.phone || normalizePhone(session.user.phone || ''),
               email: session.user.email,
               profile,
             });
-          } else {
+            lastProfileCheckRef.current = Date.now();
+          } else if (mounted) {
             setUser(null);
           }
-          setLoading(false);
+          if (mounted) setLoading(false);
         }
       }
     );
 
     // Actively verify account active status on window focus (F-12)
     const handleFocus = () => {
-      if (user) {
-        refreshProfile();
+      if (userRef.current) {
+        refreshProfileRef.current(false);
       }
     };
     window.addEventListener('focus', handleFocus);
@@ -130,7 +210,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       authListener?.subscription.unsubscribe();
       window.removeEventListener('focus', handleFocus);
     };
-  }, [fetchProfile, user, refreshProfile]);
+  }, [fetchProfile]);
 
   const login = async (phone: string, password: string) => {
     setError(null);
@@ -149,6 +229,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setLoading(true);
     try {
+      await releaseDeviceSession();
+      clearSignedUrlCache();
       await supabase.auth.signOut();
       setUser(null);
       setError(null);

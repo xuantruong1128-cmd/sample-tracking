@@ -11,9 +11,10 @@ import {
   Loader2,
   Lock,
   ShieldCheck,
+  Clock,
 } from 'lucide-react';
 import type { SampleFinalReport } from '../../types/finalReport';
-import { fetchFinalReport, triggerReportGeneration, getReportDownloadUrl } from '../../services/finalReportService';
+import { fetchFinalReport, fetchFinalReportStatus, triggerReportGeneration, getReportDownloadUrl } from '../../services/finalReportService';
 import { ReportPreviewModal } from './ReportPreviewModal';
 import { permissions } from '../../features/auth/authUtils';
 import { downloadAndSaveReportFile } from '../../utils/fileSaveUtils';
@@ -39,6 +40,7 @@ export const SampleFinalReportSection: React.FC<SampleFinalReportSectionProps> =
   const [report, setReport] = useState<SampleFinalReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pollTimeout, setPollTimeout] = useState<boolean>(false);
   const [isRetrying, setIsRetrying] = useState(false);
   const [downloadingType, setDownloadingType] = useState<'pdf' | 'zip' | null>(null);
   const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -67,16 +69,37 @@ export const SampleFinalReportSection: React.FC<SampleFinalReportSectionProps> =
     }
   }, [jobId, jobStatus, loadReport]);
 
-  // Polling while Pending or Generating
+  // Polling while Pending or Generating with bounded retry counter and lightweight status query
   useEffect(() => {
     if (!report) return;
-    if (report.generation_status === 'Pending' || report.generation_status === 'Generating') {
-      const interval = setInterval(() => {
-        loadReport();
-      }, 3500);
-      return () => clearInterval(interval);
-    }
-  }, [report, loadReport]);
+    const isGenerating = report.generation_status === 'Pending' || report.generation_status === 'Generating';
+    if (!isGenerating) return;
+
+    let pollCount = 0;
+    const MAX_POLLS = 20; // 20 * 3500ms = 70 seconds max polling time
+
+    const interval = setInterval(async () => {
+      pollCount++;
+      if (pollCount > MAX_POLLS) {
+        clearInterval(interval);
+        setPollTimeout(true);
+        return;
+      }
+
+      const { status, error: statusErr } = await fetchFinalReportStatus(jobId);
+      if (statusErr) {
+        clearInterval(interval);
+        setError(statusErr);
+        await loadReport();
+      } else if (status === 'Ready' || status === 'Completed' || status === 'Failed') {
+        clearInterval(interval);
+        setPollTimeout(false);
+        await loadReport();
+      }
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [report?.generation_status, jobId, loadReport]);
 
   // Handle Safe Retry
   const handleRetry = async () => {
@@ -370,7 +393,7 @@ export const SampleFinalReportSection: React.FC<SampleFinalReportSectionProps> =
         </div>
 
         {/* GENERATION STATE / ARTIFACTS / ACTIONS */}
-        {isGenerating && (
+        {isGenerating && !pollTimeout && (
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between gap-3 text-xs text-amber-900">
             <div className="flex items-center gap-3">
               <Loader2 className="w-5 h-5 animate-spin text-amber-600 shrink-0" />
@@ -381,6 +404,32 @@ export const SampleFinalReportSection: React.FC<SampleFinalReportSectionProps> =
                 </span>
               </div>
             </div>
+          </div>
+        )}
+
+        {isGenerating && pollTimeout && (
+          <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-950">
+            <div className="flex items-start gap-2.5">
+              <Clock className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <strong className="font-bold">Tiến trình tạo báo cáo đang mất nhiều thời gian hơn bình thường (&gt; 70s)</strong>
+                <p className="text-[11px] text-amber-800">
+                  Hệ thống vẫn đang tiếp tục xử lý ngầm trên máy chủ. Bạn không cần tạo lại. Bấm nút bên cạnh để kiểm tra trạng thái mới nhất từ máy chủ.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              data-testid="poll-check-status-btn"
+              onClick={async () => {
+                setPollTimeout(false);
+                await loadReport();
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition self-end sm:self-center shrink-0 cursor-pointer shadow-2xs"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Kiểm tra trạng thái</span>
+            </button>
           </div>
         )}
 

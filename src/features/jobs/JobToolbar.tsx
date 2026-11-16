@@ -20,6 +20,10 @@ export interface JobToolbarProps {
   onResetFilter?: () => void;
   onJobCreated?: (newJob: Job) => void;
 
+  // Additional action controls (e.g. Column Visibility & Export Excel)
+  extraActions?: React.ReactNode;
+  resetToEmpty?: boolean;
+
   // Backward compatibility props for legacy test suites
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
@@ -33,6 +37,8 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
   onApplyFilter,
   onResetFilter,
   onJobCreated,
+  extraActions,
+  resetToEmpty = false,
   // legacy props
   searchTerm,
   onSearchChange,
@@ -149,7 +155,7 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
   };
 
   const handleReset = () => {
-    const resetList = [createDefaultCondition('init_1', 'item_number')];
+    const resetList = resetToEmpty ? [] : [createDefaultCondition('init_1', 'item_number')];
     if (onConditionsChange) {
       onConditionsChange(resetList);
     } else {
@@ -228,6 +234,8 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
                 </button>
               </div>
 
+              {extraActions}
+
               {canCreate && (
                 <button
                   type="button"
@@ -261,21 +269,22 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
   // -------------------------------------------------------------------------
   return (
     <>
-      <div className="bg-white border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-xs mb-6 space-y-3">
-        {/* Condition Rows List */}
-        <div className="space-y-2">
-          {activeConditions.map((cond) => {
-            const isDateField = cond.field === 'start_date' || cond.field === 'closing_date';
-            const isRange = isDateField && cond.operator === 'range';
-            const isStatus = cond.field === 'status';
-            const hasRangeErr = isRange && cond.value && cond.valueTo && cond.value > cond.valueTo;
+      <div className="bg-white border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-xs mb-3 space-y-3">
+        {/* Condition Rows List (only rendered when there are conditions) */}
+        {activeConditions.length > 0 && (
+          <div className="space-y-2">
+            {activeConditions.map((cond) => {
+              const isDateField = cond.field === 'start_date' || cond.field === 'closing_date';
+              const isRange = isDateField && cond.operator === 'range';
+              const isStatus = cond.field === 'status';
+              const hasRangeErr = isRange && cond.value && cond.valueTo && cond.value > cond.valueTo;
 
-            return (
-              <div
-                key={cond.id}
-                data-testid={`filter-condition-row-${cond.id}`}
-                className="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50/70 p-2 sm:p-2.5 rounded-lg border border-slate-200 text-xs sm:text-sm"
-              >
+              return (
+                <div
+                  key={cond.id}
+                  data-testid={`filter-condition-row-${cond.id}`}
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50/70 p-2 sm:p-2.5 rounded-lg border border-slate-200 text-xs sm:text-sm"
+                >
                 {/* 1. Field Dropdown */}
                 <div className="flex items-center gap-2">
                   <select
@@ -403,6 +412,7 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
             );
           })}
         </div>
+        )}
 
         {/* Validation Error Message */}
         {validationError && (
@@ -416,7 +426,7 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
         )}
 
         {/* Actions Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+        <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${activeConditions.length > 0 ? 'pt-2 border-t border-slate-100' : ''}`}>
           <div className="flex items-center gap-2 flex-wrap">
             {/* Thêm điều kiện */}
             <button
@@ -449,17 +459,22 @@ export const JobToolbar: React.FC<JobToolbarProps> = ({
             </button>
           </div>
 
-          {/* + Tạo JOB mới (Planning / Admin only) */}
-          {canCreate && (
-            <button
-              type="button"
-              onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-xs transition touch-manipulation focus:outline-none focus:ring-2 focus:ring-emerald-500 self-start sm:self-auto"
-            >
-              <Plus className="w-4 h-4 shrink-0" />
-              <span>Tạo JOB mới</span>
-            </button>
-          )}
+          {/* Right side: Extra Actions (Hiển thị cột, Xuất Excel) + Tạo JOB mới */}
+          <div className="flex items-center gap-2 flex-wrap self-start sm:self-auto">
+            {extraActions}
+
+            {/* + Tạo JOB mới (Planning / Admin only) */}
+            {canCreate && (
+              <button
+                type="button"
+                onClick={() => setShowCreateModal(true)}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-xs transition touch-manipulation focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <Plus className="w-4 h-4 shrink-0" />
+                <span>Tạo JOB mới</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { ENV } from '../lib/env';
-import { STORAGE_BUCKET, createSecureSignedUrl } from '../lib/storageUtils';
+import { STORAGE_BUCKET, createSecureSignedUrl, invalidateSignedUrl } from '../lib/storageUtils';
 import type { OperationSamplePhoto } from '../types/database.types';
 
 export const MAX_SAMPLE_PHOTO_SIZE = 10 * 1024 * 1024; // 10MB
@@ -36,6 +36,7 @@ export interface UploadSamplePhotoParams {
   jobId: string;
   operationId: string;
   file: File;
+  uploaderName?: string;
 }
 
 /**
@@ -46,6 +47,7 @@ export async function uploadSamplePhoto({
   jobId,
   operationId,
   file,
+  uploaderName: customUploaderName,
 }: UploadSamplePhotoParams): Promise<{ photo: OperationSamplePhoto | null; error: string | null }> {
   if (!ENV.IS_CONFIGURED) {
     const mockPhoto: OperationSamplePhoto = {
@@ -57,7 +59,7 @@ export async function uploadSamplePhoto({
       file_size: file.size,
       mime_type: file.type || 'image/jpeg',
       uploaded_by: 'demo-user',
-      uploader_name: 'Người dùng thử nghiệm',
+      uploader_name: customUploaderName || 'Người dùng thử nghiệm',
       created_at: new Date().toISOString(),
     };
     return { photo: mockPhoto, error: null };
@@ -88,13 +90,16 @@ export async function uploadSamplePhoto({
     return { photo: null, error: 'Chưa đăng nhập. Vui lòng đăng nhập lại.' };
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, phone, role')
-    .eq('id', session.user.id)
-    .single();
+  let uploaderName = customUploaderName;
+  if (!uploaderName) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, phone, role')
+      .eq('id', session.user.id)
+      .single();
 
-  const uploaderName = profile?.full_name || profile?.phone || 'Kỹ thuật viên';
+    uploaderName = profile?.full_name || profile?.phone || 'Kỹ thuật viên';
+  }
 
   // 3. Prepare storage path
   const sanitizedName = file.name
@@ -167,6 +172,7 @@ export async function deleteSamplePhoto(
 
     // Also remove from storage
     await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
+    invalidateSignedUrl(STORAGE_BUCKET, filePath);
     return { success: true, error: null };
   } catch (err: any) {
     return { success: false, error: err.message || 'Lỗi khi xóa ảnh mẫu.' };
@@ -180,4 +186,89 @@ export async function viewSamplePhotoSignedUrl(
   filePath: string
 ): Promise<{ signedUrl: string | null; error: string | null }> {
   return createSecureSignedUrl(filePath, 300);
+}
+
+/**
+ * Set an uploaded sample photo as the Part Avatar for a job.
+ * Pass photoId=null to unset avatar.
+ */
+export async function setPartAvatar(
+  jobId: string,
+  photoId: string | null
+): Promise<{ success: boolean; error: string | null }> {
+  if (!ENV.IS_CONFIGURED) {
+    return { success: true, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase.rpc('set_part_avatar', {
+      p_job_id: jobId,
+      p_photo_id: photoId,
+    });
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    if (data && data.success === false) {
+      return { success: false, error: data.message || 'Lỗi khi đặt ảnh đại diện.' };
+    }
+
+    return { success: true, error: null };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Lỗi khi cập nhật ảnh đại diện.' };
+  }
+}
+
+/**
+ * Fetch the current Part Avatar for a job.
+ */
+export async function fetchJobPartAvatar(
+  jobId: string
+): Promise<{ avatar: OperationSamplePhoto | null; error: string | null }> {
+  if (!ENV.IS_CONFIGURED) {
+    return { avatar: null, error: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('operation_sample_photos')
+      .select('*')
+      .eq('job_id', jobId)
+      .eq('is_avatar', true)
+      .maybeSingle();
+
+    if (error) {
+      return { avatar: null, error: error.message };
+    }
+    return { avatar: data as OperationSamplePhoto | null, error: null };
+  } catch (err: any) {
+    return { avatar: null, error: err.message || 'Lỗi khi tải ảnh đại diện.' };
+  }
+}
+
+/**
+ * Fetch all sample photos for a job across all operations.
+ */
+export async function fetchAllJobSamplePhotos(
+  jobId: string
+): Promise<{ photos: OperationSamplePhoto[]; error: string | null }> {
+  if (!ENV.IS_CONFIGURED) {
+    return { photos: [], error: null };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('operation_sample_photos')
+      .select('*')
+      .eq('job_id', jobId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      return { photos: [], error: error.message };
+    }
+    return { photos: (data || []) as OperationSamplePhoto[], error: null };
+  } catch (err: any) {
+    return { photos: [], error: err.message || 'Lỗi khi tải danh sách ảnh mẫu.' };
+  }
 }

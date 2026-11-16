@@ -120,7 +120,7 @@ serve(async (req) => {
         });
       }
 
-      const VALID_ROLES = ['Admin', 'Planning', 'PE-MFG', 'QA'];
+      const VALID_ROLES = ['Admin', 'Planning', 'PE-MFG', 'QA', 'Drawing', 'Viewer', 'BD'];
       if (!VALID_ROLES.includes(role)) {
         return new Response(JSON.stringify({ error: `Vai trò "${role}" không hợp lệ. Chỉ chấp nhận: ${VALID_ROLES.join(', ')}` }), {
           status: 400,
@@ -358,7 +358,7 @@ serve(async (req) => {
         });
       }
 
-      const VALID_ROLES = ['Admin', 'Planning', 'PE-MFG', 'QA'];
+      const VALID_ROLES = ['Admin', 'Planning', 'PE-MFG', 'QA', 'Drawing', 'Viewer', 'BD'];
       if (!VALID_ROLES.includes(role)) {
         return new Response(JSON.stringify({ error: `Vai trò "${role}" không hợp lệ. Chỉ chấp nhận: ${VALID_ROLES.join(', ')}` }), {
           status: 400,
@@ -474,6 +474,9 @@ serve(async (req) => {
         throw new Error(`Lỗi vô hiệu hóa phiên xác thực: ${banErr.message}`);
       }
 
+      // Invalidate active device sessions immediately
+      await adminClient.from('user_active_devices').delete().eq('user_id', user_id);
+
       // 3. Record audit log
       await adminClient.from('audit_logs').insert({
         user_id: callerUser.id,
@@ -560,6 +563,9 @@ serve(async (req) => {
         .eq('id', user_id);
       if (updateProfileErr) throw updateProfileErr;
 
+      // Invalidate all active devices for target user on password reset (global emergency logout)
+      await adminClient.from('user_active_devices').delete().eq('user_id', user_id);
+
       await adminClient.from('audit_logs').insert({
         user_id: callerUser.id,
         action: 'ADMIN_RESET_PASSWORD',
@@ -570,6 +576,31 @@ serve(async (req) => {
       });
 
       return new Response(JSON.stringify({ success: true, must_change_password: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // --- ACTION: REVOKE ALL DEVICES ---
+    if (action === 'revoke_devices') {
+      if (!user_id) throw new Error('user_id required for revoke_devices');
+
+      const { error: delErr } = await adminClient
+        .from('user_active_devices')
+        .delete()
+        .eq('user_id', user_id);
+
+      if (delErr) throw delErr;
+
+      await adminClient.from('audit_logs').insert({
+        user_id: callerUser.id,
+        action: 'ADMIN_REVOKE_USER_DEVICES',
+        entity_type: 'user_active_devices',
+        entity_id: user_id,
+        new_values: { initiated_by: callerUser.id },
+        created_at: new Date().toISOString(),
+      });
+
+      return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

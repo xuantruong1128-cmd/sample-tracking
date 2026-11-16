@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase';
 import { ENV } from '../../lib/env';
 import type { AuthUser, Profile, UserRole } from '../../types/auth';
+import { registerOrCheckDeviceSession } from '../../lib/deviceUtils';
 
 /**
  * Valid Vietnamese Mobile Prefixes (after leading 0):
@@ -278,6 +279,21 @@ export async function loginWithPhone(
     throw new Error('Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ Quản trị viên (Admin).');
   }
 
+  // Enforce 2-Device Policy (1 PC + 1 Mobile per account)
+  const deviceResult = await registerOrCheckDeviceSession();
+  if (!deviceResult.allowed) {
+    await supabase.auth.signOut();
+    const typeLabel = deviceResult.device_type === 'desktop' ? 'Máy tính' : 'Điện thoại';
+    const conflictName = deviceResult.conflictingDevice?.device_name || 'Thiết bị khác';
+    const err: any = new Error(
+      `Tài khoản đang đăng nhập trên một ${typeLabel} khác (${conflictName}). Quy định hệ thống chỉ cho phép 1 Máy tính và 1 Điện thoại cùng lúc. Vui lòng đăng xuất trên thiết bị cũ trước khi sử dụng máy này. Nếu thiết bị cũ bị mất hoặc hỏng, vui lòng liên hệ Admin để được cấp lại mật khẩu.`
+    );
+    err.isDeviceConflict = true;
+    err.conflictingDevice = deviceResult.conflictingDevice;
+    err.deviceType = deviceResult.device_type;
+    throw err;
+  }
+
   const authUser: AuthUser = {
     id: authenticatedUser.id,
     phone: phoneResult.localPhone,
@@ -308,10 +324,29 @@ export const permissions = {
     role === 'Admin' || (role === 'PE-MFG' && Boolean(isDecisionMaker)),
   isAdmin: (role?: UserRole | null): boolean => role === 'Admin',
   isDrawing: (role?: UserRole | null): boolean => role === 'Drawing',
+  isViewer: (role?: UserRole | null): boolean => role === 'Viewer',
+  isBD: (role?: UserRole | null): boolean => role === 'BD',
+  canCreateDrawingReview: (role?: UserRole | null): boolean => role === 'BD' || role === 'Admin',
+  canEditTechnicalReview: (role?: UserRole | null): boolean => role === 'PE-MFG' || role === 'Admin',
+  canCloseTechnicalReview: (role?: UserRole | null): boolean => role === 'PE-MFG' || role === 'Admin',
+  canCreateReviewVersion: (role?: UserRole | null): boolean => role === 'PE-MFG' || role === 'Admin',
+  canQuoteDrawingReview: (role?: UserRole | null): boolean => role === 'BD' || role === 'Admin',
+  canRequoteDrawingReview: (role?: UserRole | null): boolean => role === 'BD' || role === 'Admin',
+  canViewDrawingReview: (role?: UserRole | null): boolean => Boolean(role),
+  canDownloadDrawingReport: (role?: UserRole | null): boolean => Boolean(role),
   canUploadSamplePhotos: (role?: UserRole | null): boolean => role === 'PE-MFG' || role === 'Admin',
   canReviewPeEngineering: (role?: UserRole | null): boolean => role === 'PE-MFG' || role === 'Admin',
   canUploadEngineeringDocuments: (role?: UserRole | null): boolean =>
     role === 'Drawing' || role === 'Planning' || role === 'PE-MFG' || role === 'Admin',
+  canUploadQaDocuments: (role?: UserRole | null): boolean => role === 'QA' || role === 'Admin',
+  canEditJobPlanning: (
+    job?: { status?: string; operations?: Array<{ status: string }> } | null,
+    role?: UserRole | null
+  ): boolean => {
+    if (role !== 'Planning' && role !== 'Admin') return false;
+    if (!job || job.status !== 'ACTIVE') return false;
+    return !(job.operations && job.operations.some((op) => op.status === 'CLOSED'));
+  },
   canDeleteJob: (
     job?: { created_by?: string | null; status?: string; operations?: Array<{ status: string }> } | null,
     profile?: Profile | null
@@ -341,4 +376,6 @@ export const permissions = {
     profile?.role === 'QA' && Boolean(profile?.is_department_leader),
   canDownloadFinalReport: (role?: UserRole | null, isLeader?: boolean): boolean =>
     role === 'Admin' || (role === 'PE-MFG' && Boolean(isLeader)),
+  canViewFinalReport: (role?: UserRole | null): boolean =>
+    Boolean(role && role !== null),
 };

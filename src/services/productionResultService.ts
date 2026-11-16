@@ -25,13 +25,26 @@ export interface SaveProductionResultInput {
   remarks?: string;
 }
 
+export interface QANgItemInput {
+  id?: string;
+  ng_qty: number;
+  defect_name: string;
+  defect_code?: string;
+  cause?: string;
+  remark?: string;
+  photo_urls?: string[];
+}
+
 export interface SaveQACheckInput {
   operationId: string;
-  result: 'OK' | 'NG' | 'KIV';
-  sampleSize: number;
-  okQty: number;
-  ngQty: number;
+  result?: 'OK' | 'NG' | 'KIV';
+  sampleSize?: number;
+  okQty?: number;
+  ngQty?: number;
   notes?: string;
+  n1Result?: 'OK' | 'NG';
+  n1CheckSheetUrls?: string[];
+  qaNgItems?: QANgItemInput[];
 }
 
 /**
@@ -41,11 +54,14 @@ export async function fetchDefectCatalog(): Promise<{ defects: DefectItem[]; err
   if (!ENV.IS_CONFIGURED) {
     return {
       defects: [
-        { id: '1', code: 'DEF-DIM-01', name_vi: 'Sai đường kính', name_en: 'Outer Diameter', category: 'DIMENSION', is_active: true, created_at: '' },
-        { id: '2', code: 'DEF-SRF-01', name_vi: 'Bavia', name_en: 'Burr', category: 'SURFACE', is_active: true, created_at: '' },
-        { id: '3', code: 'DEF-SRF-02', name_vi: 'Xước bề mặt', name_en: 'Surface scratch', category: 'SURFACE', is_active: true, created_at: '' },
-        { id: '4', code: 'DEF-THR-01', name_vi: 'Lỗi ren', name_en: 'Thread defect', category: 'MACHINING', is_active: true, created_at: '' },
-        { id: '5', code: 'DEF-OTH-01', name_vi: 'Lỗi khác', name_en: 'Other defect', category: 'OTHER', is_active: true, created_at: '' },
+        { id: '1', code: 'NG-DIA', name_vi: 'NG Đường Kính', name_en: 'Diameter NG', category: 'DIMENSION', is_active: true, created_at: '' },
+        { id: '2', code: 'NG-LEN', name_vi: 'NG Chiều Dài', name_en: 'Length NG', category: 'DIMENSION', is_active: true, created_at: '' },
+        { id: '3', code: 'NG-DIM', name_vi: 'NG Kích thước', name_en: 'Dimension NG', category: 'DIMENSION', is_active: true, created_at: '' },
+        { id: '4', code: 'NG-THR', name_vi: 'NG Ren', name_en: 'Thread NG', category: 'MACHINING', is_active: true, created_at: '' },
+        { id: '5', code: 'NG-APP', name_vi: 'NG Ngoại quan', name_en: 'Appearance NG', category: 'SURFACE', is_active: true, created_at: '' },
+        { id: '6', code: 'NG-SCR', name_vi: 'NG Xước dập', name_en: 'Scratch / Dent NG', category: 'SURFACE', is_active: true, created_at: '' },
+        { id: '7', code: 'NG-SHP', name_vi: 'NG hình dáng', name_en: 'Shape NG', category: 'GEOMETRY', is_active: true, created_at: '' },
+        { id: '8', code: 'DEF-OTH-01', name_vi: 'Lỗi khác', name_en: 'Other defect', category: 'OTHER', is_active: true, created_at: '' },
       ],
       error: null,
     };
@@ -133,6 +149,9 @@ export async function saveProductionResult(
     if (!item.defect_name || item.defect_name.trim() === '') {
       return { success: false, error: `Vui lòng chọn loại lỗi (Type) tại dòng NG thứ ${i + 1}.` };
     }
+    if (item.defect_name.trim() === 'Lỗi khác' && (!item.cause || item.cause.trim() === '')) {
+      return { success: false, error: `Vui lòng nhập mô tả cụ thể khi chọn Lỗi khác tại dòng NG thứ ${i + 1}.` };
+    }
   }
 
   try {
@@ -165,35 +184,55 @@ export async function saveProductionResult(
 }
 
 /**
- * Save QA Inspection Result atomically via RPC.
+ * Save QA Inspection Result atomically via RPC (R2 Consolidation).
+ * Supports N1 Result, Check Sheet URLs, and atomic QA NG Detail list.
  */
 export async function saveQACheck(
   input: SaveQACheckInput
 ): Promise<{ success: boolean; data?: any; error?: string }> {
   if (!ENV.IS_CONFIGURED) {
-    return { success: true, data: { result: input.result } };
+    return { success: true, data: { result: input.result || input.n1Result || 'OK' } };
   }
 
-  if (input.sampleSize <= 0 || !Number.isInteger(input.sampleSize)) {
-    return { success: false, error: 'Cỡ mẫu kiểm tra phải là số nguyên dương lớn hơn 0.' };
+  // Validate QA NG items if present
+  if (input.qaNgItems && input.qaNgItems.length > 0) {
+    for (let i = 0; i < input.qaNgItems.length; i++) {
+      const item = input.qaNgItems[i];
+      if (!item.defect_name?.trim()) {
+        return { success: false, error: `Tên loại lỗi NG của QA tại dòng thứ ${i + 1} không được để trống.` };
+      }
+      if (item.defect_name.trim() === 'Lỗi khác' && (!item.cause || item.cause.trim() === '')) {
+        return { success: false, error: `Vui lòng nhập mô tả cụ thể khi chọn Lỗi khác cho lỗi QA tại dòng thứ ${i + 1}.` };
+      }
+      if (!item.ng_qty || item.ng_qty <= 0 || !Number.isInteger(item.ng_qty)) {
+        return { success: false, error: `Số lượng phế phẩm QA tại dòng thứ ${i + 1} phải là số nguyên dương lớn hơn 0.` };
+      }
+    }
   }
 
-  if (input.okQty < 0 || input.ngQty < 0) {
-    return { success: false, error: 'Số lượng OK và NG kiểm tra phải là số không âm.' };
-  }
-
-  if (input.okQty + input.ngQty > input.sampleSize) {
-    return { success: false, error: 'Tổng số lượng OK và NG không được vượt quá cỡ mẫu.' };
-  }
+  const n1Result = input.n1Result || (input.result === 'NG' ? 'NG' : 'OK');
+  const computedTotalNg = input.qaNgItems && input.qaNgItems.length > 0
+    ? input.qaNgItems.reduce((sum, item) => sum + (Number(item.ng_qty) || 0), 0)
+    : (input.ngQty || 0);
 
   try {
     const { data, error } = await supabase.rpc('save_qa_check_result', {
       p_operation_id: input.operationId,
-      p_result: input.result,
-      p_sample_size: Math.floor(input.sampleSize),
-      p_ok_qty: Math.floor(input.okQty),
-      p_ng_qty: Math.floor(input.ngQty),
+      p_result: (n1Result === 'NG' || computedTotalNg > 0 || input.result === 'NG') ? 'NG' : 'OK',
+      p_sample_size: input.sampleSize ? Math.floor(input.sampleSize) : Math.max(1, computedTotalNg),
+      p_ok_qty: input.okQty ? Math.floor(input.okQty) : 0,
+      p_ng_qty: computedTotalNg,
       p_notes: input.notes ? input.notes.trim() : null,
+      p_n1_result: n1Result,
+      p_n1_check_sheet_urls: input.n1CheckSheetUrls || [],
+      p_qa_ng_items: (input.qaNgItems || []).map((item) => ({
+        defect_name: item.defect_name.trim(),
+        defect_code: item.defect_code || null,
+        ng_qty: Math.floor(item.ng_qty),
+        cause: item.cause ? item.cause.trim() : null,
+        remark: item.remark ? item.remark.trim() : null,
+        photo_urls: (item.photo_urls || []).slice(0, 2),
+      })),
     });
 
     if (error) {
@@ -204,6 +243,54 @@ export async function saveQACheck(
   } catch (err: any) {
     return { success: false, error: err.message || 'Lỗi khi lưu kết quả kiểm tra QA.' };
   }
+}
+
+/**
+ * Upload N1 Check Sheet attachment or image to private Supabase Storage.
+ * Supports image, PDF, Excel files.
+ */
+export async function uploadN1CheckSheet(
+  jobId: string,
+  operationId: string,
+  file: File
+): Promise<{ filePath: string | null; fileName: string | null; error: string | null }> {
+  const result = await uploadAttachment({
+    jobId,
+    operationId,
+    fileType: 'CHECK_SHEET',
+    file,
+    fileName: `n1_${Date.now()}_${file.name}`,
+  });
+
+  if (result.error || !result.attachment) {
+    return { filePath: null, fileName: null, error: result.error || 'Lỗi khi tải Check Sheet lên kho lưu trữ.' };
+  }
+
+  return { filePath: result.attachment.file_path, fileName: file.name, error: null };
+}
+
+/**
+ * Upload QA NG photo to private storage and register as NG_PHOTO attachment.
+ * Associated with exact QA NG detail record.
+ */
+export async function uploadQaNgPhoto(
+  jobId: string,
+  operationId: string,
+  file: File
+): Promise<{ filePath: string | null; error: string | null }> {
+  const result = await uploadAttachment({
+    jobId,
+    operationId,
+    fileType: 'NG_PHOTO',
+    file,
+    fileName: `qa_ng_${Date.now()}_${file.name}`,
+  });
+
+  if (result.error || !result.attachment) {
+    return { filePath: null, error: result.error || 'Lỗi khi tải ảnh lỗi QA lên kho lưu trữ.' };
+  }
+
+  return { filePath: result.attachment.file_path, error: null };
 }
 
 /**

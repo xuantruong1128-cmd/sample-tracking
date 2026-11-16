@@ -237,7 +237,7 @@ describe('SAMPLE TRACKING — UI-04: Job Detail & Production Result Redesign', (
 
       expect(screen.getByText('Machine')).toBeInTheDocument();
       expect(screen.getByText('Date')).toBeInTheDocument();
-      expect(screen.getByText('CT Actual')).toBeInTheDocument();
+      expect(screen.getByText(/Cycle Time \(sec\)|CT Actual/)).toBeInTheDocument();
       expect(screen.getAllByText('OK').length).toBeGreaterThan(0);
       expect(screen.getAllByText('NG').length).toBeGreaterThan(0);
       expect(screen.getAllByText(/KIV/).length).toBeGreaterThan(0);

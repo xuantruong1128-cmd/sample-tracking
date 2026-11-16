@@ -1,4 +1,4 @@
-import type { JobOperation } from '../../types/database.types';
+import type { Job, JobOperation, ProductionRun } from '../../types/database.types';
 
 /**
  * UI-02 R2: Work Center Master list from Master data.xlsx
@@ -8,7 +8,7 @@ export const OFFICIAL_WORKCENTERS = [
   { no: 1, code: 'CAMC', mcType: 'CAM', description: 'Auto Turn' },
   { no: 2, code: 'B12C', mcType: 'Cincom B12', description: 'Auto Turn' },
   { no: 3, code: 'A20C', mcType: 'Cincom citizent A20', description: 'Auto Turn' },
-  { no: 4, code: 'CYGG', mcType: 'Cilindrical Grinding', description: 'Auto Turn' },
+  { no: 4, code: 'CYGG', mcType: 'Cilindrical Grinding', description: 'Cylindrical Grinding' },
   { no: 5, code: 'D&TS', mcType: 'Drilling and Tapping', description: 'Drill & Tap' },
   { no: 6, code: 'B26C', mcType: 'Tsugami BO265', description: 'Auto Turn' },
   { no: 7, code: 'L32C', mcType: 'Cincom Citizent L32', description: 'Auto Turn' },
@@ -62,7 +62,7 @@ export const UNIQUE_WORKCENTERS: WorkcenterOption[] = [
   { code: 'B26C', description: 'Auto Turn' },
   { code: 'CAMC', description: 'Auto Turn' },
   { code: 'CGMG', description: 'Centerless Grinding' },
-  { code: 'CYGG', description: 'Auto Turn' },
+  { code: 'CYGG', description: 'Cylindrical Grinding' },
   { code: 'D&TS', description: 'Drill & Tap' },
   { code: 'FINS', description: 'Buffing / Polishing' },
   { code: 'GCMN', description: 'Gear cutting' },
@@ -96,9 +96,43 @@ export function getWorkcenterDescription(
 ): string {
   if (!code) return '';
   const trimmed = code.trim().toUpperCase();
+  // R4 FIX 01 Safeguard: CYGG is always Cylindrical Grinding, never Auto Turn
+  if (trimmed === 'CYGG') {
+    return 'Cylindrical Grinding';
+  }
   const list = customList && customList.length > 0 ? customList : UNIQUE_WORKCENTERS;
   const match = list.find((w) => w.code.toUpperCase() === trimmed);
   return match ? match.description : '';
+}
+
+/**
+ * R3 FIX 02: Checks if an operation is an "Auto Turn" operation based on:
+ * 1. Operation description or name equaling 'Auto Turn' (case-insensitive)
+ * 2. Or operation workcenter_code mapping to 'Auto Turn' in master data
+ * Does NOT rely on step_order (OP10).
+ */
+export function isAutoTurnOperation(
+  op?: {
+    workcenter_code?: string | null;
+    description?: string | null;
+    operation_name?: string | null;
+  } | null,
+  customList?: readonly WorkcenterOption[] | WorkcenterOption[]
+): boolean {
+  if (!op) return false;
+  const wc = (op.workcenter_code || '').trim().toUpperCase();
+  // R4 FIX 01 Safeguard: CYGG is Cylindrical Grinding, never Auto Turn
+  if (wc === 'CYGG') return false;
+
+  const desc = (op.description || '').trim().toLowerCase();
+  const name = (op.operation_name || '').trim().toLowerCase();
+  if (desc === 'auto turn' || name === 'auto turn') return true;
+
+  if (op.workcenter_code) {
+    const wcDesc = getWorkcenterDescription(op.workcenter_code, customList).trim().toLowerCase();
+    if (wcDesc === 'auto turn') return true;
+  }
+  return false;
 }
 
 /** Set of valid 4-character workcenter codes for O(1) membership check */
@@ -246,7 +280,9 @@ export function getJobDisplayStatus(job: {
   status: string;
   operations?: Array<{
     status?: string;
+    closed_at?: string | null;
     production_runs?: Array<{ ok_qty?: number; ng_qty?: number }>;
+    qa_checks?: Array<any>;
   }>;
 }): JobDisplayStatus {
   // Closed status in database
@@ -263,9 +299,12 @@ export function getJobDisplayStatus(job: {
       op.status === 'WAITING_QA' ||
       op.status === 'QA_KIV' ||
       op.status === 'QA_NG' ||
-      op.status === 'HOLD';
+      op.status === 'HOLD' ||
+      op.status === 'CLOSED' ||
+      Boolean(op.closed_at);
     const hasRuns = Boolean(op.production_runs && op.production_runs.length > 0);
-    return isStarted || hasRuns;
+    const hasQa = Boolean(op.qa_checks && op.qa_checks.length > 0);
+    return isStarted || hasRuns || hasQa;
   });
 
   if (hasStartedManufacturing) {
@@ -275,3 +314,453 @@ export function getJobDisplayStatus(job: {
   // Default: Scheduled, not started manufacturing yet
   return 'Active';
 }
+
+/**
+ * R1-05: Formats database ISO timestamp into Vietnam local time (Asia/Ho_Chi_Minh).
+ * e.g. "14:30 16/10/2026" or "16/10/2026"
+ */
+export function formatVietnamCreationDate(createdAt?: string | null): string {
+  if (!createdAt) return '—';
+  try {
+    const d = new Date(createdAt);
+    if (isNaN(d.getTime())) return '—';
+    const formatter = new Intl.DateTimeFormat('vi-VN', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+    return formatter.format(d);
+  } catch {
+    return '—';
+  }
+}
+
+/**
+ * R4 FIX 03: Formats date strictly as DD/MM/YY in Vietnam timeZone without hours/minutes.
+ * Works for ISO timestamps or DATE-only strings ('YYYY-MM-DD').
+ * Returns empty string '' if input is missing or invalid.
+ */
+export function formatDDMMYY(dateStr?: string | null): string {
+  if (!dateStr) return '';
+  const trimmed = dateStr.trim();
+  if (!trimmed) return '';
+
+  // Fast path for YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    const [y, m, d] = trimmed.split('-');
+    return `${d}/${m}/${y.slice(-2)}`;
+  }
+
+  try {
+    const d = new Date(trimmed);
+    if (isNaN(d.getTime())) return '';
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    }).formatToParts(d);
+    const day = parts.find((p) => p.type === 'day')?.value;
+    const month = parts.find((p) => p.type === 'month')?.value;
+    const year = parts.find((p) => p.type === 'year')?.value;
+    if (day && month && year) {
+      return `${day}/${month}/${year}`;
+    }
+    return '';
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * R4 FIX 03: Returns formatted Created Date strictly as DD/MM/YY.
+ */
+export function getCreatedDateDisplay(job: { created_at?: string | null }): string {
+  return formatDDMMYY(job.created_at);
+}
+
+/**
+ * R4 FIX 03: Returns Plan Close date (from Planned Finish Date) strictly as DD/MM/YY.
+ */
+export function getPlanCloseDateDisplay(job: { planned_finish_date?: string | null }): string {
+  return formatDDMMYY(job.planned_finish_date);
+}
+
+/**
+ * R4 FIX 03: Returns Actual Close date strictly as DD/MM/YY.
+ * Rules:
+ * - If job status != 'CLOSE', returns empty string '' (never guesses from updated_at or operation close).
+ * - If job status == 'CLOSE' but closed_at is missing, returns empty string ''.
+ * - If job status == 'CLOSE' and closed_at is present, returns DD/MM/YY.
+ */
+export function getActualCloseDateDisplay(job: {
+  status?: string | null;
+  closed_at?: string | null;
+}): string {
+  if (job.status !== 'CLOSE' || !job.closed_at) {
+    return '';
+  }
+  return formatDDMMYY(job.closed_at);
+}
+
+/**
+ * R4.1 FIX 03: Normalizes a date or timestamp string into YYYY-MM-DD in Vietnam timezone (Asia/Ho_Chi_Minh).
+ * Avoids any 1-day off errors due to UTC conversion.
+ */
+export function getVietnamCalendarDate(dateStr?: string | null): string | null {
+  if (!dateStr) return null;
+  const trimmed = dateStr.trim();
+  if (!trimmed) return null;
+
+  // If strictly YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  try {
+    const d = new Date(trimmed);
+    if (isNaN(d.getTime())) return null;
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(d);
+    const year = parts.find((p) => p.type === 'year')?.value;
+    const month = parts.find((p) => p.type === 'month')?.value;
+    const day = parts.find((p) => p.type === 'day')?.value;
+    if (year && month && day) {
+      return `${year}-${month}-${day}`;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export interface ActualCloseColorInfo {
+  status: 'on_time' | 'late' | 'none';
+  text: string;
+  badgeClassName: string;
+}
+
+/**
+ * R4.1 FIX 03: Returns visual status, text, and badge class for Homepage Actual Close column.
+ *
+ * Rules:
+ * - JOB closed and Actual Close <= Plan Close: Green background, dark green text.
+ * - JOB closed and Actual Close > Plan Close: Dark red background, high contrast white text.
+ * - JOB not closed: displays '—', no background color.
+ * - Missing either date: displays available date or '—', no color (never guesses).
+ * - Comparisons done strictly on calendar dates (YYYY-MM-DD) in Vietnam timezone.
+ */
+export function getActualCloseColorInfo(job: {
+  status?: string | null;
+  closed_at?: string | null;
+  planned_finish_date?: string | null;
+}): ActualCloseColorInfo {
+  // If JOB is not closed or closed_at is missing: display '—' without background color
+  if (job.status !== 'CLOSE' || !job.closed_at) {
+    return {
+      status: 'none',
+      text: '—',
+      badgeClassName: 'text-slate-400 font-mono text-xs',
+    };
+  }
+
+  const actualDateDisplay = getActualCloseDateDisplay(job);
+  if (!actualDateDisplay) {
+    return {
+      status: 'none',
+      text: '—',
+      badgeClassName: 'text-slate-400 font-mono text-xs',
+    };
+  }
+
+  // If planned_finish_date is missing: cannot evaluate timeliness -> no color
+  if (!job.planned_finish_date) {
+    return {
+      status: 'none',
+      text: actualDateDisplay,
+      badgeClassName: 'text-slate-700 font-mono text-xs font-semibold',
+    };
+  }
+
+  const actualCal = getVietnamCalendarDate(job.closed_at);
+  const planCal = getVietnamCalendarDate(job.planned_finish_date);
+
+  if (!actualCal || !planCal) {
+    return {
+      status: 'none',
+      text: actualDateDisplay,
+      badgeClassName: 'text-slate-700 font-mono text-xs font-semibold',
+    };
+  }
+
+  if (actualCal <= planCal) {
+    // ON TIME / EARLY: Green background, dark green text, easy to read
+    return {
+      status: 'on_time',
+      text: actualDateDisplay,
+      badgeClassName:
+        'inline-flex items-center justify-center px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300',
+    };
+  } else {
+    // LATE: Dark red background, high-contrast clear text, easy to read
+    return {
+      status: 'late',
+      text: actualDateDisplay,
+      badgeClassName:
+        'inline-flex items-center justify-center px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-red-700 text-white shadow-2xs',
+    };
+  }
+}
+
+/**
+ * R4 FIX 04: Homepage Column Definitions & Visibility Configuration
+ */
+export interface ColumnConfig {
+  id: string;
+  label: string;
+  defaultVisible: boolean;
+  alwaysVisible?: boolean;
+}
+
+export const HOMEPAGE_COLUMNS: ColumnConfig[] = [
+  { id: 'item_no', label: 'Item No.', defaultVisible: true, alwaysVisible: true },
+  { id: 'job_ticket', label: 'Job Ticket', defaultVisible: true },
+  { id: 'customer', label: 'Customer', defaultVisible: true },
+  { id: 'created_date', label: 'Created Date', defaultVisible: true },
+  { id: 'plan_close', label: 'Plan Close', defaultVisible: true },
+  { id: 'actual_close', label: 'Actual Close', defaultVisible: true },
+  { id: 'status', label: 'Status', defaultVisible: true },
+  { id: 'qty', label: "Q'ty", defaultVisible: true },
+  { id: 'ct_plan', label: 'CT Plan', defaultVisible: true },
+  { id: 'ct_actual', label: 'CT Actual', defaultVisible: true },
+  { id: 'routing', label: 'Routing', defaultVisible: true },
+];
+
+export const DEFAULT_VISIBLE_COLUMN_IDS = HOMEPAGE_COLUMNS.map((c) => c.id);
+
+/**
+ * R4.2: Formats an integer quantity (order_qty, ok_qty, ng_qty, kiv_qty) without thousands separators.
+ * e.g. 1050 -> "1050", 12500 -> "12500", 100000 -> "100000", 500 -> "500", 0 -> "0".
+ * Strictly avoids dots or commas as thousands separators (never produces "1.050" or "1,050").
+ */
+export function formatIntegerQuantity(qty?: number | string | null): string {
+  if (qty === null || qty === undefined || qty === '') return '0';
+  const num = typeof qty === 'number' ? qty : Number(qty);
+  if (isNaN(num)) return '0';
+  return String(Math.round(num));
+}
+
+export interface AutoTurnCTInfo {
+  autoTurnCount: number;
+  actualRecordedCount: number;
+  totalPlan: number | null;
+  totalActual: number | null;
+  planDisplay: string;
+  actualDisplay: string;
+  status: 'none' | 'no_auto_turn' | 'no_actual' | 'partial' | 'on_time' | 'exceeded';
+  statusLabel: string;
+  isComplete: boolean;
+  badgeClassName: string;
+  planTooltip: string;
+  actualTooltip: string;
+}
+
+/**
+ * Formats a CT number without rounding before summation or comparison.
+ * Avoids JavaScript floating point inaccuracies (e.g. 60.70000000000001 -> "60.7").
+ */
+export function formatCTValue(val?: number | null): string {
+  if (val === null || val === undefined || isNaN(val)) return '—';
+  const rounded = Math.round(val * 100) / 100;
+  return String(rounded);
+}
+
+/**
+ * R4.3: Computes aggregated Auto Turn CT Plan & CT Actual for a Job.
+ *
+ * Rules:
+ * 1. Identifies Auto Turn operations via isAutoTurnOperation(op, customList).
+ * 2. Excludes Grinding (CYGG, CGMG) and non-Auto Turn operations completely.
+ * 3. CT Plan = Sum of planned_cycle_time_seconds of all Auto Turn operations.
+ * 4. CT Actual = Sum of latest valid cycle_time_seconds for each Auto Turn operation (does NOT sum multiple runs of same op).
+ * 5. Does NOT require operations to be CLOSED.
+ * 6. Partial data handling:
+ *    - 0 actuals recorded: display '—'
+ *    - 0 < actuals < autoTurnCount: display partial sum, neutral styling, statusLabel 'Chưa đủ CT'
+ *    - all actuals recorded:
+ *        - actual <= plan: green background, statusLabel 'Đạt'
+ *        - actual > plan: dark red background, statusLabel 'Vượt CT'
+ * 7. Does NOT round CT before summing or comparing.
+ */
+export function getJobAutoTurnCTInfo(
+  job?: Partial<Job> | null,
+  customList?: readonly WorkcenterOption[] | WorkcenterOption[]
+): AutoTurnCTInfo {
+  if (!job || !job.operations || job.operations.length === 0) {
+    return {
+      autoTurnCount: 0,
+      actualRecordedCount: 0,
+      totalPlan: null,
+      totalActual: null,
+      planDisplay: '—',
+      actualDisplay: '—',
+      status: 'no_auto_turn',
+      statusLabel: '—',
+      isComplete: false,
+      badgeClassName: 'text-slate-400 font-mono text-xs',
+      planTooltip: 'Không có công đoạn Auto Turn',
+      actualTooltip: 'Không có công đoạn Auto Turn',
+    };
+  }
+
+  // Filter Auto Turn operations strictly
+  const autoTurnOps = (job.operations || []).filter((op: JobOperation) =>
+    isAutoTurnOperation(op, customList)
+  );
+
+  const autoTurnCount = autoTurnOps.length;
+
+  if (autoTurnCount === 0) {
+    return {
+      autoTurnCount: 0,
+      actualRecordedCount: 0,
+      totalPlan: null,
+      totalActual: null,
+      planDisplay: '—',
+      actualDisplay: '—',
+      status: 'no_auto_turn',
+      statusLabel: '—',
+      isComplete: false,
+      badgeClassName: 'text-slate-400 font-mono text-xs',
+      planTooltip: 'Không có công đoạn Auto Turn',
+      actualTooltip: 'Không có công đoạn Auto Turn',
+    };
+  }
+
+  // Calculate total plan without premature rounding
+  let rawPlanSum = 0;
+  let hasValidPlan = false;
+  for (const op of autoTurnOps) {
+    const rawVal = op.planned_cycle_time_seconds;
+    if (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal)) && Number(rawVal) > 0) {
+      rawPlanSum += Number(rawVal);
+      hasValidPlan = true;
+    }
+  }
+  const totalPlan = hasValidPlan ? rawPlanSum : null;
+  const planDisplay = totalPlan !== null ? formatCTValue(totalPlan) : '—';
+  const planTooltip =
+    totalPlan !== null
+      ? `Tổng CT Kế hoạch: ${formatCTValue(totalPlan)}s (${autoTurnCount} công đoạn Auto Turn)`
+      : `Chưa có CT Kế hoạch (${autoTurnCount} công đoạn Auto Turn)`;
+
+  // For each Auto Turn operation, find the latest valid production run's cycle_time_seconds
+  let rawActualSum = 0;
+  let actualRecordedCount = 0;
+
+  for (const op of autoTurnOps) {
+    const validRuns = (op.production_runs || []).filter((r: ProductionRun) => {
+      const ct = r.cycle_time_seconds;
+      return ct !== null && ct !== undefined && !isNaN(Number(ct)) && Number(ct) > 0;
+    });
+
+    if (validRuns.length > 0) {
+      // Sort latest first
+      validRuns.sort((a: ProductionRun, b: ProductionRun) => {
+        const timeA = new Date(a.updated_at || a.created_at || a.start_time || 0).getTime();
+        const timeB = new Date(b.updated_at || b.created_at || b.start_time || 0).getTime();
+        return timeB - timeA;
+      });
+      const latestCt = Number(validRuns[0].cycle_time_seconds);
+      rawActualSum += latestCt;
+      actualRecordedCount += 1;
+    }
+  }
+
+  // Case A: No CT Actual recorded at all
+  if (actualRecordedCount === 0) {
+    return {
+      autoTurnCount,
+      actualRecordedCount: 0,
+      totalPlan,
+      totalActual: null,
+      planDisplay,
+      actualDisplay: '—',
+      status: 'no_actual',
+      statusLabel: '—',
+      isComplete: false,
+      badgeClassName: 'text-slate-400 font-mono text-xs',
+      planTooltip,
+      actualTooltip: `Chưa có CT Thực tế (${autoTurnCount} công đoạn Auto Turn)`,
+    };
+  }
+
+  const totalActual = rawActualSum;
+  const actualDisplay = formatCTValue(totalActual);
+
+  // Case B: Partial CT Actual (0 < actualRecordedCount < autoTurnCount)
+  if (actualRecordedCount < autoTurnCount) {
+    return {
+      autoTurnCount,
+      actualRecordedCount,
+      totalPlan,
+      totalActual,
+      planDisplay,
+      actualDisplay,
+      status: 'partial',
+      statusLabel: 'Chưa đủ CT',
+      isComplete: false,
+      badgeClassName:
+        'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono font-medium bg-slate-100 text-slate-700 border border-slate-300',
+      planTooltip,
+      actualTooltip: `Tổng CT Thực tế hiện có: ${formatCTValue(totalActual)}s (Chưa đủ CT: ${actualRecordedCount}/${autoTurnCount} công đoạn Auto Turn)`,
+    };
+  }
+
+  // Case C: Complete CT Actual (actualRecordedCount === autoTurnCount)
+  // Compare raw numbers without rounding
+  if (totalPlan !== null && totalActual <= totalPlan) {
+    return {
+      autoTurnCount,
+      actualRecordedCount,
+      totalPlan,
+      totalActual,
+      planDisplay,
+      actualDisplay,
+      status: 'on_time',
+      statusLabel: 'Đạt',
+      isComplete: true,
+      badgeClassName:
+        'inline-flex items-center justify-center px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-emerald-100 text-emerald-800 border border-emerald-300',
+      planTooltip,
+      actualTooltip: `Tổng CT Đạt: ${formatCTValue(totalActual)}s <= ${formatCTValue(totalPlan)}s (${autoTurnCount}/${autoTurnCount} công đoạn Auto Turn)`,
+    };
+  } else {
+    return {
+      autoTurnCount,
+      actualRecordedCount,
+      totalPlan,
+      totalActual,
+      planDisplay,
+      actualDisplay,
+      status: 'exceeded',
+      statusLabel: 'Vượt CT',
+      isComplete: true,
+      badgeClassName:
+        'inline-flex items-center justify-center px-1.5 py-0.5 rounded text-xs font-mono font-bold bg-red-700 text-white shadow-2xs',
+      planTooltip,
+      actualTooltip: `Tổng CT Vượt kế hoạch: ${formatCTValue(totalActual)}s > ${formatCTValue(totalPlan ?? 0)}s (${autoTurnCount}/${autoTurnCount} công đoạn Auto Turn)`,
+    };
+  }
+}
+
+
+

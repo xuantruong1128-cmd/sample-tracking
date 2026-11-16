@@ -1,4 +1,4 @@
-export type UserRole = 'Planning' | 'PE-MFG' | 'QA' | 'Admin' | 'Drawing';
+export type UserRole = 'Planning' | 'PE-MFG' | 'QA' | 'Admin' | 'Drawing' | 'Viewer' | 'BD';
 export type JobStatus = 'ACTIVE' | 'CLOSE' | 'ARCHIVE' | 'PURGED';
 export type OperationStatus =
   | 'NOT_STARTED'
@@ -19,6 +19,12 @@ export type PEDispositionType =
   | 'CUSTOMER_EVALUATION'
   | 'HOLD';
 export type EngineeringDocCategory = 'Drawing' | 'Check Sheet' | 'Setting' | 'Other';
+export type QADocumentCategory =
+  | 'Inspection Report'
+  | 'CPK/SPC'
+  | 'NG Photos'
+  | 'Measurement Results'
+  | 'Other';
 export type PEReviewResult = 'Pending' | 'OK' | 'NG';
 
 export interface Profile {
@@ -103,6 +109,22 @@ export interface JobOperation {
   kiv_reviews?: KIVReview[];
   sample_photos?: OperationSamplePhoto[];
   pe_reviews?: PEEngineeringReview[];
+  qa_documents?: QADocument[];
+}
+
+export interface QADocument {
+  id: string;
+  job_id: string;
+  operation_id: string;
+  category: QADocumentCategory;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  remark?: string;
+  uploaded_by?: string | null;
+  uploader_name: string;
+  created_at: string;
 }
 
 export interface OperationSamplePhoto {
@@ -113,6 +135,7 @@ export interface OperationSamplePhoto {
   file_path: string;
   file_size: number;
   mime_type: string;
+  is_avatar?: boolean;
   uploaded_by?: string | null;
   uploader_name: string;
   created_at: string;
@@ -208,6 +231,21 @@ export interface NGDetail {
   updated_at?: string;
 }
 
+export interface QANgDetail {
+  id: string;
+  qa_check_id: string;
+  operation_id: string;
+  job_id: string;
+  defect_code?: string | null;
+  defect_name: string;
+  ng_qty: number;
+  cause?: string | null;
+  remark?: string | null;
+  photo_urls?: string[];
+  created_at: string;
+  updated_at?: string;
+}
+
 export interface QACheck {
   id: string;
   operation_id: string;
@@ -215,13 +253,17 @@ export interface QACheck {
   inspector_id?: string | null;
   inspector_name: string;
   inspection_time: string;
-  sample_size: number;
-  ok_qty: number;
-  ng_qty: number;
+  sample_size?: number | null;
+  ok_qty?: number;
+  ng_qty?: number;
   result: QAResult;
   event_seq?: number;
   notes?: string | null;
   created_at: string;
+  n1_result?: 'OK' | 'NG' | null;
+  n1_check_sheet_urls?: string[];
+  qa_total_ng?: number;
+  qa_ng_details?: QANgDetail[];
 }
 
 export interface Attachment {
@@ -280,5 +322,83 @@ export interface JobArchive {
   verified_at?: string | null;
   verified_by?: string | null;
   status: string;
+  created_at: string;
+}
+
+export type DrawingReviewStatus =
+  | 'Issued'
+  | 'Reviewing'
+  | 'Completed'
+  | 'Quoted'
+  | 'Requote'
+  | 'Requoted';
+
+export interface DrawingReviewIssue {
+  id: string;
+  issue_no: string;
+  item_no: string;
+  item_name: string;
+  customer: string;
+  drawing_file_path: string;
+  drawing_file_name: string;
+  drawing_file_size: number;
+  drawing_mime_type: string;
+  attention?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DrawingReviewVersion {
+  id: string;
+  issue_id: string;
+  version_number: number;
+  version_name: string;
+  parent_version_id?: string | null;
+  status: DrawingReviewStatus;
+  material_type?: string | null;
+  material_specification?: string | null;
+  required_material?: string | null;
+  required_tooling?: string | null;
+  special_measuring_equipment?: string | null;
+  engineering_remarks?: string | null;
+  avatar_file_path?: string | null;
+  avatar_crop_box?: Record<string, any> | null;
+  annotations?: any[] | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  quoted_at?: string | null;
+  quoted_by?: string | null;
+  requote_requested_at?: string | null;
+  requote_requested_by?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DrawingReviewOperation {
+  id: string;
+  version_id: string;
+  lineage_id: string;
+  step_order: number;
+  workcenter_code: string;
+  operation_description?: string | null;
+  cycle_time_seconds?: number | null;
+  remark?: string | null;
+  is_removed: boolean;
+  calculation_data?: Record<string, any> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DrawingReviewAttachment {
+  id: string;
+  version_id: string;
+  file_path: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  caption?: string | null;
+  uploaded_by?: string | null;
   created_at: string;
 }

@@ -12,6 +12,7 @@ import {
 import {
   UNIQUE_WORKCENTERS,
   getWorkcenterDescription,
+  isAutoTurnOperation,
   type WorkcenterOption,
 } from './jobDisplayUtils';
 import type { Job } from '../../types/database.types';
@@ -373,15 +374,22 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({
         );
         return;
       }
+      const isAutoTurn = isAutoTurnOperation(op, workcenters);
       const rawCycle = op.planned_cycle_time_seconds ?? op.cycle_time;
-      if (rawCycle !== null && rawCycle !== undefined && rawCycle !== ('' as any)) {
-        const num = Number(rawCycle);
-        if (isNaN(num) || num <= 0) {
-          setErrorMessage(
-            `Thời gian chu kỳ (Cycle Time Target) tại bước thứ ${i + 1} phải là số dương lớn hơn 0.`
-          );
-          return;
-        }
+      const num = rawCycle !== null && rawCycle !== undefined && rawCycle !== ('' as any) ? Number(rawCycle) : null;
+
+      if (isAutoTurn && (num === null || isNaN(num) || num <= 0)) {
+        setErrorMessage(
+          `Công đoạn Auto Turn tại bước thứ ${i + 1} (OP${op.step_order}) bắt buộc phải nhập Thời gian chu kỳ mục tiêu (Cycle Time Target > 0).`
+        );
+        return;
+      }
+
+      if (num !== null && (isNaN(num) || num <= 0)) {
+        setErrorMessage(
+          `Thời gian chu kỳ (Cycle Time Target) tại bước thứ ${i + 1} phải là số dương lớn hơn 0.`
+        );
+        return;
       }
     }
 
@@ -665,7 +673,12 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({
                     <th className="py-2.5 px-3 w-16 text-center">Operation</th>
                     <th className="py-2.5 px-3 w-40">Workcenter</th>
                     <th className="py-2.5 px-3 w-44">Description</th>
-                    <th className="py-2.5 px-3 w-32">Cycle Time (sec)</th>
+                    <th className="py-2.5 px-3 w-40">
+                      <div className="flex items-center gap-1">
+                        <span>Cycle Time Target (sec)</span>
+                        <span className="text-red-500 font-bold" title="Bắt buộc đối với công đoạn Auto Turn">*</span>
+                      </div>
+                    </th>
                     <th className="py-2.5 px-3 w-28">Machine No.</th>
                     <th className="py-2.5 px-3">Remark</th>
                     <th className="py-2.5 px-2 w-20 text-center">Thao tác</th>
@@ -703,17 +716,32 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({
                         />
                       </td>
 
-                      {/* 4. Cycle Time Target: optional number */}
+                      {/* 4. Cycle Time Target: mandatory for Auto Turn */}
                       <td className="py-2 px-3">
-                        <input
-                          type="number"
-                          min="0.01"
-                          step="any"
-                          data-testid={`cycle-time-input-${index}`}
-                          value={op.planned_cycle_time_seconds ?? ''}
-                          onChange={(e) => handleCycleTimeChange(index, e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition"
-                        />
+                        <div className="relative flex items-center">
+                          <input
+                            type="number"
+                            min="0.01"
+                            step="any"
+                            data-testid={`cycle-time-input-${index}`}
+                            value={op.planned_cycle_time_seconds ?? ''}
+                            onChange={(e) => handleCycleTimeChange(index, e.target.value)}
+                            className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 transition ${
+                              isAutoTurnOperation(op, workcenters) && (!op.planned_cycle_time_seconds || Number(op.planned_cycle_time_seconds) <= 0)
+                                ? 'border-amber-400 bg-amber-50/20 focus:ring-amber-500'
+                                : 'border-slate-200 focus:ring-blue-600'
+                            }`}
+                          />
+                          {isAutoTurnOperation(op, workcenters) && (
+                            <span
+                              data-testid={`cycle-time-required-star-${index}`}
+                              className="text-red-500 font-bold text-sm ml-1 select-none flex-shrink-0"
+                              title="Bắt buộc nhập Cycle Time Target > 0 cho Auto Turn"
+                            >
+                              *
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* 5. Machine No.: free text */}
@@ -846,7 +874,15 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-slate-600 mb-1">
-                        Cycle Time Target (sec/pcs)
+                        Cycle Time Target (sec){isAutoTurnOperation(op, workcenters) ? (
+                          <span
+                            data-testid={`cycle-time-required-star-mobile-${index}`}
+                            className="text-red-500 font-bold ml-1 select-none"
+                            title="Bắt buộc nhập Cycle Time Target > 0 cho Auto Turn"
+                          >
+                            *
+                          </span>
+                        ) : ''}
                       </label>
                       <input
                         type="number"
@@ -854,7 +890,11 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({
                         step="any"
                         value={op.planned_cycle_time_seconds ?? ''}
                         onChange={(e) => handleCycleTimeChange(index, e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 ${
+                          isAutoTurnOperation(op, workcenters) && (!op.planned_cycle_time_seconds || Number(op.planned_cycle_time_seconds) <= 0)
+                            ? 'border-amber-400 bg-amber-50/20 focus:ring-amber-500'
+                            : 'border-slate-200 focus:ring-blue-600'
+                        }`}
                       />
                     </div>
                     <div>

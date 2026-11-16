@@ -1,6 +1,15 @@
 export type FinalEvaluationResult = 'PASS' | 'CONDITIONAL' | 'FAIL';
 export type ReportGenerationStatus = 'Pending' | 'Generating' | 'Ready' | 'Failed';
 
+export interface PartAvatarMetadata {
+  id: string;
+  file_name: string;
+  file_path: string;
+  file_size: number;
+  mime_type: string;
+  uploader_name?: string;
+}
+
 export interface SampleFinalReport {
   id: string;
   job_id: string;

@@ -1,6 +1,14 @@
 import { supabase } from './supabase';
 import { ENV } from './env';
+import {
+  getOrFetchSignedUrl,
+  invalidateSignedUrl,
+  invalidateSignedUrlsByPrefix,
+  clearSignedUrlCache,
+} from './signedUrlCache';
 import type { AttachmentType } from '../types/database.types';
+
+export { invalidateSignedUrl, invalidateSignedUrlsByPrefix, clearSignedUrlCache };
 
 export const STORAGE_BUCKET = 'sample-documents';
 export const DEFAULT_SIGNED_URL_EXPIRY_SECONDS = 300; // 5 minutes
@@ -47,8 +55,10 @@ export function isValidStoragePath(filePath: string): boolean {
     'OTHER',
     'SAMPLE_PHOTO',
     'DOCUMENTS',
+    'QA_DOCS',
     'sample-photos',
     'documents',
+    'qa_documents',
   ];
   if (!validTypes.includes(fileType)) return false;
   if (fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) return false;
@@ -57,6 +67,7 @@ export function isValidStoragePath(filePath: string): boolean {
 
 /**
  * Generates a short-lived signed URL for a private document (F-13 & R2 Remediation)
+ * Integrated with M2.1 in-memory SignedUrlCache and in-flight deduplication.
  * Strictly caps expiration to MAX_SIGNED_URL_EXPIRY_SECONDS (300 seconds).
  */
 export async function createSecureSignedUrl(
@@ -81,39 +92,49 @@ export async function createSecureSignedUrl(
   // Enforce strict upper bound of 300 seconds (5 minutes)
   const effectiveExpiry = Math.min(Math.max(1, expiresInSeconds), MAX_SIGNED_URL_EXPIRY_SECONDS);
 
-  try {
-    const { data, error } = await supabase.functions.invoke('create-signed-url', {
-      body: { file_path: filePath, expires_in: effectiveExpiry },
-    });
+  return getOrFetchSignedUrl(
+    {
+      bucket: STORAGE_BUCKET,
+      filePath,
+      userId: session.user.id,
+    },
+    async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('create-signed-url', {
+          body: { file_path: filePath, expires_in: effectiveExpiry },
+        });
 
-    if (!error && data?.signedUrl) {
-      return { signedUrl: data.signedUrl as string, error: null };
-    }
+        if (!error && data?.signedUrl) {
+          return { signedUrl: data.signedUrl as string, error: null };
+        }
 
-    // Direct Supabase Storage fallback for non-legacy paths or local environment
-    const { data: storageData, error: storageErr } = await supabase.storage
-      .from(STORAGE_BUCKET)
-      .createSignedUrl(filePath, effectiveExpiry);
+        // Direct Supabase Storage fallback for non-legacy paths or local environment
+        const { data: storageData, error: storageErr } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .createSignedUrl(filePath, effectiveExpiry);
 
-    if (storageData?.signedUrl) {
-      return { signedUrl: storageData.signedUrl, error: null };
-    }
+        if (storageData?.signedUrl) {
+          return { signedUrl: storageData.signedUrl, error: null };
+        }
 
-    return {
-      signedUrl: null,
-      error: storageErr?.message || error?.message || data?.error || 'Không thể tạo liên kết tải tài liệu an toàn.',
-    };
-  } catch (err: any) {
-    try {
-      const { data: storageData, error: storageErr } = await supabase.storage
-        .from(STORAGE_BUCKET)
-        .createSignedUrl(filePath, effectiveExpiry);
-      if (storageData?.signedUrl) {
-        return { signedUrl: storageData.signedUrl, error: null };
+        return {
+          signedUrl: null,
+          error: storageErr?.message || error?.message || data?.error || 'Không thể tạo liên kết tải tài liệu an toàn.',
+        };
+      } catch (err: any) {
+        try {
+          const { data: storageData, error: storageErr } = await supabase.storage
+            .from(STORAGE_BUCKET)
+            .createSignedUrl(filePath, effectiveExpiry);
+          if (storageData?.signedUrl) {
+            return { signedUrl: storageData.signedUrl, error: null };
+          }
+          return { signedUrl: null, error: storageErr?.message || err.message || 'Lỗi hệ thống khi tạo signed URL.' };
+        } catch {
+          return { signedUrl: null, error: err.message || 'Lỗi hệ thống khi tạo signed URL.' };
+        }
       }
-      return { signedUrl: null, error: storageErr?.message || err.message || 'Lỗi hệ thống khi tạo signed URL.' };
-    } catch {
-      return { signedUrl: null, error: err.message || 'Lỗi hệ thống khi tạo signed URL.' };
-    }
-  }
+    },
+    effectiveExpiry
+  );
 }

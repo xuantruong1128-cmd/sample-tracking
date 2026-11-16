@@ -6,6 +6,7 @@ import {
   uploadSamplePhoto,
   deleteSamplePhoto,
   viewSamplePhotoSignedUrl,
+  setPartAvatar,
 } from '../../services/samplePhotoService';
 import {
   Camera,
@@ -17,29 +18,47 @@ import {
   Plus,
   AlertCircle,
   Eye,
+  Star,
+  CheckCircle2,
+  RefreshCw,
 } from 'lucide-react';
+import { ImageEditorModal } from '../../components/common/ImageEditorModal';
+import {
+  isProcessableImage,
+  formatFileSize,
+  type ProcessImageResult,
+} from '../../lib/imageProcessing';
 
 interface OperationSamplePhotosGalleryProps {
   jobId: string;
   operationId: string;
   jobStatus: string;
+  onAvatarChange?: () => void;
 }
 
 export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGalleryProps> = ({
   jobId,
   operationId,
   jobStatus,
+  onAvatarChange,
 }) => {
   const { profile } = useAuth();
   const role = profile?.role || 'PE-MFG';
   const isJobClosed = jobStatus === 'CLOSE' || jobStatus === 'PURGED';
-  // Allowed to upload/delete if PE-MFG or Admin, provided parent JOB is not closed
+  // Allowed to upload/delete/set avatar if PE-MFG or Admin, provided parent JOB is not closed
   const canManagePhotos = !isJobClosed && (role === 'PE-MFG' || role === 'Admin');
 
   const [photos, setPhotos] = useState<OperationSamplePhoto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [uploading, setUploading] = useState<boolean>(false);
+  const [settingAvatar, setSettingAvatar] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Mobile Image Crop & Compression States
+  const [selectedFileForCrop, setSelectedFileForCrop] = useState<File | null>(null);
+  const [showCropModal, setShowCropModal] = useState<boolean>(false);
+  const [uploadSuccessNotice, setUploadSuccessNotice] = useState<string | null>(null);
+  const [failedFileForRetry, setFailedFileForRetry] = useState<File | null>(null);
 
   // Lightbox modal state
   const [previewPhoto, setPreviewPhoto] = useState<OperationSamplePhoto | null>(null);
@@ -73,20 +92,46 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
     loadPhotos();
   }, [loadPhotos]);
 
-  const handleFileUpload = async (file: File) => {
+  const handleSelectFile = (file: File) => {
+    if (isProcessableImage(file)) {
+      setSelectedFileForCrop(file);
+      setShowCropModal(true);
+    } else {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleCropConfirm = async (processedFile: File, stats: ProcessImageResult) => {
+    setShowCropModal(false);
+    setSelectedFileForCrop(null);
+    await handleFileUpload(processedFile, stats);
+  };
+
+  const handleFileUpload = async (file: File, stats?: ProcessImageResult) => {
     setUploading(true);
     setErrorMsg(null);
+    setUploadSuccessNotice(null);
+    setFailedFileForRetry(null);
+
     const { photo, error } = await uploadSamplePhoto({
       jobId,
       operationId,
       file,
+      uploaderName: profile?.full_name || profile?.phone,
     });
     setUploading(false);
 
     if (error || !photo) {
       setErrorMsg(error || 'Không thể tải ảnh lên.');
+      setFailedFileForRetry(file);
     } else {
       setPhotos((prev) => [photo, ...prev]);
+      if (stats && stats.wasCompressed) {
+        setUploadSuccessNotice(
+          `Đã tối ưu giảm ${stats.reductionPercent}% (${formatFileSize(stats.originalSize)} -> ${formatFileSize(stats.processedSize)}) và tải ảnh thành công!`
+        );
+        setTimeout(() => setUploadSuccessNotice(null), 5000);
+      }
       // Cache signed URL for the new photo
       const { signedUrl } = await viewSamplePhotoSignedUrl(photo.file_path);
       if (signedUrl) {
@@ -108,6 +153,36 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
         setPreviewPhoto(null);
         setPreviewSignedUrl(null);
       }
+      if (photo.is_avatar) {
+        onAvatarChange?.();
+      }
+    }
+  };
+
+  const handleToggleAvatar = async (photo: OperationSamplePhoto) => {
+    if (!canManagePhotos || settingAvatar) return;
+    setSettingAvatar(true);
+    setErrorMsg(null);
+
+    const newTargetId = photo.is_avatar ? null : photo.id;
+    const { success, error } = await setPartAvatar(jobId, newTargetId);
+    setSettingAvatar(false);
+
+    if (!success || error) {
+      setErrorMsg(error || 'Không thể cập nhật ảnh đại diện sản phẩm.');
+    } else {
+      setPhotos((prev) =>
+        prev.map((p) => ({
+          ...p,
+          is_avatar: p.id === newTargetId,
+        }))
+      );
+      if (previewPhoto) {
+        setPreviewPhoto((prev) =>
+          prev ? { ...prev, is_avatar: prev.id === newTargetId } : null
+        );
+      }
+      onAvatarChange?.();
     }
   };
 
@@ -149,9 +224,28 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
         </div>
 
         {errorMsg && (
-          <div className="mt-2 p-2 bg-rose-50 border border-rose-200 rounded text-rose-800 text-[11px] flex items-center gap-1.5">
-            <AlertCircle className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />
-            <span>{errorMsg}</span>
+          <div className="mt-2 p-2 bg-rose-50 border border-rose-200 rounded text-rose-800 text-[11px] flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+            {failedFileForRetry && (
+              <button
+                type="button"
+                onClick={() => handleFileUpload(failedFileForRetry)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold transition"
+              >
+                <RefreshCw className="w-2.5 h-2.5" />
+                <span>Thử lại</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {uploadSuccessNotice && (
+          <div className="mt-2 p-2 bg-emerald-50 border border-emerald-200 rounded text-emerald-800 text-[11px] flex items-center gap-1.5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+            <span>{uploadSuccessNotice}</span>
           </div>
         )}
 
@@ -173,8 +267,18 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
                 return (
                   <div
                     key={p.id}
-                    className="group relative aspect-square bg-slate-100 rounded-lg border border-slate-200 overflow-hidden shadow-2xs hover:shadow-sm transition"
+                    className={`group relative aspect-square bg-slate-100 rounded-lg border overflow-hidden shadow-2xs hover:shadow-sm transition ${
+                      p.is_avatar ? 'border-amber-400 ring-2 ring-amber-300/50' : 'border-slate-200'
+                    }`}
                   >
+                    {/* Part Avatar Badge */}
+                    {p.is_avatar && (
+                      <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded bg-amber-500 text-white text-[9px] font-bold flex items-center gap-0.5 shadow-xs">
+                        <Star className="w-2.5 h-2.5 fill-current" />
+                        <span>Đại diện</span>
+                      </div>
+                    )}
+
                     {url ? (
                       <img
                         src={url}
@@ -203,14 +307,29 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
                         <Eye className="w-3.5 h-3.5" />
                       </button>
                       {canManagePhotos && (
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(p)}
-                          className="p-1 rounded bg-white/90 text-slate-800 hover:bg-white hover:text-rose-600 shadow-xs"
-                          title="Xóa ảnh"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleAvatar(p)}
+                            disabled={settingAvatar}
+                            className={`p-1 rounded shadow-xs transition ${
+                              p.is_avatar
+                                ? 'bg-amber-500 text-white hover:bg-amber-600'
+                                : 'bg-white/90 text-slate-800 hover:bg-white hover:text-amber-600'
+                            }`}
+                            title={p.is_avatar ? 'Gỡ ảnh đại diện' : 'Đặt làm ảnh đại diện sản phẩm'}
+                          >
+                            <Star className={`w-3.5 h-3.5 ${p.is_avatar ? 'fill-current' : ''}`} />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(p)}
+                            className="p-1 rounded bg-white/90 text-slate-800 hover:bg-white hover:text-rose-600 shadow-xs"
+                            title="Xóa ảnh"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
                       )}
                     </div>
 
@@ -254,7 +373,7 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
                 disabled={uploading}
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
-                    handleFileUpload(e.target.files[0]);
+                    handleSelectFile(e.target.files[0]);
                     e.target.value = '';
                   }
                 }}
@@ -272,12 +391,12 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
               <span>Chọn ảnh</span>
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/png,image/webp,image/*"
                 className="hidden"
                 disabled={uploading}
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
-                    handleFileUpload(e.target.files[0]);
+                    handleSelectFile(e.target.files[0]);
                     e.target.value = '';
                   }
                 }}
@@ -346,6 +465,21 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
                 Kích thước: {(previewPhoto.file_size / (1024 * 1024)).toFixed(2)} MB
               </div>
               <div className="flex items-center gap-2">
+                {canManagePhotos && (
+                  <button
+                    type="button"
+                    onClick={() => handleToggleAvatar(previewPhoto)}
+                    disabled={settingAvatar}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                      previewPhoto.is_avatar
+                        ? 'bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200'
+                        : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Star className={`w-3.5 h-3.5 ${previewPhoto.is_avatar ? 'fill-amber-500 text-amber-500' : 'text-slate-400'}`} />
+                    <span>{previewPhoto.is_avatar ? 'Gỡ ảnh đại diện' : 'Đặt làm ảnh đại diện'}</span>
+                  </button>
+                )}
                 {previewSignedUrl && (
                   <a
                     href={previewSignedUrl}
@@ -372,6 +506,18 @@ export const OperationSamplePhotosGallery: React.FC<OperationSamplePhotosGallery
           </div>
         </div>
       )}
+
+      {/* MOBILE IMAGE CROP & COMPRESSION MODAL */}
+      <ImageEditorModal
+        isOpen={showCropModal}
+        file={selectedFileForCrop}
+        category="sample"
+        onClose={() => {
+          setShowCropModal(false);
+          setSelectedFileForCrop(null);
+        }}
+        onConfirm={handleCropConfirm}
+      />
     </div>
   );
 };

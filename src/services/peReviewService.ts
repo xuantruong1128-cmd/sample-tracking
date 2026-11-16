@@ -8,6 +8,8 @@ export interface SubmitPeReviewParams {
   reviewResult: PEReviewResult;
   engineeringComment: string;
   improvementRequired?: string;
+  reviewerName?: string;
+  reviewerRole?: UserRole;
 }
 
 /**
@@ -47,6 +49,8 @@ export async function submitPeReview({
   reviewResult,
   engineeringComment,
   improvementRequired = '',
+  reviewerName: customReviewerName,
+  reviewerRole: customReviewerRole,
 }: SubmitPeReviewParams): Promise<{ review: PEEngineeringReview | null; error: string | null }> {
   if (!ENV.IS_CONFIGURED) {
     const mockReview: PEEngineeringReview = {
@@ -57,8 +61,8 @@ export async function submitPeReview({
       engineering_comment: engineeringComment,
       improvement_required: improvementRequired,
       reviewed_by: 'demo-user',
-      reviewer_name: 'Kỹ sư PE',
-      reviewer_role: 'PE-MFG',
+      reviewer_name: customReviewerName || 'Kỹ sư PE',
+      reviewer_role: customReviewerRole || 'PE-MFG',
       created_at: new Date().toISOString(),
     };
     return { review: mockReview, error: null };
@@ -70,9 +74,8 @@ export async function submitPeReview({
     return { review: null, error: 'Vui lòng nhập nhận xét đánh giá kỹ thuật (Engineering Comment).' };
   }
 
-  const validResults: PEReviewResult[] = ['Pending', 'OK', 'NG'];
-  if (!validResults.includes(reviewResult)) {
-    return { review: null, error: 'Kết luận đánh giá không hợp lệ (chỉ chấp nhận: Pending, OK, NG).' };
+  if (reviewResult !== 'OK' && reviewResult !== 'NG') {
+    return { review: null, error: 'Kết luận đánh giá PE mới chỉ chấp nhận OK hoặc NG (Pending đã bị loại bỏ).' };
   }
 
   // 2. Auth user check
@@ -81,14 +84,19 @@ export async function submitPeReview({
     return { review: null, error: 'Chưa đăng nhập. Vui lòng đăng nhập lại.' };
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, phone, role')
-    .eq('id', session.user.id)
-    .single();
+  let reviewerName = customReviewerName;
+  let reviewerRole: UserRole | undefined = customReviewerRole;
 
-  const reviewerName = profile?.full_name || profile?.phone || 'Kỹ sư PE';
-  const reviewerRole: UserRole = profile?.role || 'PE-MFG';
+  if (!reviewerName || !reviewerRole) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, phone, role')
+      .eq('id', session.user.id)
+      .single();
+
+    reviewerName = reviewerName || profile?.full_name || profile?.phone || 'Kỹ sư PE';
+    reviewerRole = reviewerRole || profile?.role || 'PE-MFG';
+  }
 
   try {
     const { data, error } = await supabase

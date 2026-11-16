@@ -37,6 +37,9 @@ export const OperationAttachmentsSection: React.FC<OperationAttachmentsSectionPr
 
   const isJobActive = jobStatus === 'ACTIVE';
   const role: UserRole = profile?.role || 'PE-MFG';
+  const isViewer = profile?.role === 'Viewer';
+  const isBD = profile?.role === 'BD';
+  const canUpload = isJobActive && !isViewer && !isBD && (role === 'QA' || role === 'Planning' || role === 'PE-MFG' || role === 'Admin');
 
   // Allowed file types by role (matching database integrity trigger)
   const getAllowedFileTypes = (r: UserRole): { type: AttachmentType; label: string }[] => {
@@ -241,7 +244,7 @@ export const OperationAttachmentsSection: React.FC<OperationAttachmentsSectionPr
           )}
         </div>
 
-        {isJobActive ? (
+        {canUpload ? (
           <form onSubmit={handleUploadSubmit} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -299,6 +302,11 @@ export const OperationAttachmentsSection: React.FC<OperationAttachmentsSectionPr
               </button>
             </div>
           </form>
+        ) : isViewer || isBD ? (
+          <div className="bg-slate-100 border border-slate-200 text-slate-600 rounded-lg p-3 text-xs flex items-center gap-2">
+            <Info className="w-4 h-4 text-slate-500 flex-shrink-0" />
+            <span>Chế độ chỉ xem — Tài khoản {role} chỉ được xem, không có quyền tải lên tài liệu mới.</span>
+          </div>
         ) : (
           <div className="bg-amber-50/80 border border-amber-200 text-amber-900 rounded-lg p-3 text-xs flex items-center gap-2">
             <Info className="w-4 h-4 text-amber-600 flex-shrink-0" />

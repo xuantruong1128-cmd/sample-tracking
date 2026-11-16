@@ -6,15 +6,33 @@ import {
   saveProductionResult,
   saveQACheck,
   uploadNGPhoto,
+  uploadN1CheckSheet,
+  uploadQaNgPhoto,
   viewNGPhotoSignedUrl,
   closeJobOperation,
   reviewKivTransfer,
   fetchKivReviews,
   type NGItemInput,
+  type QANgItemInput,
 } from '../../services/productionResultService';
 import { OperationAttachmentsSection } from './OperationAttachmentsSection';
+import { OperationQaDocumentsSection } from './OperationQaDocumentsSection';
 import { OperationSamplePhotosGallery } from './OperationSamplePhotosGallery';
 import { OperationPeReviewSection } from './OperationPeReviewSection';
+import { NumericInput } from '../../components/common/NumericInput';
+import { isAutoTurnOperation } from '../jobs/jobDisplayUtils';
+import { ImageEditorModal } from '../../components/common/ImageEditorModal';
+import {
+  STANDARDIZED_NG_TYPES,
+  STANDARDIZED_NG_CODES,
+  getNgTypeOptions,
+} from '../../constants/defectCatalog';
+import {
+  isProcessableImage,
+  formatFileSize,
+  type ImageCategory,
+  type ProcessImageResult,
+} from '../../lib/imageProcessing';
 import {
   Save,
   Plus,
@@ -53,13 +71,14 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
 }) => {
   const { profile } = useAuth();
   const role = profile?.role || 'PE-MFG';
+  const isViewer = role === 'Viewer';
   const isJobClosed = jobStatus === 'CLOSE' || jobStatus === 'PURGED';
   const isOpClosed = operation.status === 'CLOSED';
-  const isPeLeaderOrAdmin = role === 'Admin' || (role === 'PE-MFG' && Boolean(profile?.is_department_leader));
-  const canEditMfg = !isJobClosed && !isOpClosed && (role === 'PE-MFG' || role === 'Admin');
-  const canEditQa = !isJobClosed && (role === 'QA' || role === 'Admin');
-  const canCloseOp = !isJobClosed && !isOpClosed && isPeLeaderOrAdmin;
-  const canReviewKiv = !isJobClosed && isOpClosed && isPeLeaderOrAdmin;
+  const isPeLeaderOrAdmin = !isViewer && (role === 'Admin' || (role === 'PE-MFG' && Boolean(profile?.is_department_leader)));
+  const canEditMfg = !isViewer && !isJobClosed && !isOpClosed && (role === 'PE-MFG' || role === 'Admin');
+  const canEditQa = !isViewer && !isJobClosed && (role === 'QA' || role === 'Admin');
+  const canCloseOp = !isViewer && !isJobClosed && !isOpClosed && isPeLeaderOrAdmin;
+  const canReviewKiv = !isViewer && !isJobClosed && isOpClosed && isPeLeaderOrAdmin;
 
   // Defect catalog for dropdown
   const [defectCatalog, setDefectCatalog] = useState<DefectItem[]>([]);
@@ -87,6 +106,9 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     if (runs.length === 0) return null;
     return [...runs].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
   }, [operation.production_runs]);
+
+  // R3 FIX 02: Check if current operation is Auto Turn based on master mapping
+  const isAutoTurn = useMemo(() => isAutoTurnOperation(operation), [operation]);
 
   // Form State: PE-MFG Row 1
   const [machineId, setMachineId] = useState<string>(
@@ -134,21 +156,55 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
   const [photoLoading, setPhotoLoading] = useState<boolean>(false);
   const [uploadingRowIdx, setUploadingRowIdx] = useState<number | null>(null);
 
-  // QA Check State
+  // QA Check State (R2 Consolidation)
   const latestQaCheck = useMemo(() => {
     const checks = operation.qa_checks || [];
     if (checks.length === 0) return null;
     return [...checks].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
   }, [operation.qa_checks]);
 
-  const [qaResult, setQaResult] = useState<'OK' | 'NG' | 'KIV'>(latestQaCheck?.result || 'OK');
-  const [qaSampleSize, setQaSampleSize] = useState<number>(latestQaCheck?.sample_size || 5);
-  const [qaOkQty, setQaOkQty] = useState<number>(latestQaCheck?.ok_qty ?? 5);
-  const [qaNgQty, setQaNgQty] = useState<number>(latestQaCheck?.ng_qty ?? 0);
+  const [n1Result, setN1Result] = useState<'OK' | 'NG'>(
+    latestQaCheck?.n1_result || (latestQaCheck?.result === 'NG' ? 'NG' : 'OK')
+  );
+  const [n1CheckSheetUrls, setN1CheckSheetUrls] = useState<string[]>(
+    latestQaCheck?.n1_check_sheet_urls || []
+  );
+  const [isUploadingN1, setIsUploadingN1] = useState<boolean>(false);
   const [qaNotes, setQaNotes] = useState<string>(latestQaCheck?.notes || '');
+  const [qaNgRows, setQaNgRows] = useState<QANgItemInput[]>(() => {
+    if (latestQaCheck?.qa_ng_details && latestQaCheck.qa_ng_details.length > 0) {
+      return latestQaCheck.qa_ng_details.map((d) => ({
+        id: d.id,
+        ng_qty: d.ng_qty,
+        defect_name: d.defect_name,
+        defect_code: d.defect_code || undefined,
+        cause: (d as any).cause || '',
+        remark: d.remark || '',
+        photo_urls: d.photo_urls || [],
+      }));
+    }
+    return [];
+  });
+  const [uploadingQaNgRowIdx, setUploadingQaNgRowIdx] = useState<number | null>(null);
+
+  // Active Image Editor Modal State (Mobile Image Crop & Compression)
+  const [editorState, setEditorState] = useState<{
+    file: File;
+    category: ImageCategory;
+    target:
+      | { type: 'mfg_ng'; rowIdx: number }
+      | { type: 'qa_n1' }
+      | { type: 'qa_ng'; rowIdx: number };
+  } | null>(null);
+
   const [isSavingQa, setIsSavingQa] = useState<boolean>(false);
   const [qaSuccessMsg, setQaSuccessMsg] = useState<string | null>(null);
   const [qaErrorMsg, setQaErrorMsg] = useState<string | null>(null);
+
+  // QA Total NG live computed sum (B4)
+  const qaTotalNg = useMemo(() => {
+    return qaNgRows.reduce((sum, row) => sum + (Number(row.ng_qty) || 0), 0);
+  }, [qaNgRows]);
 
   // Load defect catalog on mount
   useEffect(() => {
@@ -159,6 +215,7 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
         setLoadingDefects(false);
       }
     });
+
     return () => {
       isMounted = false;
     };
@@ -199,11 +256,33 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     }
   }, [latestRun]);
 
+  // Sync QA state when latestQaCheck updates
+  useEffect(() => {
+    if (latestQaCheck) {
+      setN1Result(latestQaCheck.n1_result || (latestQaCheck.result === 'NG' ? 'NG' : 'OK'));
+      setN1CheckSheetUrls(latestQaCheck.n1_check_sheet_urls || []);
+      setQaNotes(latestQaCheck.notes || '');
+      if (latestQaCheck.qa_ng_details && latestQaCheck.qa_ng_details.length > 0) {
+        setQaNgRows(
+          latestQaCheck.qa_ng_details.map((d) => ({
+            id: d.id,
+            ng_qty: d.ng_qty,
+            defect_name: d.defect_name,
+            defect_code: d.defect_code || undefined,
+            cause: (d as any).cause || '',
+            remark: d.remark || '',
+            photo_urls: d.photo_urls || [],
+          }))
+        );
+      }
+    }
+  }, [latestQaCheck]);
+
   // Handle NG Rows
   const handleAddNgRow = () => {
     if (!canEditMfg) return;
-    const defaultDefect = defectCatalog[0]?.name_vi || 'Sai đường kính';
-    const defaultCode = defectCatalog[0]?.code || 'DEF-DIM-01';
+    const defaultDefect = STANDARDIZED_NG_TYPES[0]; // 'NG Đường Kính'
+    const defaultCode = STANDARDIZED_NG_CODES[defaultDefect];
     setNgRows([
       ...ngRows,
       {
@@ -226,11 +305,11 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     if (!canEditMfg) return;
     const updated = [...ngRows];
     if (field === 'defect_name') {
-      const match = defectCatalog.find((d) => d.name_vi === value);
+      const code = STANDARDIZED_NG_CODES[value] || defectCatalog.find((d) => d.name_vi === value)?.code;
       updated[index] = {
         ...updated[index],
         defect_name: value,
-        defect_code: match ? match.code : undefined,
+        defect_code: code,
       };
     } else {
       updated[index] = {
@@ -241,8 +320,26 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     setNgRows(updated);
   };
 
+  // Handle processed image from ImageEditorModal
+  const handleEditorConfirm = async (processedFile: File, stats: ProcessImageResult) => {
+    if (!editorState) return;
+    const target = editorState.target;
+    setEditorState(null);
+    const statsMsg = stats.wasCompressed
+      ? ` (giảm ${stats.reductionPercent}%, ${formatFileSize(stats.originalSize)} -> ${formatFileSize(stats.processedSize)})`
+      : '';
+
+    if (target.type === 'mfg_ng') {
+      await handlePhotoUpload(target.rowIdx, processedFile, statsMsg);
+    } else if (target.type === 'qa_n1') {
+      await handleN1FileUpload(processedFile, statsMsg);
+    } else if (target.type === 'qa_ng') {
+      await handleQaPhotoUpload(target.rowIdx, processedFile, statsMsg);
+    }
+  };
+
   // Upload NG Photo (Max 2 photos per row)
-  const handlePhotoUpload = async (rowIdx: number, file: File) => {
+  const handlePhotoUpload = async (rowIdx: number, file: File, statsMsg: string = '') => {
     if (!canEditMfg) return;
     const row = ngRows[rowIdx];
     const currentPhotos = row.photo_urls || [];
@@ -267,6 +364,10 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
       photo_urls: [...currentPhotos, filePath].slice(0, 2),
     };
     setNgRows(updated);
+    if (statsMsg) {
+      setMfgSuccessMsg(`Đã tải ảnh NG thành công${statsMsg}!`);
+      setTimeout(() => setMfgSuccessMsg(null), 5000);
+    }
   };
 
   const handleRemovePhoto = (rowIdx: number, photoIdx: number) => {
@@ -297,6 +398,25 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
 
     setMfgErrorMsg(null);
     setMfgSuccessMsg(null);
+
+    // R3 FIX 02: Mandatory CT Actual > 0 for Auto Turn
+    if (isAutoTurn) {
+      const ctVal = cycleTimeActual ? Number(cycleTimeActual) : null;
+      if (!ctVal || isNaN(ctVal) || ctVal <= 0) {
+        setMfgErrorMsg('Vui lòng nhập Cycle Time thực tế (CT Actual > 0) cho công đoạn Auto Turn.');
+        return;
+      }
+    }
+
+    // R3 FIX 04: Validate 'Lỗi khác' requires specific description / cause
+    for (let i = 0; i < ngRows.length; i++) {
+      const row = ngRows[i];
+      if (row.defect_name.trim() === 'Lỗi khác' && (!row.cause || !row.cause.trim())) {
+        setMfgErrorMsg(`Vui lòng nhập mô tả cụ thể khi chọn Lỗi khác tại dòng NG thứ ${i + 1}.`);
+        return;
+      }
+    }
+
     setIsSavingMfg(true);
 
     const result = await saveProductionResult({
@@ -320,21 +440,140 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     }
   };
 
-  // Save QA Check
+  // N1 Check Sheet Handlers (B2)
+  const handleN1FileUpload = async (file: File, statsMsg: string = '') => {
+    if (!canEditQa) return;
+    setIsUploadingN1(true);
+    setQaErrorMsg(null);
+    const { filePath, error } = await uploadN1CheckSheet(jobId, operation.id, file);
+    setIsUploadingN1(false);
+    if (error || !filePath) {
+      setQaErrorMsg(error || 'Lỗi khi tải Check Sheet lên kho lưu trữ.');
+      return;
+    }
+    setN1CheckSheetUrls((prev) => [...prev, filePath]);
+    if (statsMsg) {
+      setQaSuccessMsg(`Đã tải Check Sheet thành công${statsMsg}!`);
+      setTimeout(() => setQaSuccessMsg(null), 5000);
+    }
+  };
+
+  const handleRemoveN1File = (fileIdx: number) => {
+    if (!canEditQa) return;
+    setN1CheckSheetUrls((prev) => prev.filter((_, i) => i !== fileIdx));
+  };
+
+  // QA NG Detail Handlers (B3 & R3 FIX 04)
+  const handleAddQaNgRow = () => {
+    if (!canEditQa) return;
+    const defaultDefect = STANDARDIZED_NG_TYPES[0]; // 'NG Đường Kính'
+    const defaultCode = STANDARDIZED_NG_CODES[defaultDefect];
+    setQaNgRows([
+      ...qaNgRows,
+      {
+        ng_qty: 1,
+        defect_name: defaultDefect,
+        defect_code: defaultCode,
+        cause: '',
+        remark: '',
+        photo_urls: [],
+      },
+    ]);
+  };
+
+  const handleRemoveQaNgRow = (index: number) => {
+    if (!canEditQa) return;
+    setQaNgRows(qaNgRows.filter((_, i) => i !== index));
+  };
+
+  const handleQaNgChange = (
+    index: number,
+    field: keyof QANgItemInput,
+    value: any
+  ) => {
+    if (!canEditQa) return;
+    const updated = [...qaNgRows];
+    if (field === 'defect_name') {
+      const code = STANDARDIZED_NG_CODES[value] || defectCatalog.find((d) => d.name_vi === value)?.code;
+      updated[index] = {
+        ...updated[index],
+        defect_name: value,
+        defect_code: code,
+      };
+    } else {
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+    }
+    setQaNgRows(updated);
+  };
+
+  const handleQaPhotoUpload = async (rowIdx: number, file: File, statsMsg: string = '') => {
+    if (!canEditQa) return;
+    const row = qaNgRows[rowIdx];
+    const currentPhotos = row.photo_urls || [];
+    if (currentPhotos.length >= 2) {
+      setQaErrorMsg('Mỗi dòng lỗi QA chỉ được đính kèm tối đa 2 ảnh.');
+      return;
+    }
+
+    setUploadingQaNgRowIdx(rowIdx);
+    setQaErrorMsg(null);
+    const { filePath, error } = await uploadQaNgPhoto(jobId, operation.id, file);
+    setUploadingQaNgRowIdx(null);
+
+    if (error || !filePath) {
+      setQaErrorMsg(error || 'Lỗi khi tải ảnh lỗi QA lên kho lưu trữ.');
+      return;
+    }
+
+    const updated = [...qaNgRows];
+    updated[rowIdx] = {
+      ...row,
+      photo_urls: [...currentPhotos, filePath].slice(0, 2),
+    };
+    setQaNgRows(updated);
+    if (statsMsg) {
+      setQaSuccessMsg(`Đã tải ảnh lỗi QA thành công${statsMsg}!`);
+      setTimeout(() => setQaSuccessMsg(null), 5000);
+    }
+  };
+
+  const handleRemoveQaPhoto = (rowIdx: number, photoIdx: number) => {
+    if (!canEditQa) return;
+    const row = qaNgRows[rowIdx];
+    const currentPhotos = row.photo_urls || [];
+    const updatedPhotos = currentPhotos.filter((_, i) => i !== photoIdx);
+    const updated = [...qaNgRows];
+    updated[rowIdx] = { ...row, photo_urls: updatedPhotos };
+    setQaNgRows(updated);
+  };
+
+  // Save QA Check (R2 Consolidation & R3 FIX 04)
   const handleSaveQACheck = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canEditQa) return;
 
     setQaErrorMsg(null);
     setQaSuccessMsg(null);
+
+    // R3 FIX 04: Validate 'Lỗi khác' requires specific description / cause
+    for (let i = 0; i < qaNgRows.length; i++) {
+      const row = qaNgRows[i];
+      if (row.defect_name.trim() === 'Lỗi khác' && (!row.cause || !row.cause.trim())) {
+        setQaErrorMsg(`Vui lòng nhập mô tả cụ thể khi chọn Lỗi khác cho lỗi QA tại dòng thứ ${i + 1}.`);
+        return;
+      }
+    }
+
     setIsSavingQa(true);
 
     const result = await saveQACheck({
       operationId: operation.id,
-      result: qaResult,
-      sampleSize: Number(qaSampleSize) || 1,
-      okQty: Number(qaOkQty) || 0,
-      ngQty: Number(qaNgQty) || 0,
+      n1Result,
+      n1CheckSheetUrls,
+      qaNgItems: qaNgRows,
       notes: qaNotes,
     });
 
@@ -354,6 +593,19 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
   // -------------------------------------------------------------------------
   const handleConfirmCloseOp = async () => {
     if (!canCloseOp) return;
+
+    // R3 FIX 02: Check valid CT Actual > 0 for Auto Turn before calling RPC
+    if (isAutoTurn) {
+      const runs = operation.production_runs || [];
+      const hasValidRunCt = runs.some(
+        (r) => r.cycle_time_seconds !== null && r.cycle_time_seconds !== undefined && Number(r.cycle_time_seconds) > 0
+      );
+      if (!hasValidRunCt) {
+        setCloseOpError('Không thể đóng công đoạn Auto Turn. PE-MFG phải nhập Cycle Time thực tế (CT Actual) trước khi đóng.');
+        return;
+      }
+    }
+
     setIsClosingOp(true);
     setCloseOpError(null);
     const res = await closeJobOperation(operation.id);
@@ -371,8 +623,8 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
   // -------------------------------------------------------------------------
   const handleAddKivNgRow = () => {
     if (!canReviewKiv) return;
-    const defaultDefect = defectCatalog[0]?.name_vi || 'Sai kích thước';
-    const defaultCode = defectCatalog[0]?.code || 'DEF-DIM-01';
+    const defaultDefect = STANDARDIZED_NG_TYPES[0]; // 'NG Đường Kính'
+    const defaultCode = STANDARDIZED_NG_CODES[defaultDefect];
     setKivNgRows([
       ...kivNgRows,
       {
@@ -395,11 +647,11 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
     if (!canReviewKiv) return;
     const updated = [...kivNgRows];
     if (field === 'defect_name') {
-      const match = defectCatalog.find((d) => d.name_vi === value);
+      const code = STANDARDIZED_NG_CODES[value] || defectCatalog.find((d) => d.name_vi === value)?.code;
       updated[index] = {
         ...updated[index],
         defect_name: value,
-        defect_code: match ? match.code : undefined,
+        defect_code: code,
       };
     } else {
       updated[index] = {
@@ -453,6 +705,16 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
 
     setKivErrorMsg(null);
     setKivSuccessMsg(null);
+
+    // R3 FIX 04: Validate 'Lỗi khác' requires specific description / cause
+    for (let i = 0; i < kivNgRows.length; i++) {
+      const row = kivNgRows[i];
+      if (row.defect_name.trim() === 'Lỗi khác' && (!row.cause || !row.cause.trim())) {
+        setKivErrorMsg(`Vui lòng nhập mô tả cụ thể khi chọn Lỗi khác tại dòng KIV -> NG thứ ${i + 1}.`);
+        return;
+      }
+    }
+
     setIsSubmittingKiv(true);
 
     const res = await reviewKivTransfer({
@@ -477,6 +739,27 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
       setKivReviews(data || []);
       await onRefresh();
       setTimeout(() => setKivSuccessMsg(null), 4000);
+    }
+  };
+
+  // R3 FIX 05: Prevent unintentional form submit & preserve scroll position on Enter
+  const handleFormKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'Enter') {
+      const target = e.target as HTMLElement;
+      // Do NOT block Enter on textarea or buttons (e.g. submit confirmation buttons)
+      if (target.tagName === 'TEXTAREA' || target.tagName === 'BUTTON') {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      const currentScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+      (target as HTMLInputElement).blur?.();
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+        requestAnimationFrame(() => {
+          window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+        });
+      }
     }
   };
 
@@ -541,7 +824,7 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
           </div>
         )}
 
-        <form onSubmit={handleSaveProductionResult} className="space-y-4">
+        <form onSubmit={handleSaveProductionResult} onKeyDown={handleFormKeyDown} className="space-y-4">
           {/* TOP AREA: Split Desktop Left (Parameters 2 Rows) & Right (Sample Photos Gallery) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
             {/* LEFT: Thông số sản xuất dạng compact, hai hàng */}
@@ -578,20 +861,52 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                   />
                 </div>
 
-                {/* CT Actual (sec/pcs) - CT Target is NOT shown here */}
+                {/* CT Actual (sec/pcs) - R3 FIX 02: Cycle Time (sec) * for Auto Turn */}
                 <div>
                   <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                    CT Actual <span className="text-slate-400 font-normal">(sec/pcs)</span>
+                    {isAutoTurn ? (
+                      <span>
+                        Cycle Time (sec) <span className="text-red-500">*</span>
+                      </span>
+                    ) : (
+                      <span>
+                        CT Actual <span className="text-slate-400 font-normal">(sec/pcs)</span>
+                      </span>
+                    )}
                   </label>
                   <input
                     type="number"
                     step="0.01"
                     min="0.01"
+                    required={isAutoTurn}
                     disabled={!canEditMfg}
                     value={cycleTimeActual}
                     onChange={(e) => setCycleTimeActual(e.target.value)}
-                    className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const y = typeof window !== 'undefined' ? window.scrollY : 0;
+                        e.currentTarget.blur();
+                        if (typeof window !== 'undefined') {
+                          window.scrollTo({ top: y, behavior: 'instant' });
+                          requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' }));
+                        }
+                      }
+                    }}
+                    placeholder={isAutoTurn ? 'Bắt buộc > 0' : ''}
+                    className={`w-full px-3 py-1.5 bg-white border rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 disabled:cursor-not-allowed ${
+                      isAutoTurn && (!cycleTimeActual || Number(cycleTimeActual) <= 0)
+                        ? 'border-amber-400 focus:border-amber-500 ring-1 ring-amber-100'
+                        : 'border-slate-200'
+                    }`}
                   />
+                  {isAutoTurn && (!cycleTimeActual || Number(cycleTimeActual) <= 0) && (
+                    <p className="text-[11px] text-amber-600 mt-1 flex items-center gap-1 font-medium">
+                      <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>Bắt buộc nhập Cycle Time thực tế (&gt; 0) cho Auto Turn</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -602,14 +917,12 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                   <label className="block text-[11px] font-bold text-emerald-800 mb-1">
                     OK <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
+                  <NumericInput
+                    min={0}
                     required
                     disabled={!canEditMfg}
                     value={okQty}
-                    onChange={(e) => setOkQty(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                    onChange={(val) => setOkQty(val)}
                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
                   />
                 </div>
@@ -635,13 +948,11 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                   <label className="block text-[11px] font-bold text-amber-800 mb-1">
                     KIV <span className="text-slate-400 font-normal">(Chưa phân định)</span>
                   </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
+                  <NumericInput
+                    min={0}
                     disabled={!canEditMfg}
                     value={kivQty}
-                    onChange={(e) => setKivQty(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                    onChange={(val) => setKivQty(val)}
                     className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-amber-800 focus:outline-none focus:ring-1 focus:ring-amber-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
                   />
                 </div>
@@ -654,6 +965,7 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                 jobId={jobId}
                 operationId={operation.id}
                 jobStatus={jobStatus}
+                onAvatarChange={onRefresh}
               />
             </div>
           </div>
@@ -708,21 +1020,19 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                       <tr key={idx} className="hover:bg-slate-50/50">
                         {/* 1. Q'ty */}
                         <td className="p-2">
-                          <input
-                            type="number"
-                            min="1"
-                            step="1"
+                          <NumericInput
+                            min={1}
                             required
                             disabled={!canEditMfg}
                             value={row.ng_qty}
-                            onChange={(e) =>
-                              handleNgChange(idx, 'ng_qty', Math.max(1, parseInt(e.target.value, 10) || 1))
+                            onChange={(val) =>
+                              handleNgChange(idx, 'ng_qty', Math.max(1, val || 1))
                             }
                             className="w-16 px-2 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-rose-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 disabled:bg-slate-100"
                           />
                         </td>
 
-                        {/* 2. Type (Dropdown from defect_catalog) */}
+                        {/* 2. Type (Standardized 8 NG Types with legacy support) */}
                         <td className="p-2">
                           <select
                             disabled={!canEditMfg || loadingDefects}
@@ -730,22 +1040,31 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                             onChange={(e) => handleNgChange(idx, 'defect_name', e.target.value)}
                             className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100"
                           >
-                            {defectCatalog.map((def) => (
-                              <option key={def.id || def.code} value={def.name_vi}>
-                                {def.name_vi}
+                            {getNgTypeOptions(row.defect_name).map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
                               </option>
                             ))}
                           </select>
                         </td>
 
-                        {/* 3. Cause */}
+                        {/* 3. Cause / Mô tả cụ thể */}
                         <td className="p-2">
                           <input
                             type="text"
                             disabled={!canEditMfg}
                             value={row.cause || ''}
                             onChange={(e) => handleNgChange(idx, 'cause', e.target.value)}
-                            className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100"
+                            placeholder={
+                              row.defect_name === 'Lỗi khác'
+                                ? 'Bắt buộc nhập mô tả cụ thể *'
+                                : 'Nguyên nhân / mô tả lỗi...'
+                            }
+                            className={`w-full px-2 py-1 bg-white border rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 ${
+                              row.defect_name === 'Lỗi khác' && (!row.cause || !row.cause.trim())
+                                ? 'border-amber-400 bg-amber-50/30 placeholder-amber-700/60'
+                                : 'border-slate-200'
+                            }`}
                           />
                         </td>
 
@@ -811,7 +1130,12 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                                   disabled={uploadingRowIdx === idx}
                                   onChange={(e) => {
                                     if (e.target.files && e.target.files[0]) {
-                                      handlePhotoUpload(idx, e.target.files[0]);
+                                      const file = e.target.files[0];
+                                      if (isProcessableImage(file)) {
+                                        setEditorState({ file, category: 'ng', target: { type: 'mfg_ng', rowIdx: idx } });
+                                      } else {
+                                        handlePhotoUpload(idx, file);
+                                      }
                                       e.target.value = '';
                                     }
                                   }}
@@ -917,7 +1241,7 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
           {/* Form chuyển đổi KIV */}
           {(latestRun?.kiv_qty ?? 0) > 0 ? (
             canReviewKiv ? (
-              <form onSubmit={handleSubmitKivReview} className="space-y-4 bg-amber-50/40 p-3.5 rounded-lg border border-amber-200/70">
+              <form onSubmit={handleSubmitKivReview} onKeyDown={handleFormKeyDown} className="space-y-4 bg-amber-50/40 p-3.5 rounded-lg border border-amber-200/70">
                 <div className="text-xs font-semibold text-amber-950">
                   Thực hiện chuyển đổi KIV sang OK hoặc NG (Chỉ PE-MFG Leader hoặc Admin)
                 </div>
@@ -928,14 +1252,12 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                     <label htmlFor="kiv-to-ok-input" className="block text-[11px] font-bold text-emerald-800 mb-1">
                       Chuyển KIV sang OK (pcs)
                     </label>
-                    <input
+                    <NumericInput
                       id="kiv-to-ok-input"
-                      type="number"
-                      min="0"
+                      min={0}
                       max={latestRun?.kiv_qty ?? 0}
-                      step="1"
                       value={kivToOk}
-                      onChange={(e) => setKivToOk(Math.max(0, parseInt(e.target.value, 10) || 0))}
+                      onChange={(val) => setKivToOk(val)}
                       className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-emerald-700 focus:outline-none focus:ring-1 focus:ring-emerald-600"
                     />
                   </div>
@@ -945,15 +1267,12 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                     <label htmlFor="kiv-to-ng-input" className="block text-[11px] font-bold text-rose-800 mb-1">
                       Chuyển KIV sang NG (pcs)
                     </label>
-                    <input
+                    <NumericInput
                       id="kiv-to-ng-input"
-                      type="number"
-                      min="0"
+                      min={0}
                       max={latestRun?.kiv_qty ?? 0}
-                      step="1"
                       value={kivToNg}
-                      onChange={(e) => {
-                        const newNg = Math.max(0, parseInt(e.target.value, 10) || 0);
+                      onChange={(newNg) => {
                         setKivToNg(newNg);
                         if (newNg > 0) {
                           if (kivNgRows.length === 0) {
@@ -1033,14 +1352,12 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                           {kivNgRows.map((row, idx) => (
                             <tr key={idx} className="hover:bg-slate-50/50">
                               <td className="p-2">
-                                <input
-                                  type="number"
-                                  min="1"
-                                  step="1"
+                                <NumericInput
+                                  min={1}
                                   required
                                   value={row.ng_qty}
-                                  onChange={(e) =>
-                                    handleKivNgChange(idx, 'ng_qty', Math.max(1, parseInt(e.target.value, 10) || 1))
+                                  onChange={(val) =>
+                                    handleKivNgChange(idx, 'ng_qty', Math.max(1, val || 1))
                                   }
                                   className="w-16 px-2 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-rose-700 text-center"
                                 />
@@ -1051,9 +1368,9 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                                   onChange={(e) => handleKivNgChange(idx, 'defect_name', e.target.value)}
                                   className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-800"
                                 >
-                                  {defectCatalog.map((def) => (
-                                    <option key={def.id || def.code} value={def.name_vi}>
-                                      {def.name_vi}
+                                  {getNgTypeOptions(row.defect_name).map((opt) => (
+                                    <option key={opt} value={opt}>
+                                      {opt}
                                     </option>
                                   ))}
                                 </select>
@@ -1063,7 +1380,16 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
                                   type="text"
                                   value={row.cause || ''}
                                   onChange={(e) => handleKivNgChange(idx, 'cause', e.target.value)}
-                                  className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs"
+                                  placeholder={
+                                    row.defect_name === 'Lỗi khác'
+                                      ? 'Bắt buộc nhập mô tả cụ thể *'
+                                      : 'Nguyên nhân / mô tả lỗi...'
+                                  }
+                                  className={`w-full px-2 py-1 bg-white border rounded text-xs ${
+                                    row.defect_name === 'Lỗi khác' && (!row.cause || !row.cause.trim())
+                                      ? 'border-amber-400 bg-amber-50/30 placeholder-amber-700/60'
+                                      : 'border-slate-200'
+                                  }`}
                                 />
                               </td>
                               <td className="p-2">
@@ -1249,29 +1575,33 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
       />
 
       {/* ----------------------------------------------------------------- */}
-      {/* SECTION 2: QA INSPECTION SECTION                                  */}
+      {/* SECTION 2: QA INSPECTION SECTION (R2 Consolidation)                */}
       {/* ----------------------------------------------------------------- */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-2xs space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
               Kiểm tra Chất lượng (QA Inspection)
             </h4>
           </div>
-          {latestQaCheck && (
-            <span
-              className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                latestQaCheck.result === 'OK'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : latestQaCheck.result === 'KIV'
-                  ? 'bg-amber-50 text-amber-800 border-amber-200'
-                  : 'bg-rose-50 text-rose-700 border-rose-200'
-              }`}
-            >
-              Kết luận gần nhất: {latestQaCheck.result}
+          <div className="flex items-center gap-2 flex-wrap">
+            {latestQaCheck && (
+              <span
+                className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  (latestQaCheck.n1_result || latestQaCheck.result) === 'OK'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-rose-50 text-rose-700 border-rose-200'
+                }`}
+              >
+                Gần nhất: N1 [{latestQaCheck.n1_result || latestQaCheck.result || 'OK'}] • QA Total NG: {latestQaCheck.qa_total_ng ?? latestQaCheck.ng_qty ?? 0} pcs
+              </span>
+            )}
+            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              Tổng lỗi QA: {qaTotalNg} pcs
             </span>
-          )}
+          </div>
         </div>
 
         {qaSuccessMsg && (
@@ -1288,87 +1618,297 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
           </div>
         )}
 
-        <form onSubmit={handleSaveQACheck} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            {/* QA Result Toggle (OK / NG / KIV) */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                Kết quả QA <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-3 gap-1">
-                {(['OK', 'NG', 'KIV'] as const).map((res) => (
+        <form onSubmit={handleSaveQACheck} onKeyDown={handleFormKeyDown} className="space-y-4">
+          {/* B2. N1 Inspection: One compact horizontal row */}
+          <div className="p-3 bg-slate-50/80 rounded-lg border border-slate-200/80 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              {/* N1 Label & OK/NG Toggle */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-bold text-slate-800 bg-white px-2.5 py-1 rounded border border-slate-200 shadow-2xs">
+                  N1
+                </span>
+                <div className="flex items-center gap-1">
                   <button
-                    key={res}
                     type="button"
                     disabled={!canEditQa}
-                    onClick={() => setQaResult(res)}
-                    className={`py-1.5 text-xs font-bold rounded-lg border transition ${
-                      qaResult === res
-                        ? res === 'OK'
-                          ? 'bg-emerald-600 text-white border-emerald-600'
-                          : res === 'KIV'
-                          ? 'bg-amber-500 text-slate-950 border-amber-500'
-                          : 'bg-rose-600 text-white border-rose-600'
-                        : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                    onClick={() => setN1Result('OK')}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg border transition ${
+                      n1Result === 'OK'
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
                     } disabled:opacity-50`}
                   >
-                    {res}
+                    OK
                   </button>
-                ))}
+                  <button
+                    type="button"
+                    disabled={!canEditQa}
+                    onClick={() => setN1Result('NG')}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg border transition ${
+                      n1Result === 'NG'
+                        ? 'bg-rose-600 text-white border-rose-600 shadow-2xs'
+                        : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                    } disabled:opacity-50`}
+                  >
+                    NG
+                  </button>
+                </div>
               </div>
+
+              {/* N1 Check Sheet / Image Upload Button - R3 FIX 03: Single plus in text, no duplicate Plus icon */}
+              {canEditQa && (
+                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 shadow-2xs transition">
+                  {isUploadingN1 && (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                  )}
+                  <span>+ Check Sheet / Ảnh</span>
+                  <input
+                    type="file"
+                    accept="image/*,.pdf,.xlsx,.xls,.csv"
+                    disabled={isUploadingN1 || !canEditQa}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        if (isProcessableImage(file)) {
+                          setEditorState({ file, category: 'check_sheet', target: { type: 'qa_n1' } });
+                        } else {
+                          handleN1FileUpload(file);
+                        }
+                      }
+                      e.target.value = '';
+                    }}
+                    className="hidden"
+                  />
+                </label>
+              )}
             </div>
 
-            {/* Sample Size */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                Cỡ mẫu kiểm (pcs) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                step="1"
-                required
-                disabled={!canEditQa}
-                value={qaSampleSize}
-                onChange={(e) => setQaSampleSize(Math.max(1, parseInt(e.target.value, 10) || 1))}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
-              />
+            {/* Uploaded N1 Check Sheets list */}
+            {n1CheckSheetUrls.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-slate-200/60">
+                <span className="text-[10px] font-bold text-slate-500 uppercase">Tệp N1 đính kèm:</span>
+                {n1CheckSheetUrls.map((filePath, fIdx) => {
+                  const raw = filePath.split('/').pop()?.replace(/^[0-9a-fA-F-]{36}_/, '') || `Check_Sheet_${fIdx + 1}`;
+                  const cleanName = raw.replace(/^n1_\d+_/, '');
+                  return (
+                    <div
+                      key={fIdx}
+                      className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200 text-[11px] font-semibold"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleViewPhoto(filePath)}
+                        className="hover:underline flex items-center gap-1 max-w-[200px] truncate"
+                        title="Nhấn để xem tệp N1"
+                      >
+                        <Paperclip className="w-3 h-3 shrink-0 text-blue-600" />
+                        <span className="truncate">{cleanName}</span>
+                      </button>
+                      {canEditQa && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveN1File(fIdx)}
+                          className="text-slate-400 hover:text-rose-600 p-0.5"
+                          title="Xóa tệp N1"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* B3 & B4. QA NG Details Table: Q'ty | NG Type | Remark | Image | Delete */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                  Chi tiết phế phẩm QA (QA NG Details)
+                </label>
+                <span className="text-[11px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">
+                  Tổng lỗi QA: {qaTotalNg} pcs
+                </span>
+              </div>
+              {canEditQa && (
+                <button
+                  type="button"
+                  onClick={handleAddQaNgRow}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>Thêm lỗi QA</span>
+                </button>
+              )}
             </div>
 
-            {/* QA OK Qty */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                Số lượng OK (pcs)
-              </label>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                disabled={!canEditQa}
-                value={qaOkQty}
-                onChange={(e) => setQaOkQty(Math.max(0, parseInt(e.target.value, 10) || 0))}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
-              />
-            </div>
-
-            {/* QA NG Qty */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                Số lượng NG (pcs)
-              </label>
-              <input
-                type="number"
-                min="0"
-                step="1"
-                disabled={!canEditQa}
-                value={qaNgQty}
-                onChange={(e) => setQaNgQty(Math.max(0, parseInt(e.target.value, 10) || 0))}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-900 focus:outline-none focus:ring-1 focus:ring-rose-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
-              />
+            <div className="border border-slate-200 rounded-lg overflow-x-auto bg-white">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
+                    <th className="p-2 w-16 text-center">Q'ty</th>
+                    <th className="p-2 w-44">NG Type</th>
+                    <th className="p-2 w-48">Mô tả cụ thể / Cause</th>
+                    <th className="p-2">Remark</th>
+                    <th className="p-2 w-40">Image</th>
+                    {canEditQa && <th className="p-2 w-12 text-center">Delete</th>}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {qaNgRows.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={canEditQa ? 6 : 5}
+                        className="py-3 px-3 text-center text-slate-400 text-xs italic"
+                      >
+                        Không ghi nhận lỗi QA (QA Total NG = 0).
+                      </td>
+                    </tr>
+                  ) : (
+                    qaNgRows.map((row, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50/50">
+                        {/* Q'ty */}
+                        <td className="p-2 text-center">
+                          <NumericInput
+                            min={1}
+                            required
+                            disabled={!canEditQa}
+                            value={row.ng_qty}
+                            onChange={(val) => handleQaNgChange(idx, 'ng_qty', Math.max(1, val || 1))}
+                            className="w-16 px-2 py-1 bg-white border border-slate-200 rounded text-xs font-bold text-rose-700 text-center focus:outline-none focus:ring-1 focus:ring-rose-500 disabled:bg-slate-100"
+                          />
+                        </td>
+                        {/* NG Type */}
+                        <td className="p-2">
+                          <select
+                            disabled={!canEditQa || loadingDefects}
+                            value={row.defect_name}
+                            onChange={(e) => handleQaNgChange(idx, 'defect_name', e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100"
+                          >
+                            {getNgTypeOptions(row.defect_name).map((opt) => (
+                              <option key={opt} value={opt}>
+                                {opt}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        {/* Mô tả cụ thể / Cause */}
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            disabled={!canEditQa}
+                            value={row.cause || ''}
+                            onChange={(e) => handleQaNgChange(idx, 'cause', e.target.value)}
+                            placeholder={
+                              row.defect_name === 'Lỗi khác'
+                                ? 'Bắt buộc nhập mô tả cụ thể *'
+                                : 'Nguyên nhân / mô tả lỗi...'
+                            }
+                            className={`w-full px-2 py-1 bg-white border rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100 ${
+                              row.defect_name === 'Lỗi khác' && (!row.cause || !row.cause.trim())
+                                ? 'border-amber-400 bg-amber-50/30 placeholder-amber-700/60'
+                                : 'border-slate-200'
+                            }`}
+                          />
+                        </td>
+                        {/* Remark */}
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            disabled={!canEditQa}
+                            value={row.remark || ''}
+                            onChange={(e) => handleQaNgChange(idx, 'remark', e.target.value)}
+                            placeholder="Ghi chú thêm..."
+                            className="w-full px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-600 disabled:bg-slate-100"
+                          />
+                        </td>
+                        {/* Image */}
+                        <td className="p-2">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {(row.photo_urls || []).map((photoPath, photoIdx) => (
+                              <div
+                                key={photoIdx}
+                                className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-200 text-[11px] font-semibold"
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => handleViewPhoto(photoPath)}
+                                  className="hover:underline flex items-center gap-0.5"
+                                  title="Xem ảnh lỗi QA"
+                                >
+                                  <span>Ảnh {photoIdx + 1}</span>
+                                  <ExternalLink className="w-2.5 h-2.5" />
+                                </button>
+                                {canEditQa && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveQaPhoto(idx, photoIdx)}
+                                    className="text-slate-400 hover:text-rose-600 p-0.5"
+                                    title="Xóa ảnh"
+                                  >
+                                    <X className="w-2.5 h-2.5" />
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                            {canEditQa && (row.photo_urls || []).length < 2 && (
+                              <label
+                                className={`cursor-pointer inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[11px] font-semibold border border-dashed border-slate-300 text-slate-600 hover:text-blue-600 hover:border-blue-400 bg-slate-50 transition ${
+                                  uploadingQaNgRowIdx === idx ? 'opacity-50 pointer-events-none' : ''
+                                }`}
+                              >
+                                {uploadingQaNgRowIdx === idx ? (
+                                  <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
+                                ) : (
+                                  <Plus className="w-3 h-3 text-blue-600" />
+                                )}
+                                <span>Ảnh</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  disabled={uploadingQaNgRowIdx === idx || !canEditQa}
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      if (isProcessableImage(file)) {
+                                        setEditorState({ file, category: 'ng', target: { type: 'qa_ng', rowIdx: idx } });
+                                      } else {
+                                        handleQaPhotoUpload(idx, file);
+                                      }
+                                    }
+                                    e.target.value = '';
+                                  }}
+                                  className="hidden"
+                                />
+                              </label>
+                            )}
+                          </div>
+                        </td>
+                        {/* Delete */}
+                        {canEditQa && (
+                          <td className="p-2 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveQaNgRow(idx)}
+                              className="text-slate-400 hover:text-rose-600 p-1 rounded transition"
+                              title="Xóa dòng lỗi QA"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
 
-          {/* QA Notes */}
+          {/* B5. QA Notes */}
           <div>
             <label className="block text-[11px] font-bold text-slate-700 mb-1">
               Ghi chú thẩm định QA
@@ -1378,6 +1918,7 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
               disabled={!canEditQa}
               value={qaNotes}
               onChange={(e) => setQaNotes(e.target.value)}
+              placeholder="Ghi chú tổng hợp kết quả thẩm định QA..."
               className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-600 disabled:bg-slate-100 disabled:cursor-not-allowed"
             />
           </div>
@@ -1400,6 +1941,15 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
             </div>
           )}
         </form>
+
+        {/* QA Documents Section (R1-02) */}
+        <div className="pt-3 border-t border-slate-100">
+          <OperationQaDocumentsSection
+            jobId={jobId}
+            operationId={operation.id}
+            jobStatus={jobStatus}
+          />
+        </div>
 
         {/* Operation Attachments / Document Section */}
         <div className="pt-3 border-t border-slate-100">
@@ -1488,6 +2038,21 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
               </div>
             )}
 
+            {/* R3 FIX 02: Auto Turn Missing CT Warning in Close Modal */}
+            {isAutoTurn && !(operation.production_runs || []).some(
+              (r) => r.cycle_time_seconds !== null && r.cycle_time_seconds !== undefined && Number(r.cycle_time_seconds) > 0
+            ) && (
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-bold">Không thể đóng công đoạn Auto Turn</p>
+                  <p className="text-[11px] mt-0.5 leading-relaxed">
+                    PE-MFG phải nhập Cycle Time thực tế (CT Actual) trước khi đóng.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Snapshot Preview */}
             <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 space-y-2 text-xs">
               <span className="font-bold text-slate-700 uppercase tracking-wide text-[10px] block">
@@ -1553,6 +2118,15 @@ export const OperationExecutionPanel: React.FC<OperationExecutionPanelProps> = (
           </div>
         </div>
       )}
+
+      {/* MOBILE IMAGE CROP & COMPRESSION MODAL */}
+      <ImageEditorModal
+        isOpen={editorState !== null}
+        file={editorState?.file || null}
+        category={editorState?.category || 'general'}
+        onClose={() => setEditorState(null)}
+        onConfirm={handleEditorConfirm}
+      />
     </div>
   );
 };

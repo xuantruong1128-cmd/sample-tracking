@@ -1,4 +1,5 @@
 import type { Job } from '../../types/database.types';
+import { getJobDisplayStatus } from './jobDisplayUtils';
 
 export type FilterField =
   | 'status'
@@ -132,21 +133,20 @@ export function evaluateJobCondition(job: Job, cond: FilterCondition): boolean {
 
   switch (cond.field) {
     case 'status': {
-      const targetStatus = cond.value.toUpperCase();
-      if (targetStatus === 'RUNNING') {
-        // Job must be ACTIVE and have at least one IN_PROGRESS operation
-        const hasInProgressOp = (job.operations || []).some(
-          (op) => op.status === 'IN_PROGRESS'
-        );
-        return job.status === 'ACTIVE' && hasInProgressOp;
+      const target = cond.value.trim().toUpperCase();
+      // R4.1 FIX 01: Unify filter logic with the single source of truth for Homepage status display
+      const displayStatus = getJobDisplayStatus(job).toUpperCase();
+
+      if (target === 'RUNNING') {
+        return displayStatus === 'RUNNING';
       }
-      if (targetStatus === 'ACTIVE') {
-        return job.status === 'ACTIVE';
+      if (target === 'ACTIVE') {
+        return displayStatus === 'ACTIVE';
       }
-      if (targetStatus === 'CLOSE') {
-        return job.status === 'CLOSE';
+      if (target === 'CLOSE') {
+        return displayStatus === 'CLOSE' || job.status === 'CLOSE' || job.status === 'ARCHIVE' || job.status === 'PURGED';
       }
-      return job.status === targetStatus;
+      return displayStatus === target || (job.status && job.status.toUpperCase() === target);
     }
 
     case 'item_number': {

@@ -1,7 +1,9 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
-import { PDFDocument, rgb, StandardFonts } from 'npm:pdf-lib@1.17.1';
+import { PDFDocument, rgb } from 'npm:pdf-lib@1.17.1';
+import fontkit from 'npm:@pdf-lib/fontkit@1.1.1';
 import { zipSync, strToU8 } from 'npm:fflate@0.8.2';
+import { getRobotoRegularFontBytes, getRobotoBoldFontBytes } from './fonts.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,13 +20,74 @@ function sanitizeFileName(name: string): string {
   return name.replace(/[\\/:*?"<>|]/g, '_').trim();
 }
 
-function toAscii(str: string): string {
-  if (!str) return '';
-  return String(str)
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[đĐ]/g, (m) => (m === 'đ' ? 'd' : 'D'))
-    .replace(/[^\x20-\x7E]/g, ' ');
+function wrapText(text: string, maxWidth: number, font: any, fontSize: number): string[] {
+  if (!text) return [];
+  const lines: string[] = [];
+  const paragraphs = String(text).replace(/\r\n/g, '\n').split('\n');
+
+  for (const para of paragraphs) {
+    if (!para.trim()) {
+      lines.push('');
+      continue;
+    }
+    const words = para.split(/\s+/);
+    let currentLine = '';
+
+    for (const word of words) {
+      const test = currentLine ? `${currentLine} ${word}` : word;
+      if (font.widthOfTextAtSize(test, fontSize) <= maxWidth) {
+        currentLine = test;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        if (font.widthOfTextAtSize(word, fontSize) > maxWidth) {
+          let chunk = '';
+          for (const char of word) {
+            if (font.widthOfTextAtSize(chunk + char, fontSize) <= maxWidth) {
+              chunk += char;
+            } else {
+              lines.push(chunk);
+              chunk = char;
+            }
+          }
+          currentLine = chunk;
+        } else {
+          currentLine = word;
+        }
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+  }
+  return lines;
+}
+
+async function embedImageSafely(pdfDoc: PDFDocument, bytes: Uint8Array): Promise<any> {
+  if (!bytes || bytes.length < 8) return null;
+  // JPEG magic: FF D8 FF
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    try {
+      return await pdfDoc.embedJpg(bytes);
+    } catch {
+      return null;
+    }
+  }
+  // PNG magic: 89 50 4E 47
+  if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47) {
+    try {
+      return await pdfDoc.embedPng(bytes);
+    } catch {
+      return null;
+    }
+  }
+  // Try fallback
+  try {
+    return await pdfDoc.embedJpg(bytes);
+  } catch {
+    try {
+      return await pdfDoc.embedPng(bytes);
+    } catch {
+      return null;
+    }
+  }
 }
 
 serve(async (req) => {
@@ -162,17 +225,19 @@ serve(async (req) => {
     const baseName = `${partNo} - ${jobNo}`;
 
     // =========================================================================
-    // 1. GENERATE PDF REPORT USING PDF-LIB
+    // 1. GENERATE PDF REPORT USING PDF-LIB WITH UNICODE FONTS (REVISION R2)
     // =========================================================================
     const pdfDoc = await PDFDocument.create();
-    const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    pdfDoc.registerFontkit(fontkit);
+
+    const fontRegular = await pdfDoc.embedFont(getRobotoRegularFontBytes(), { subset: true });
+    const fontBold = await pdfDoc.embedFont(getRobotoBoldFontBytes(), { subset: true });
 
     let page = pdfDoc.addPage([595.28, 841.89]); // A4 portrait
     let y = 800;
 
     const drawPageText = (text: string, options: any) => {
-      page.drawText(toAscii(String(text || '')), options);
+      page.drawText(String(text ?? ''), options);
     };
 
     const drawText = (
@@ -195,20 +260,6 @@ serve(async (req) => {
       if (y - needed < 50) {
         page = pdfDoc.addPage([595.28, 841.89]);
         y = 800;
-        // Mini page header
-        drawPageText(`SAMPLE FINAL REPORT: ${jobNo} (Part: ${partNo})`, {
-          x: 40,
-          y: 815,
-          size: 8,
-          font: fontRegular,
-          color: rgb(0.5, 0.5, 0.5),
-        });
-        page.drawLine({
-          start: { x: 40, y: 810 },
-          end: { x: 555, y: 810 },
-          thickness: 0.5,
-          color: rgb(0.8, 0.8, 0.8),
-        });
       }
     };
 
@@ -226,41 +277,131 @@ serve(async (req) => {
     });
     y -= 18;
 
-    // SECTION: JOB PLANNING OVERVIEW (Grid)
+    // SECTION 1: PLANNING OVERVIEW + PART AVATAR (R2-04)
     drawText('1. THÔNG TIN CHUNG (PLANNING OVERVIEW)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 14;
 
+    const yOverviewTop = y;
+
+    // 2-column info grid on the left (x: 40 to 405)
     const infoRows = [
       [`Mã JOB Ticket:`, snapshot.job_no || 'N/A', `Mã bản vẽ (Part No):`, snapshot.part_no || 'N/A'],
       [`Tên sản phẩm:`, snapshot.part_name || 'N/A', `Khách hàng:`, snapshot.customer || 'N/A'],
       [`Sản lượng đặt hàng:`, `${snapshot.order_qty || 0} pcs`, `Ngày giao hàng:`, snapshot.delivery_date || 'N/A'],
-      [`Vật liệu:`, snapshot.material || 'N/A', `Xử lý bề mặt:`, snapshot.treatment || 'N/A'],
-      [`Độ cứng:`, snapshot.hardness || 'N/A', `Phiên bản bản vẽ:`, snapshot.drawing_version || 'N/A'],
-      [`Thời gian đóng JOB:`, snapshot.closed_at || 'N/A', `Người đóng JOB:`, snapshot.closed_by_name || 'N/A'],
+      [`Vật liệu:`, snapshot.material || 'N/A', `Xử lý bề mặt:`, snapshot.treatment || snapshot.material_spec || 'N/A'],
+      [`Thời gian đóng JOB:`, snapshot.closed_at ? new Date(snapshot.closed_at).toLocaleString('vi-VN') : 'N/A', `Người đóng JOB:`, snapshot.closed_by_name || 'N/A'],
     ];
 
     infoRows.forEach((row) => {
-      ensureSpace(14);
-      drawText(row[0], 45, 8.5, true, rgb(0.3, 0.3, 0.3));
-      drawText(row[1], 145, 8.5, false, rgb(0.1, 0.1, 0.1));
-      drawText(row[2], 300, 8.5, true, rgb(0.3, 0.3, 0.3));
-      drawText(row[3], 420, 8.5, false, rgb(0.1, 0.1, 0.1));
-      y -= 12;
+      drawText(row[0], 45, 8, true, rgb(0.3, 0.3, 0.3));
+      drawText(String(row[1]).slice(0, 20), 125, 8, false, rgb(0.1, 0.1, 0.1));
+      drawText(row[2], 225, 8, true, rgb(0.3, 0.3, 0.3));
+      drawText(String(row[3]).slice(0, 20), 310, 8, false, rgb(0.1, 0.1, 0.1));
+      y -= 13;
     });
 
-    y -= 10;
+    // R2-04: Part Avatar on the right side of Planning Overview (x: 415 to 555, width: 140, height: 75)
+    const avatarBoxX = 415;
+    const avatarBoxY = yOverviewTop - 70;
+    const avatarBoxW = 140;
+    const avatarBoxH = 72;
+
+    let avatarEmbedded = false;
+    const partAvatar = snapshot.part_avatar;
+    if (partAvatar && partAvatar.file_path) {
+      try {
+        const { data: avatarBlob, error: avErr } = await adminClient.storage
+          .from('sample-documents')
+          .download(partAvatar.file_path);
+
+        if (!avErr && avatarBlob) {
+          const avatarArrayBuf = await avatarBlob.arrayBuffer();
+          const avatarBytes = new Uint8Array(avatarArrayBuf);
+          const embeddedImg = await embedImageSafely(pdfDoc, avatarBytes);
+          if (embeddedImg) {
+            const dims = embeddedImg.scale(1);
+            const maxW = avatarBoxW - 8;
+            const maxH = avatarBoxH - 16;
+            const scale = Math.min(maxW / dims.width, maxH / dims.height);
+            const renderW = dims.width * scale;
+            const renderH = dims.height * scale;
+            const imgX = avatarBoxX + (avatarBoxW - renderW) / 2;
+            const imgY = avatarBoxY + 14 + (maxH - renderH) / 2;
+
+            page.drawRectangle({
+              x: avatarBoxX,
+              y: avatarBoxY,
+              width: avatarBoxW,
+              height: avatarBoxH,
+              color: rgb(0.98, 0.99, 1.0),
+              borderColor: rgb(0.8, 0.85, 0.9),
+              borderWidth: 0.8,
+            });
+
+            page.drawImage(embeddedImg, {
+              x: imgX,
+              y: imgY,
+              width: renderW,
+              height: renderH,
+            });
+
+            page.drawText('Ảnh đại diện sản phẩm', {
+              x: avatarBoxX + 15,
+              y: avatarBoxY + 4,
+              size: 6.5,
+              font: fontBold,
+              color: rgb(0.3, 0.4, 0.6),
+            });
+
+            avatarEmbedded = true;
+          }
+        }
+      } catch {
+        avatarEmbedded = false;
+      }
+    }
+
+    if (!avatarEmbedded) {
+      // Neutral placeholder when no avatar exists or download failed
+      page.drawRectangle({
+        x: avatarBoxX,
+        y: avatarBoxY,
+        width: avatarBoxW,
+        height: avatarBoxH,
+        color: rgb(0.96, 0.97, 0.98),
+        borderColor: rgb(0.82, 0.85, 0.9),
+        borderWidth: 0.8,
+      });
+
+      page.drawText('[ẢNH ĐẠI DIỆN SẢN PHẨM]', {
+        x: avatarBoxX + 12,
+        y: avatarBoxY + 40,
+        size: 7.5,
+        font: fontBold,
+        color: rgb(0.5, 0.55, 0.6),
+      });
+
+      page.drawText('(Chưa có ảnh mẫu đại diện)', {
+        x: avatarBoxX + 16,
+        y: avatarBoxY + 26,
+        size: 7,
+        font: fontRegular,
+        color: rgb(0.6, 0.65, 0.7),
+      });
+    }
+
+    y = Math.min(y, avatarBoxY - 14);
     ensureSpace(60);
 
-    // SECTION: FINAL EVALUATION BADGE & ASSESSMENT
+    // SECTION 2: FINAL EVALUATION BADGE & ASSESSMENT
     drawText('2. ĐÁNH GIÁ NGHIỆM THU CUỐI CÙNG (FINAL EVALUATION)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 16;
 
     const evalResult = report.evaluation_result || 'PASS';
     let evalColor = rgb(0.1, 0.6, 0.2); // Green for PASS
     if (evalResult === 'CONDITIONAL') evalColor = rgb(0.85, 0.5, 0.05); // Orange
-    if (evalResult === 'FAIL') evalColor = rgb(0.8, 0.15, 0.15); // Red
+    if (evalResult === 'FAIL' || evalResult === 'REJECT') evalColor = rgb(0.8, 0.15, 0.15); // Red
 
-    // Evaluation box
     page.drawRectangle({
       x: 40,
       y: y - 55,
@@ -287,7 +428,7 @@ serve(async (req) => {
       color: rgb(0.3, 0.3, 0.3),
     });
 
-    drawPageText(`Thời điểm đánh giá: ${report.closed_at || 'N/A'}`, {
+    drawPageText(`Thời điểm đánh giá: ${report.closed_at ? new Date(report.closed_at).toLocaleString('vi-VN') : 'N/A'}`, {
       x: 55,
       y: y - 44,
       size: 8.5,
@@ -296,70 +437,93 @@ serve(async (req) => {
     });
 
     y -= 70;
-    ensureSpace(50);
+    ensureSpace(40);
 
     drawText('Nhận xét kỹ thuật tổng thể:', 45, 8.5, true, rgb(0.2, 0.2, 0.2));
     y -= 11;
-    drawText(report.overall_assessment || 'Không có ghi chú thêm.', 55, 8, false, rgb(0.2, 0.2, 0.2));
-    y -= 14;
+
+    const assessmentLines = wrapText(report.overall_assessment || 'Không có ghi chú thêm.', 500, fontRegular, 8);
+    assessmentLines.forEach((line) => {
+      ensureSpace(12);
+      drawText(line, 55, 8, false, rgb(0.2, 0.2, 0.2));
+      y -= 11;
+    });
+    y -= 4;
 
     if (report.improvements_required) {
       ensureSpace(25);
       drawText('Hạng mục cần cải tiến:', 45, 8.5, true, rgb(0.7, 0.3, 0.1));
       y -= 11;
-      drawText(report.improvements_required, 55, 8, false, rgb(0.2, 0.2, 0.2));
-      y -= 14;
+      const impLines = wrapText(report.improvements_required, 500, fontRegular, 8);
+      impLines.forEach((line) => {
+        ensureSpace(12);
+        drawText(line, 55, 8, false, rgb(0.2, 0.2, 0.2));
+        y -= 11;
+      });
+      y -= 4;
     }
 
     if (report.unresolved_issues) {
       ensureSpace(25);
       drawText('Vấn đề tồn đọng:', 45, 8.5, true, rgb(0.8, 0.1, 0.1));
       y -= 11;
-      drawText(report.unresolved_issues, 55, 8, false, rgb(0.2, 0.2, 0.2));
-      y -= 14;
+      const unresLines = wrapText(report.unresolved_issues, 500, fontRegular, 8);
+      unresLines.forEach((line) => {
+        ensureSpace(12);
+        drawText(line, 55, 8, false, rgb(0.2, 0.2, 0.2));
+        y -= 11;
+      });
+      y -= 4;
     }
 
     y -= 8;
     ensureSpace(60);
 
-    // SECTION: OPERATIONS & PRODUCTION RESULTS
-    // Invariant: OK/NG/KIV are displayed PER OPERATION, never summed across operations
+    // =========================================================================
+    // SECTION 3: OPERATIONS BREAKDOWN (R2-02: Status column REMOVED)
+    // OP, Process, Machine, CT, OK, NG, KIV
+    // =========================================================================
     drawText('3. TIẾN ĐỘ & KẾT QUẢ SẢN XUẤT THEO CÔNG ĐOẠN (OPERATIONS BREAKDOWN)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 14;
 
-    // Table Header
-    page.drawRectangle({
-      x: 40,
-      y: y - 12,
-      width: 515,
-      height: 16,
-      color: rgb(0.9, 0.93, 0.97),
-    });
+    const drawOpsHeader = () => {
+      page.drawRectangle({
+        x: 40,
+        y: y - 12,
+        width: 515,
+        height: 16,
+        color: rgb(0.9, 0.93, 0.97),
+      });
 
-    const colX = [45, 80, 200, 260, 330, 380, 430, 480];
-    drawPageText('Bước', { x: colX[0], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-    drawPageText('Công đoạn', { x: colX[1], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-    drawPageText('Máy', { x: colX[2], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-    drawPageText('CT (s)', { x: colX[3], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-    drawPageText('OK', { x: colX[4], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.1, 0.5, 0.2) });
-    drawPageText('NG', { x: colX[5], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.7, 0.1, 0.1) });
-    drawPageText('KIV', { x: colX[6], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.7, 0.5, 0.1) });
-    drawPageText('Trạng thái', { x: colX[7], y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-    y -= 18;
+      page.drawText('Bước', { x: 45, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('Công đoạn (Process)', { x: 85, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('Máy (Machine)', { x: 275, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('CT (s)', { x: 360, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('OK', { x: 415, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.1, 0.5, 0.2) });
+      page.drawText('NG', { x: 465, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.7, 0.1, 0.1) });
+      page.drawText('KIV', { x: 515, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.7, 0.5, 0.1) });
+      y -= 18;
+    };
+
+    drawOpsHeader();
 
     const ops = snapshot.operations || [];
     ops.forEach((op: any) => {
-      ensureSpace(16);
+      if (y - 18 < 50) {
+        page = pdfDoc.addPage([595.28, 841.89]);
+        y = 800;
+        drawOpsHeader();
+      }
+
       const pr = op.production_run || {};
-      drawPageText(`OP${op.step_order}`, { x: colX[0], y, size: 8, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
-      drawPageText(String(op.operation_name || '').slice(0, 22), { x: colX[1], y, size: 8, font: fontRegular, color: rgb(0.2, 0.2, 0.2) });
-      drawPageText(String(pr.machine_id || op.machine_no || '-').slice(0, 10), { x: colX[2], y, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
-      drawPageText(String(pr.cycle_time_seconds || '-'), { x: colX[3], y, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
-      drawPageText(String(pr.ok_qty ?? 0), { x: colX[4], y, size: 8, font: fontBold, color: rgb(0.1, 0.5, 0.2) });
-      drawPageText(String(pr.ng_qty ?? 0), { x: colX[5], y, size: 8, font: fontBold, color: rgb(0.7, 0.1, 0.1) });
-      drawPageText(String(pr.kiv_qty ?? 0), { x: colX[6], y, size: 8, font: fontBold, color: rgb(0.7, 0.5, 0.1) });
-      drawPageText(String(op.status || 'CLOSED'), { x: colX[7], y, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
-      
+      drawPageText(`OP${op.step_order}`, { x: 45, y, size: 8, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      drawPageText(String(op.operation_name || '').slice(0, 32), { x: 85, y, size: 8, font: fontRegular, color: rgb(0.2, 0.2, 0.2) });
+      drawPageText(String(pr.machine_id || op.machine_no || '-').slice(0, 12), { x: 275, y, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
+      drawPageText(String(pr.cycle_time_seconds || '-'), { x: 360, y, size: 8, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
+      drawPageText(String(pr.ok_qty ?? 0), { x: 415, y, size: 8, font: fontBold, color: rgb(0.1, 0.5, 0.2) });
+      drawPageText(String(pr.ng_qty ?? 0), { x: 465, y, size: 8, font: fontBold, color: rgb(0.7, 0.1, 0.1) });
+      drawPageText(String(pr.kiv_qty ?? 0), { x: 515, y, size: 8, font: fontBold, color: rgb(0.7, 0.5, 0.1) });
+
       page.drawLine({
         start: { x: 40, y: y - 3 },
         end: { x: 555, y: y - 3 },
@@ -372,36 +536,140 @@ serve(async (req) => {
     y -= 10;
     ensureSpace(50);
 
-    // SECTION: DEFECT LOGS (NG DETAILS)
+    // =========================================================================
+    // SECTION 4: NG DETAILS TABLE (R2-03: Formal Table Replacement)
+    // OP | Q'ty | Reason | Remark | Image
+    // =========================================================================
     drawText('4. BÁO CÁO PHẾ PHẨM & NGUYÊN NHÂN LỖI (NG DETAILS)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 14;
 
-    let hasNg = false;
+    const drawNgHeader = () => {
+      page.drawRectangle({
+        x: 40,
+        y: y - 12,
+        width: 515,
+        height: 16,
+        color: rgb(0.92, 0.94, 0.98),
+      });
+
+      page.drawText('Bước (OP)', { x: 45, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('SL (Q\'ty)', { x: 95, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('Lỗi / Nguyên nhân (Reason)', { x: 145, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('Ghi chú (Remark)', { x: 295, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      page.drawText('Tệp ảnh đính kèm (Image)', { x: 425, y: y - 8, size: 7.5, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+      y -= 18;
+    };
+
+    interface FinalNgRecord {
+      opStep: number;
+      source: 'PE-MFG' | 'QA';
+      defectQty: number;
+      defectCode?: string;
+      defectName: string;
+      cause?: string;
+      remark?: string;
+      photoUrls?: string[];
+    }
+
+    let allNgRecords: FinalNgRecord[] = [];
     ops.forEach((op: any) => {
-      const ngList = op.ng_details || [];
-      ngList.forEach((ng: any) => {
-        hasNg = true;
-        ensureSpace(14);
-        drawText(
-          `• OP${op.step_order} [${ng.defect_code || 'NG'}]: ${ng.defect_name || 'Lỗi'} | SL: ${ng.defect_qty || 0} | NN: ${ng.cause || 'Chưa rõ'} | Ghi chú: ${ng.remark || '-'}`,
-          45,
-          7.5,
-          false,
-          rgb(0.2, 0.2, 0.2)
-        );
-        y -= 11;
+      // 1. PE-MFG NG Records
+      (op.ng_details || []).forEach((ng: any) => {
+        allNgRecords.push({
+          opStep: op.step_order,
+          source: 'PE-MFG',
+          defectQty: ng.defect_qty || ng.ng_qty || 0,
+          defectCode: ng.defect_code,
+          defectName: ng.defect_name || 'Lỗi sản xuất',
+          cause: ng.cause,
+          remark: ng.remark,
+          photoUrls: ng.photo_urls || [],
+        });
+      });
+
+      // 2. QA NG Records (Part C2)
+      (op.qa_ng_details || []).forEach((qng: any) => {
+        allNgRecords.push({
+          opStep: op.step_order,
+          source: 'QA',
+          defectQty: qng.defect_qty || qng.ng_qty || 0,
+          defectCode: qng.defect_code,
+          defectName: qng.defect_name || 'Lỗi thẩm định QA',
+          cause: qng.cause,
+          remark: qng.remark,
+          photoUrls: qng.photo_urls || [],
+        });
       });
     });
 
-    if (!hasNg) {
-      drawText('• Không ghi nhận phế phẩm (Không phát sinh lỗi NG trong toàn bộ quy trình).', 45, 8, false, rgb(0.3, 0.5, 0.3));
-      y -= 12;
+    if (allNgRecords.length === 0) {
+      drawText('• Không ghi nhận phế phẩm (Không phát sinh lỗi NG từ PE-MFG hoặc QA).', 45, 8, false, rgb(0.3, 0.5, 0.3));
+      y -= 14;
+    } else {
+      drawNgHeader();
+
+      for (const item of allNgRecords) {
+        const { opStep, source } = item;
+        const prefix = source === 'QA' ? '[QA-NG]' : '[PE-MFG]';
+        const reasonText = `${prefix} [${item.defectCode || 'NG'}] ${item.defectName}${item.cause ? `\nNN: ${item.cause}` : ''}`;
+        const remarkText = item.remark || '-';
+
+        // Extract filenames (up to 2 per requirement R2-03)
+        const photoUrls = item.photoUrls || [];
+        const fileNames = photoUrls.slice(0, 2).map((u: string) => {
+          let raw = (u || '').split('/').pop()?.split('?')[0] || '';
+          raw = raw.replace(/^[0-9a-fA-F-]{36}_/, '');
+          return sanitizeFileName(raw);
+        }).filter(Boolean);
+
+        const reasonLines = wrapText(reasonText, 140, fontRegular, 7.5);
+        const remarkLines = wrapText(remarkText, 120, fontRegular, 7.5);
+        const imageLines = fileNames.length > 0 ? fileNames : ['-'];
+
+        const maxLines = Math.max(reasonLines.length, remarkLines.length, imageLines.length, 1);
+        const rowHeight = maxLines * 10 + 6;
+
+        if (y - rowHeight < 50) {
+          page = pdfDoc.addPage([595.28, 841.89]);
+          y = 800;
+          drawNgHeader();
+        }
+
+        const startY = y;
+        drawPageText(`OP${opStep}`, { x: 45, y: startY, size: 8, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+        drawPageText(`${item.defectQty} pcs`, { x: 95, y: startY, size: 8, font: fontBold, color: rgb(0.7, 0.1, 0.1) });
+
+        reasonLines.forEach((line, idx) => {
+          drawPageText(line, { x: 145, y: startY - idx * 10, size: 7.5, font: fontRegular, color: rgb(0.2, 0.2, 0.2) });
+        });
+
+        remarkLines.forEach((line, idx) => {
+          drawPageText(line, { x: 295, y: startY - idx * 10, size: 7.5, font: fontRegular, color: rgb(0.3, 0.3, 0.3) });
+        });
+
+        imageLines.forEach((name, idx) => {
+          const displayName = name.length > 28 ? name.slice(0, 25) + '...' : name;
+          drawPageText(displayName, { x: 425, y: startY - idx * 10, size: 7, font: fontRegular, color: rgb(0.2, 0.3, 0.5) });
+        });
+
+        y -= rowHeight;
+        page.drawLine({
+          start: { x: 40, y: y + 2 },
+          end: { x: 555, y: y + 2 },
+          thickness: 0.3,
+          color: rgb(0.85, 0.85, 0.85),
+        });
+      }
     }
 
     y -= 10;
     ensureSpace(50);
 
-    // SECTION: QA INSPECTION & REVIEWS
+    // =========================================================================
+    // SECTION 5: QA INSPECTION & REVIEWS (C1: Revised QA presentation)
+    // Display: OP, N1 Result (OK/NG), QA remarks, QA Total NG
+    // Do NOT display: QA Result, Sample Size, QA OK Quantity, QA KIV
+    // =========================================================================
     drawText('5. KẾT QUẢ KIỂM TRA CHẤT LƯỢNG (QA INSPECTION)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 14;
 
@@ -411,9 +679,12 @@ serve(async (req) => {
       qaList.forEach((qc: any) => {
         hasQa = true;
         ensureSpace(14);
-        const qColor = qc.result === 'OK' ? rgb(0.1, 0.5, 0.2) : rgb(0.8, 0.2, 0.2);
+        const n1Res = qc.n1_result || (qc.result === 'NG' ? 'NG' : 'OK');
+        const qColor = n1Res === 'OK' ? rgb(0.1, 0.5, 0.2) : rgb(0.8, 0.2, 0.2);
+        const totalNg = qc.qa_total_ng ?? qc.ng_qty ?? 0;
+        const notes = qc.notes || '-';
         drawText(
-          `• OP${op.step_order} QA: Kết quả [${qc.result || 'OK'}] | Mẫu: ${qc.sample_size || 0} | OK: ${qc.ok_qty || 0} | NG: ${qc.ng_qty || 0} | Ghi chú: ${qc.notes || '-'}`,
+          `• OP${op.step_order} QA: Kết quả N1 [${n1Res}] | Tổng lỗi QA: ${totalNg} pcs | Ghi chú: ${notes}`,
           45,
           7.5,
           false,
@@ -431,8 +702,8 @@ serve(async (req) => {
     y -= 10;
     ensureSpace(50);
 
-    // SECTION: ATTACHMENT & DOCUMENT INDEX
-    drawText('6. MỤC LỤC TÀI LIỆU KỸ THUẬT & HÌNH ẢNH (ATTACHMENT INDEX)', 40, 10, true, rgb(0.15, 0.2, 0.3));
+    // SECTION 6: ATTACHMENT & DOCUMENT INDEX
+    drawText('6. MỤC LỤC TÀI LIỆU KỸ THUẬT & HỒ SƠ ĐÍNH KÈM (ATTACHMENT INDEX)', 40, 10, true, rgb(0.15, 0.2, 0.3));
     y -= 14;
 
     const engDocs = snapshot.engineering_documents || [];
@@ -456,7 +727,21 @@ serve(async (req) => {
         docCount++;
         ensureSpace(12);
         drawText(
-          `• [Sample Photo] OP${op.step_order}: ${sp.file_name} - Tải lên bởi: ${sp.uploader_name || 'MFG'}`,
+          `• [Sample Photo] OP${op.step_order}: ${sp.file_name}${sp.is_avatar ? ' (Ảnh đại diện)' : ''} - Tải lên bởi: ${sp.uploader_name || 'MFG'}`,
+          45,
+          7.5,
+          false,
+          rgb(0.2, 0.2, 0.2)
+        );
+        y -= 11;
+      });
+
+      const qaDocs = op.qa_documents || [];
+      qaDocs.forEach((qd: any) => {
+        docCount++;
+        ensureSpace(12);
+        drawText(
+          `• [QA Doc: ${qd.category}] OP${op.step_order}: ${qd.file_name} - Tải lên bởi: ${qd.uploader_name || 'QA'}`,
           45,
           7.5,
           false,
@@ -471,17 +756,313 @@ serve(async (req) => {
       y -= 12;
     }
 
-    // Footer signature notice on last page
-    ensureSpace(40);
-    y -= 10;
-    page.drawLine({
-      start: { x: 40, y },
-      end: { x: 555, y },
-      thickness: 0.5,
-      color: rgb(0.8, 0.8, 0.8),
+    // =========================================================================
+    // SECTION 7: PHOTO APPENDIX (R2-05 & C3: Dedicated 2-Column Photo Appendix)
+    // Starts on a brand new page after text sections & document indexes
+    // =========================================================================
+    interface AppendixItem {
+      opStep: number;
+      filePath: string;
+      fileName: string;
+      desc: string;
+      type: 'SAMPLE' | 'PE_NG' | 'QA_NG' | 'N1_CHECK_SHEET' | 'QA_DOC';
+    }
+
+    const appendixItems: AppendixItem[] = [];
+    const seenPaths = new Set<string>();
+
+    // 1. Sample photos
+    ops.forEach((op: any) => {
+      (op.sample_photos || []).forEach((sp: any) => {
+        if (sp.file_path && !seenPaths.has(sp.file_path)) {
+          seenPaths.add(sp.file_path);
+          appendixItems.push({
+            opStep: op.step_order,
+            filePath: sp.file_path,
+            fileName: sp.file_name,
+            desc: `Ảnh sản phẩm mẫu${sp.is_avatar ? ' (Ảnh đại diện)' : ''}`,
+            type: 'SAMPLE',
+          });
+        }
+      });
     });
-    y -= 14;
-    drawText('Hồ sơ số hóa tự động từ hệ thống Sample Tracking Online - Tính bất biến được bảo đảm bởi Supabase.', 40, 7.5, false, rgb(0.5, 0.5, 0.5));
+
+    // 2. PE-MFG NG photos
+    ops.forEach((op: any) => {
+      (op.ng_details || []).forEach((ng: any) => {
+        (ng.photo_urls || []).forEach((u: string) => {
+          if (u && !seenPaths.has(u)) {
+            seenPaths.add(u);
+            const rawName = (u.split('/').pop()?.split('?')[0] || 'PE_NG_Photo.jpg').replace(/^[0-9a-fA-F-]{36}_/, '');
+            const fn = sanitizeFileName(rawName);
+            appendixItems.push({
+              opStep: op.step_order,
+              filePath: u,
+              fileName: fn,
+              desc: `Phế phẩm PE-MFG: [${ng.defect_code || 'NG'}] ${ng.defect_name || 'Lỗi'}${ng.remark ? ` (${ng.remark})` : ''}`,
+              type: 'PE_NG',
+            });
+          }
+        });
+      });
+    });
+
+    // 3. QA NG photos (C3)
+    ops.forEach((op: any) => {
+      (op.qa_ng_details || []).forEach((qng: any) => {
+        (qng.photo_urls || []).forEach((u: string) => {
+          if (u && !seenPaths.has(u)) {
+            seenPaths.add(u);
+            const rawName = (u.split('/').pop()?.split('?')[0] || 'QA_NG_Photo.jpg').replace(/^[0-9a-fA-F-]{36}_/, '');
+            const fn = sanitizeFileName(rawName);
+            appendixItems.push({
+              opStep: op.step_order,
+              filePath: u,
+              fileName: fn,
+              desc: `Phế phẩm QA: [${qng.defect_code || 'NG'}] ${qng.defect_name || 'Lỗi'}${qng.remark ? ` (${qng.remark})` : ''}`,
+              type: 'QA_NG',
+            });
+          }
+        });
+      });
+    });
+
+    // 4. N1 Check Sheet images (C3)
+    ops.forEach((op: any) => {
+      (op.qa_checks || []).forEach((qc: any) => {
+        (qc.n1_check_sheet_urls || []).forEach((u: string) => {
+          const lower = u.toLowerCase();
+          const isImg = lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.png') || lower.endsWith('.webp');
+          if (isImg && !seenPaths.has(u)) {
+            seenPaths.add(u);
+            const rawName = (u.split('/').pop()?.split('?')[0] || 'N1_CheckSheet.jpg').replace(/^[0-9a-fA-F-]{36}_/, '');
+            const cleanName = rawName.replace(/^n1_\d+_/, '');
+            const fn = sanitizeFileName(cleanName);
+            appendixItems.push({
+              opStep: op.step_order,
+              filePath: u,
+              fileName: fn,
+              desc: `N1 Check Sheet [${qc.n1_result || 'OK'}]: OP${op.step_order}`,
+              type: 'N1_CHECK_SHEET',
+            });
+          }
+        });
+      });
+    });
+
+    // 5. QA inspection photos / documents
+    ops.forEach((op: any) => {
+      (op.qa_documents || []).forEach((qd: any) => {
+        const mime = (qd.mime_type || '').toLowerCase();
+        const fn = (qd.file_name || '').toLowerCase();
+        const isImg = mime.startsWith('image/') || fn.endsWith('.jpg') || fn.endsWith('.jpeg') || fn.endsWith('.png') || fn.endsWith('.webp');
+        if (isImg && qd.file_path && !seenPaths.has(qd.file_path)) {
+          seenPaths.add(qd.file_path);
+          appendixItems.push({
+            opStep: op.step_order,
+            filePath: qd.file_path,
+            fileName: qd.file_name,
+            desc: `Kiểm tra QA (${qd.category})${qd.remark ? `: ${qd.remark}` : ''}`,
+            type: 'QA_DOC',
+          });
+        }
+      });
+    });
+
+    if (appendixItems.length > 0) {
+      // Must start on a new page after all text sections and document indexes
+      page = pdfDoc.addPage([595.28, 841.89]);
+      y = 800;
+
+      drawText('7. PHỤ LỤC HÌNH ẢNH (PHOTO APPENDIX)', 40, 11, true, rgb(0.15, 0.2, 0.3));
+      y -= 12;
+      drawText('Tổng hợp hình ảnh mẫu sản phẩm, hình ảnh phế phẩm (NG) và biên bản kiểm tra chất lượng (QA)', 40, 8, false, rgb(0.4, 0.4, 0.4));
+      y -= 18;
+
+      const cardWidth = 245;
+      const cardHeight = 175;
+      const colX = [40, 310];
+
+      for (let i = 0; i < appendixItems.length; i += 2) {
+        if (y - cardHeight < 50) {
+          page = pdfDoc.addPage([595.28, 841.89]);
+          y = 800;
+        }
+
+        const rowItems = [appendixItems[i], appendixItems[i + 1]].filter(Boolean);
+
+        for (let colIdx = 0; colIdx < rowItems.length; colIdx++) {
+          const item = rowItems[colIdx];
+          const xPos = colX[colIdx];
+          const yPos = y - cardHeight;
+
+          // Outer frame
+          page.drawRectangle({
+            x: xPos,
+            y: yPos,
+            width: cardWidth,
+            height: cardHeight,
+            color: rgb(0.99, 0.99, 1.0),
+            borderColor: rgb(0.85, 0.88, 0.92),
+            borderWidth: 0.8,
+          });
+
+          // Download and render image
+          let rendered = false;
+          try {
+            const { data: imgBlob, error: imgErr } = await adminClient.storage
+              .from('sample-documents')
+              .download(item.filePath);
+
+            if (!imgErr && imgBlob) {
+              const arrayBuf = await imgBlob.arrayBuffer();
+              const imgBytes = new Uint8Array(arrayBuf);
+              const embeddedImg = await embedImageSafely(pdfDoc, imgBytes);
+
+              if (embeddedImg) {
+                const dims = embeddedImg.scale(1);
+                const maxImgW = cardWidth - 10;
+                const maxImgH = 125;
+                const scale = Math.min(maxImgW / dims.width, maxImgH / dims.height);
+                const renderW = dims.width * scale;
+                const renderH = dims.height * scale;
+                const imgX = xPos + (cardWidth - renderW) / 2;
+                const imgY = yPos + 44 + (maxImgH - renderH) / 2;
+
+                page.drawImage(embeddedImg, {
+                  x: imgX,
+                  y: imgY,
+                  width: renderW,
+                  height: renderH,
+                });
+                rendered = true;
+              }
+            }
+          } catch {
+            rendered = false;
+          }
+
+          if (!rendered) {
+            // Missing or inaccessible image neutral placeholder (R2-05 safe handling)
+            page.drawRectangle({
+              x: xPos + 5,
+              y: yPos + 44,
+              width: cardWidth - 10,
+              height: 125,
+              color: rgb(0.95, 0.96, 0.97),
+              borderColor: rgb(0.88, 0.9, 0.92),
+              borderWidth: 0.5,
+            });
+
+            page.drawText('[ẢNH KHÔNG KHẢ DỤNG]', {
+              x: xPos + 60,
+              y: yPos + 110,
+              size: 8,
+              font: fontBold,
+              color: rgb(0.6, 0.3, 0.3),
+            });
+
+            page.drawText(item.fileName.slice(0, 30), {
+              x: xPos + 20,
+              y: yPos + 95,
+              size: 7,
+              font: fontRegular,
+              color: rgb(0.4, 0.4, 0.4),
+            });
+
+            page.drawText('(Tệp không tồn tại hoặc lỗi định dạng)', {
+              x: xPos + 40,
+              y: yPos + 80,
+              size: 6.5,
+              font: fontRegular,
+              color: rgb(0.55, 0.55, 0.55),
+            });
+          }
+
+          // Caption Box at bottom of card
+          page.drawLine({
+            start: { x: xPos, y: yPos + 42 },
+            end: { x: xPos + cardWidth, y: yPos + 42 },
+            thickness: 0.5,
+            color: rgb(0.85, 0.88, 0.92),
+          });
+
+          page.drawText(`OP${item.opStep}: ${item.fileName}`.slice(0, 35), {
+            x: xPos + 6,
+            y: yPos + 28,
+            size: 7.5,
+            font: fontBold,
+            color: rgb(0.2, 0.25, 0.35),
+          });
+
+          const descLines = wrapText(item.desc, cardWidth - 12, fontRegular, 6.8);
+          descLines.slice(0, 2).forEach((dLine, dIdx) => {
+            page.drawText(dLine, {
+              x: xPos + 6,
+              y: yPos + 16 - dIdx * 9,
+              size: 6.8,
+              font: fontRegular,
+              color: rgb(0.4, 0.45, 0.5),
+            });
+          });
+        }
+
+        y -= (cardHeight + 12);
+      }
+    }
+
+    // =========================================================================
+    // R2-06: NEUTRAL HEADER & FOOTER WITH PAGE NUMBERS (Supabase sentence removed)
+    // =========================================================================
+    const pages = pdfDoc.getPages();
+    const totalPages = pages.length;
+
+    pages.forEach((p, idx) => {
+      // Running header on page 2 and beyond
+      if (idx > 0) {
+        p.drawText(`SAMPLE PRODUCTION FINAL REPORT — ${jobNo} | Mã bản vẽ: ${partNo}`, {
+          x: 40,
+          y: 818,
+          size: 7.5,
+          font: fontBold,
+          color: rgb(0.45, 0.5, 0.6),
+        });
+
+        p.drawLine({
+          start: { x: 40, y: 812 },
+          end: { x: 555, y: 812 },
+          thickness: 0.5,
+          color: rgb(0.85, 0.88, 0.92),
+        });
+      }
+
+      // Neutral running footer on every page
+      p.drawLine({
+        start: { x: 40, y: 32 },
+        end: { x: 555, y: 32 },
+        thickness: 0.5,
+        color: rgb(0.8, 0.82, 0.85),
+      });
+
+      const footerLeft = `SAMPLE PRODUCTION FINAL REPORT — Job Ticket: ${jobNo} (Part: ${partNo})`;
+      p.drawText(footerLeft, {
+        x: 40,
+        y: 20,
+        size: 7.5,
+        font: fontRegular,
+        color: rgb(0.45, 0.45, 0.45),
+      });
+
+      const footerRight = `Trang ${idx + 1} / ${totalPages}`;
+      const pageNumWidth = fontRegular.widthOfTextAtSize(footerRight, 7.5);
+      p.drawText(footerRight, {
+        x: 555 - pageNumWidth,
+        y: 20,
+        size: 7.5,
+        font: fontRegular,
+        color: rgb(0.45, 0.45, 0.45),
+      });
+    });
 
     const pdfBytes = await pdfDoc.save();
     const pdfSha256 = await computeSha256Hex(pdfBytes);
@@ -510,6 +1091,7 @@ serve(async (req) => {
       job_no: snapshot.job_no,
       part_no: snapshot.part_no,
       master_pdf: pdfFileName,
+      part_avatar: snapshot.part_avatar || null,
       files: [] as any[],
       missing_files: [] as any[],
     };
@@ -587,6 +1169,35 @@ serve(async (req) => {
           await downloadAndAttach('ng_photos', u, cleanName);
         }
       }
+
+      // Collect QA NG Photos (C3)
+      for (const qng of op.qa_ng_details || []) {
+        const urls = qng.photo_urls || [];
+        for (let i = 0; i < urls.length; i++) {
+          const u = urls[i];
+          if (!u) continue;
+          const cleanName = `OP${op.step_order}_QA_NG_${qng.defect_code || 'DEFECT'}_${i + 1}.jpg`;
+          await downloadAndAttach('qa_ng_photos', u, cleanName);
+        }
+      }
+
+      // Collect N1 Check Sheets (C3)
+      for (const qc of op.qa_checks || []) {
+        for (const u of qc.n1_check_sheet_urls || []) {
+          if (!u) continue;
+          const raw = u.split('/').pop() || 'check_sheet';
+          const cleanName = `OP${op.step_order}_N1_${raw.replace(/^n1_\d+_/, '')}`;
+          await downloadAndAttach('n1_check_sheets', u, cleanName);
+        }
+      }
+
+      // Collect QA Documents (R1-02)
+      for (const qd of op.qa_documents || []) {
+        if (!qd.file_path) continue;
+        const catClean = sanitizeFileName(qd.category || 'Other').replace(/\s+/g, '_');
+        const name = `OP${op.step_order}_${catClean}_${sanitizeFileName(qd.file_name)}`;
+        await downloadAndAttach('qa_documents', qd.file_path, name);
+      }
     }
 
     // Add manifest.json into ZIP
@@ -658,7 +1269,7 @@ serve(async (req) => {
         success: true,
         status: 'Ready',
         report: updatedReport,
-        message: 'Báo cáo PDF và gói ZIP đã được khởi tạo thành công.',
+        message: 'Báo cáo PDF Revision R2 và gói ZIP đã được khởi tạo thành công.',
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

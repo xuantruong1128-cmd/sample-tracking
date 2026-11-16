@@ -10,6 +10,7 @@ import {
   resetAdminUserPassword,
   deleteAdminUser,
   setDepartmentLeader,
+  revokeAdminUserDevices,
   type AdminUserItem,
 } from '../../services/adminUserService';
 import { RoleBadge } from '../../components/common/Badge';
@@ -31,6 +32,7 @@ import {
   Unlock,
   AlertTriangle,
   Crown,
+  Smartphone,
 } from 'lucide-react';
 
 export const UserManagementPage: React.FC = () => {
@@ -52,6 +54,7 @@ export const UserManagementPage: React.FC = () => {
   const [roleModalUser, setRoleModalUser] = useState<AdminUserItem | null>(null);
   const [resetModalUser, setResetModalUser] = useState<AdminUserItem | null>(null);
   const [deleteModalUser, setDeleteModalUser] = useState<AdminUserItem | null>(null);
+  const [revokeDevicesUser, setRevokeDevicesUser] = useState<AdminUserItem | null>(null);
 
   // Load users
   const loadUsers = useCallback(async () => {
@@ -396,6 +399,15 @@ export const UserManagementPage: React.FC = () => {
                           <KeyRound className="w-3.5 h-3.5" />
                         </button>
 
+                        {/* Revoke All Active Devices */}
+                        <button
+                          onClick={() => setRevokeDevicesUser(user)}
+                          className="p-1.5 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-md transition"
+                          title="Đăng xuất khỏi tất cả thiết bị"
+                        >
+                          <Smartphone className="w-3.5 h-3.5" />
+                        </button>
+
                         {/* Delete User */}
                         <button
                           onClick={() => setDeleteModalUser(user)}
@@ -484,6 +496,19 @@ export const UserManagementPage: React.FC = () => {
           onClose={() => setDeleteModalUser(null)}
           onSuccess={(msg) => {
             setDeleteModalUser(null);
+            notifySuccess(msg);
+            loadUsers();
+          }}
+        />
+      )}
+
+      {/* 6. Modal Đăng Xuất Tất Cả Thiết Bị */}
+      {revokeDevicesUser && (
+        <RevokeDevicesModal
+          user={revokeDevicesUser}
+          onClose={() => setRevokeDevicesUser(null)}
+          onSuccess={(msg) => {
+            setRevokeDevicesUser(null);
             notifySuccess(msg);
             loadUsers();
           }}
@@ -977,6 +1002,10 @@ const ResetPasswordModal: React.FC<{
             </p>
           </div>
 
+          <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-[11px] leading-relaxed">
+            <strong>⚠️ Chú ý bảo mật:</strong> Đặt lại mật khẩu sẽ tự động thu hồi và đăng xuất tất cả thiết bị (Máy tính & Điện thoại) đang sử dụng tài khoản này.
+          </div>
+
           <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
             <button
               type="button"
@@ -1115,6 +1144,93 @@ const DeleteUserModal: React.FC<{
             )}
           </div>
         </form>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================================
+// SUB-MODAL 6: REVOKE ALL ACTIVE DEVICES
+// ============================================================================
+const RevokeDevicesModal: React.FC<{
+  user: AdminUserItem;
+  onClose: () => void;
+  onSuccess: (msg: string) => void;
+}> = ({ user, onClose, onSuccess }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleConfirm = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await revokeAdminUserDevices(user.id);
+      if (!res.success) {
+        setError(res.error || 'Thu hồi thiết bị thất bại.');
+        return;
+      }
+      onSuccess(`Đã đăng xuất toàn bộ thiết bị của "${user.full_name}" thành công!`);
+    } catch (err: any) {
+      setError(err.message || 'Lỗi khi đăng xuất thiết bị.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-amber-50/70">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-amber-600" />
+            <h3 className="text-sm font-bold text-slate-800">Đăng xuất tất cả thiết bị</h3>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-3.5 text-xs">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+            <span className="text-slate-500 block text-[11px]">Người dùng:</span>
+            <span className="font-bold text-slate-900 block">{user.full_name}</span>
+            <span className="text-slate-500 font-mono text-[11px]">{user.phone}</span>
+          </div>
+
+          <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-xs leading-relaxed space-y-1">
+            <p className="font-semibold">Xác nhận thu hồi thiết bị?</p>
+            <p className="text-[11px] text-amber-800">
+              Hành động này sẽ giải phóng tất cả khe thiết bị (Máy tính & Điện thoại). Mọi phiên làm việc đang mở trên các máy của người dùng sẽ bị đóng ngay lập tức, cho phép người dùng đăng nhập lại từ đầu.
+            </p>
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={loading}
+              className="px-3.5 py-2 border border-slate-300 rounded-lg font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+            >
+              Hủy
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              disabled={loading}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-xs flex items-center gap-1.5 disabled:opacity-60 cursor-pointer"
+            >
+              {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+              <span>Đăng xuất tất cả thiết bị</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

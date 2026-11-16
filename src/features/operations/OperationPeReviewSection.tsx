@@ -40,8 +40,8 @@ export const OperationPeReviewSection: React.FC<OperationPeReviewSectionProps> =
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState<boolean>(false);
 
-  // Form State
-  const [reviewResult, setReviewResult] = useState<PEReviewResult>('Pending');
+  // Form State: Only OK and NG allowed for new PE reviews (A1)
+  const [reviewResult, setReviewResult] = useState<'OK' | 'NG'>('OK');
   const [engineeringComment, setEngineeringComment] = useState<string>('');
   const [improvementRequired, setImprovementRequired] = useState<string>('');
 
@@ -54,8 +54,12 @@ export const OperationPeReviewSection: React.FC<OperationPeReviewSectionProps> =
     } else {
       setReviews(data);
       if (data.length > 0) {
-        // Pre-fill result and comments from latest review for convenience if user wants to add follow-up
-        setReviewResult(data[0].review_result);
+        // Pre-fill result from latest review only if it is OK or NG
+        if (data[0].review_result === 'OK' || data[0].review_result === 'NG') {
+          setReviewResult(data[0].review_result);
+        } else {
+          setReviewResult('OK');
+        }
       }
     }
     setLoading(false);
@@ -88,6 +92,8 @@ export const OperationPeReviewSection: React.FC<OperationPeReviewSectionProps> =
       reviewResult,
       engineeringComment: engineeringComment.trim(),
       improvementRequired: improvementRequired.trim(),
+      reviewerName: profile?.full_name || profile?.phone,
+      reviewerRole: profile?.role,
     });
 
     setIsSubmitting(false);
@@ -183,13 +189,13 @@ export const OperationPeReviewSection: React.FC<OperationPeReviewSectionProps> =
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Review Result Toggle */}
+            {/* Review Result Toggle (OK / NG only per A1) */}
             <div className="sm:col-span-1">
               <label className="block text-[11px] font-bold text-slate-700 mb-1">
                 Kết luận đánh giá <span className="text-red-500">*</span>
               </label>
-              <div className="grid grid-cols-3 gap-1">
-                {(['Pending', 'OK', 'NG'] as PEReviewResult[]).map((res) => (
+              <div className="grid grid-cols-2 gap-1.5">
+                {(['OK', 'NG'] as const).map((res) => (
                   <button
                     key={res}
                     type="button"
@@ -197,10 +203,8 @@ export const OperationPeReviewSection: React.FC<OperationPeReviewSectionProps> =
                     className={`py-1.5 text-xs font-bold rounded-lg border transition ${
                       reviewResult === res
                         ? res === 'OK'
-                          ? 'bg-emerald-600 text-white border-emerald-600'
-                          : res === 'NG'
-                          ? 'bg-rose-600 text-white border-rose-600'
-                          : 'bg-amber-500 text-slate-950 border-amber-500'
+                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
+                          : 'bg-rose-600 text-white border-rose-600 shadow-2xs'
                         : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
                     }`}
                   >

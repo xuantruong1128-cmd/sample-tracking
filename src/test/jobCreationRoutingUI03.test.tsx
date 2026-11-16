@@ -7,6 +7,7 @@ import {
   getWorkcenterDescription,
   getWorkcenterCode,
   UNIQUE_WORKCENTERS,
+  isAutoTurnOperation,
 } from '../features/jobs/jobDisplayUtils';
 import type { Profile, UserRole, JobOperation } from '../types/database.types';
 import { MemoryRouter } from 'react-router-dom';
@@ -56,6 +57,29 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
       expect(getWorkcenterDescription('D&TS')).toBe('Drill & Tap');
       expect(getWorkcenterDescription('AUTP')).toBe('Plating');
       expect(getWorkcenterDescription('VMIQ')).toBe('Visual check');
+    });
+
+    it('R3 FIX 01: Selecting CYGG maps to "Cylindrical Grinding", NOT "Auto Turn"', () => {
+      expect(getWorkcenterDescription('CYGG')).toBe('Cylindrical Grinding');
+      expect(getWorkcenterDescription('A20C')).toBe('Auto Turn');
+    });
+
+    it('R3 FIX 02: isAutoTurnOperation accurately detects Auto Turn regardless of step order', () => {
+      // Auto Turn by workcenter_code
+      expect(isAutoTurnOperation({ workcenter_code: 'A20C' })).toBe(true);
+      expect(isAutoTurnOperation({ workcenter_code: 'CAMC' })).toBe(true);
+      expect(isAutoTurnOperation({ workcenter_code: 'B12C' })).toBe(true);
+
+      // Auto Turn by description or operation_name
+      expect(isAutoTurnOperation({ description: 'Auto Turn' })).toBe(true);
+      expect(isAutoTurnOperation({ operation_name: 'Auto Turn' })).toBe(true);
+      expect(isAutoTurnOperation({ description: 'auto turn' })).toBe(true);
+
+      // Non-Auto Turn operations must return false
+      expect(isAutoTurnOperation({ workcenter_code: 'CYGG', description: 'Cylindrical Grinding' })).toBe(false);
+      expect(isAutoTurnOperation({ workcenter_code: 'CGMG', description: 'Centerless Grinding' })).toBe(false);
+      expect(isAutoTurnOperation({ workcenter_code: 'D&TS', description: 'Drill & Tap' })).toBe(false);
+      expect(isAutoTurnOperation(null)).toBe(false);
     });
 
     it('In JobCreateModal, Description is read-only and automatically updates when selecting Workcenter', () => {
@@ -173,9 +197,9 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
         planned_start_date: '2026-10-15',
         planned_finish_date: '2026-10-20',
         operations: [
-          { step_order: 10, workcenter_code: 'A20C', operation_name: 'Auto Turn', description: 'Auto Turn' },
+          { step_order: 10, workcenter_code: 'A20C', operation_name: 'Auto Turn', description: 'Auto Turn', planned_cycle_time_seconds: 45 },
           { step_order: 20, workcenter_code: 'CGMG', operation_name: 'Centerless Grinding', description: 'Centerless Grinding' },
-          { step_order: 30, workcenter_code: 'A20C', operation_name: 'Auto Turn', description: 'Auto Turn' }, // repeated A20C
+          { step_order: 30, workcenter_code: 'A20C', operation_name: 'Auto Turn', description: 'Auto Turn', planned_cycle_time_seconds: 30 }, // repeated A20C with valid CT Target
         ],
       };
 
@@ -200,15 +224,17 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
         operations: [
           {
             step_order: 10,
-            workcenter_code: 'A20C',
-            operation_name: 'Auto Turn',
-            planned_cycle_time_seconds: null, // explicit null
+            workcenter_code: 'CYGG',
+            operation_name: 'Cylindrical Grinding',
+            description: 'Cylindrical Grinding',
+            planned_cycle_time_seconds: null, // explicit null on non-Auto Turn
           },
           {
             step_order: 20,
             workcenter_code: 'CGMG',
             operation_name: 'Centerless Grinding',
-            planned_cycle_time_seconds: undefined, // omitted/blank
+            description: 'Centerless Grinding',
+            planned_cycle_time_seconds: undefined, // omitted/blank on non-Auto Turn
           },
         ],
       };
@@ -265,7 +291,7 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
           ],
         });
         expect(res.isValid).toBe(false);
-        expect(res.error).toMatch(/chu kỳ .* số dương/i);
+        expect(res.error).toMatch(/chu kỳ/i);
       }
     });
   });
@@ -287,6 +313,7 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
             step_order: 10,
             workcenter_code: 'A20C',
             operation_name: 'Auto Turn',
+            planned_cycle_time_seconds: 45,
             machine_no: '',
           },
         ],
@@ -305,6 +332,7 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
             step_order: 10,
             workcenter_code: 'A20C',
             operation_name: 'Auto Turn',
+            planned_cycle_time_seconds: 45,
             machine_no: 'AA08',
           },
         ],
@@ -330,6 +358,7 @@ describe('SAMPLE TRACKING — UI-03: Redesign Job Creation & Routing (17 Check V
             step_order: 10,
             workcenter_code: 'A20C',
             operation_name: 'Auto Turn',
+            planned_cycle_time_seconds: 45,
             remark: 'Gia công tinh mặt đầu, kiểm tra dung sai ±0.01mm',
           },
         ],

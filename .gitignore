@@ -27,3 +27,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backups and temporary test output
+backups/
+uat_output/
+audit/
+.tmp/
+*.zip
+M1_PRODUCTION_DEPLOYMENT_REPORT.md
+

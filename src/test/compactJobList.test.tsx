@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { JobListPage } from '../features/jobs/JobListPage';
 import { JobCard } from '../features/jobs/JobCard';
@@ -40,10 +40,10 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
   });
 
   // -------------------------------------------------------------------------
-  // 1. JOB List hiển thị 5 cột đúng tỷ lệ
+  // 1. JOB List hiển thị đầy đủ các cột chuẩn (R4 FIX 03 & FIX 04)
   // -------------------------------------------------------------------------
-  describe('Test 1: JOB List hiển thị 5 cột đúng tỷ lệ (14% | 18% | 8% | 10% | 50%)', () => {
-    it('renders single blue header with 5 columns matching the exact ratio', async () => {
+  describe('Test 1: JOB List hiển thị đầy đủ các cột chuẩn (R4 FIX 03 & FIX 04)', () => {
+    it('renders single blue header with all standard columns including Plan Close and Actual Close', async () => {
       const originalDemo = ENV.IS_DEMO_MODE;
       (ENV as any).IS_DEMO_MODE = true;
       try {
@@ -59,13 +59,16 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
         expect(header).toBeInTheDocument();
         expect(header.className).toContain('bg-blue-600');
         expect(header.className).toContain('text-white');
-        expect(header.className).toContain('grid-cols-[14%_18%_8%_10%_50%]');
 
         const headerScope = within(header);
         expect(headerScope.getByText('Job Ticket')).toBeInTheDocument();
         expect(headerScope.getByText('Item No.')).toBeInTheDocument();
         expect(headerScope.getByText('Customer')).toBeInTheDocument();
+        expect(headerScope.getByText('Created Date')).toBeInTheDocument();
+        expect(headerScope.getByText('Plan Close')).toBeInTheDocument();
+        expect(headerScope.getByText('Actual Close')).toBeInTheDocument();
         expect(headerScope.getByText('Status')).toBeInTheDocument();
+        expect(headerScope.getByText("Q'ty")).toBeInTheDocument();
         expect(headerScope.getByText('Routing')).toBeInTheDocument();
       } finally {
         (ENV as any).IS_DEMO_MODE = originalDemo;
@@ -76,8 +79,8 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
   // -------------------------------------------------------------------------
   // 2. Header và dữ liệu thẳng hàng
   // -------------------------------------------------------------------------
-  describe('Test 2: Header và dữ liệu thẳng hàng (All 5 columns left-aligned in header)', () => {
-    it('all 5 column titles in header are left-aligned', async () => {
+  describe('Test 2: Header và dữ liệu thẳng hàng (All columns left-aligned in header)', () => {
+    it('all column titles in header are left-aligned', async () => {
       const originalDemo = ENV.IS_DEMO_MODE;
       (ENV as any).IS_DEMO_MODE = true;
       try {
@@ -94,14 +97,18 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
         expect(headerScope.getByText('Job Ticket')).toHaveClass('text-left');
         expect(headerScope.getByText('Item No.')).toHaveClass('text-left');
         expect(headerScope.getByText('Customer')).toHaveClass('text-left');
+        expect(headerScope.getByText('Created Date')).toHaveClass('text-left');
+        expect(headerScope.getByText('Plan Close')).toHaveClass('text-left');
+        expect(headerScope.getByText('Actual Close')).toHaveClass('text-left');
         expect(headerScope.getByText('Status')).toHaveClass('text-left');
+        expect(headerScope.getByText("Q'ty")).toHaveClass('text-left');
         expect(headerScope.getByText('Routing')).toHaveClass('text-left');
       } finally {
         (ENV as any).IS_DEMO_MODE = originalDemo;
       }
     });
 
-    it('JobCard row data uses identical grid columns and padding as header', () => {
+    it('JobCard row data uses grid layout and left-aligned text', () => {
       const mockJob: Job = {
         id: 'j-align',
         job_no: '202610-001',
@@ -113,7 +120,7 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
         planned_start_date: '2026-10-10',
         planned_finish_date: '2026-10-20',
         status: 'ACTIVE',
-        created_at: '',
+        created_at: '2026-10-10T07:30:00Z',
         updated_at: '',
         operations: [],
       };
@@ -125,12 +132,13 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
       );
 
       const row = screen.getByTestId('job-row-j-align');
-      expect(row.className).toContain('grid-cols-[14%_18%_8%_10%_50%]');
+      expect(row.className).toContain('grid');
       expect(row.className).toContain('px-4');
 
       expect(screen.getByText('202610-001')).toHaveClass('text-left');
       expect(screen.getByText('PART-ALIGN-01')).toHaveClass('text-left');
       expect(screen.getByText('A')).toHaveClass('text-left');
+      expect(screen.getByText('100')).toHaveClass('text-left');
       expect(screen.getByTestId('compact-job-status-badge').parentElement).toHaveClass('text-left');
     });
   });
@@ -177,8 +185,8 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
       // Single grid row element
       expect(row.tagName).toBe('A');
       expect(row.className).toContain('grid');
-      // All 5 columns are direct children of the row
-      expect(row.children).toHaveLength(5);
+      // All columns are direct children of the row by default (11 columns with R4.3 CT Plan & CT Actual)
+      expect(row.children).toHaveLength(11);
     });
   });
 
@@ -649,6 +657,87 @@ describe('SAMPLE TRACKING — UI-02 R2: COMPACT JOB LIST TEST SUITE', () => {
     it('JobCard and JobListPage do not mutate any external state or database enum', () => {
       expect(typeof JobListPage).toBe('function');
       expect(typeof JobCard).toBe('function');
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 16. Toolbar compact layout & Freeze header
+  // -------------------------------------------------------------------------
+  describe('Test 16: Toolbar compact layout & Freeze table header', () => {
+    it('moves Column Visibility and Export Excel to the upper toolbar row, removes redundant count text, and freezes table header', async () => {
+      const originalDemo = ENV.IS_DEMO_MODE;
+      (ENV as any).IS_DEMO_MODE = true;
+      try {
+        render(
+          <MemoryRouter>
+            <AuthContext.Provider value={createMockAuth()}>
+              <JobListPage />
+            </AuthContext.Provider>
+          </MemoryRouter>
+        );
+
+        // 1. Column visibility and Export Excel buttons exist
+        const colVisibilityBtn = await screen.findByTestId('column-visibility-toggle-btn');
+        const exportExcelBtn = screen.getByTestId('export-excel-btn');
+        expect(colVisibilityBtn).toBeInTheDocument();
+        expect(exportExcelBtn).toBeInTheDocument();
+
+        // 2. Redundant "Hiển thị ... lệnh sản xuất phù hợp" text is removed
+        expect(screen.queryByText(/lệnh sản xuất phù hợp/i)).not.toBeInTheDocument();
+
+        // 3. Freeze Table Header: sticky top-0 and vertical scroll container
+        const header = screen.getByTestId('job-list-header');
+        expect(header.className).toContain('sticky');
+        expect(header.className).toContain('top-0');
+        expect(header.className).toContain('z-20');
+
+        const tableContainer = screen.getByTestId('job-list-table-container');
+        expect(tableContainer).toBeInTheDocument();
+        expect(tableContainer.className).toContain('overflow-y-auto');
+        expect(tableContainer.className).toContain('overflow-x-auto');
+      } finally {
+        (ENV as any).IS_DEMO_MODE = originalDemo;
+      }
+    });
+  });
+
+  // -------------------------------------------------------------------------
+  // 17. Ẩn bỏ trường lọc mặc định, chỉ hiện ra khi bấm "+ Thêm điều kiện"
+  // -------------------------------------------------------------------------
+  describe('Test 17: Filter rows hidden by default until "+ Thêm điều kiện" is clicked', () => {
+    it('initializes with no filter condition inputs visible, reveals condition row on click, and clears on remove', async () => {
+      const originalDemo = ENV.IS_DEMO_MODE;
+      (ENV as any).IS_DEMO_MODE = true;
+      try {
+        render(
+          <MemoryRouter>
+            <AuthContext.Provider value={createMockAuth()}>
+              <JobListPage />
+            </AuthContext.Provider>
+          </MemoryRouter>
+        );
+
+        // Initially no filter condition rows exist
+        expect(screen.queryByLabelText('Trường tìm kiếm')).not.toBeInTheDocument();
+        expect(screen.queryByPlaceholderText('Nhập mã Item (Part No.)...')).not.toBeInTheDocument();
+
+        // Click "+ Thêm điều kiện"
+        const addConditionBtn = screen.getByRole('button', { name: /Thêm điều kiện/i });
+        fireEvent.click(addConditionBtn);
+
+        // Now condition row appears
+        expect(await screen.findByLabelText('Trường tìm kiếm')).toBeInTheDocument();
+        expect(screen.getByPlaceholderText('Nhập mã Item (Part No.)...')).toBeInTheDocument();
+
+        // Click remove [X] button
+        const removeBtn = screen.getByRole('button', { name: /Xóa điều kiện/i });
+        fireEvent.click(removeBtn);
+
+        // Condition row is gone again
+        expect(screen.queryByLabelText('Trường tìm kiếm')).not.toBeInTheDocument();
+      } finally {
+        (ENV as any).IS_DEMO_MODE = originalDemo;
+      }
     });
   });
 });

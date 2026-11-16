@@ -25,7 +25,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     // F-02: Prevent live database tests from executing during default Vitest discovery
-    exclude: [...configDefaults.exclude, 'src/test/databaseIntegration.test.ts'],
+    exclude: [...configDefaults.exclude, 'src/test/databaseIntegration.test.ts', 'backups/**', 'uat_output/**', '.tmp/**'],
     fileParallelism: false,
   },
 })

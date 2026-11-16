@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { ENV } from '../lib/env';
-import { STORAGE_BUCKET, createSecureSignedUrl } from '../lib/storageUtils';
+import { STORAGE_BUCKET, createSecureSignedUrl, invalidateSignedUrl } from '../lib/storageUtils';
 import type { EngineeringDocument, EngineeringDocCategory } from '../types/database.types';
 
 export const MAX_ENGINEERING_DOC_SIZE = 15 * 1024 * 1024; // 15MB
@@ -73,6 +73,7 @@ export interface UploadEngineeringDocParams {
   version?: string;
   remark?: string;
   parentDocumentId?: string | null;
+  uploaderName?: string;
 }
 
 /**
@@ -86,6 +87,7 @@ export async function uploadEngineeringDocument({
   version = 'v1',
   remark = '',
   parentDocumentId = null,
+  uploaderName: customUploaderName,
 }: UploadEngineeringDocParams): Promise<{ document: EngineeringDocument | null; error: string | null }> {
   if (!ENV.IS_CONFIGURED) {
     const mockDoc: EngineeringDocument = {
@@ -101,7 +103,7 @@ export async function uploadEngineeringDocument({
       parent_document_id: parentDocumentId,
       remark: remark || '',
       uploaded_by: 'demo-user',
-      uploader_name: 'Drawing Engineer',
+      uploader_name: customUploaderName || 'Drawing Engineer',
       created_at: new Date().toISOString(),
     };
     return { document: mockDoc, error: null };
@@ -132,13 +134,16 @@ export async function uploadEngineeringDocument({
     return { document: null, error: 'Chưa đăng nhập. Vui lòng đăng nhập lại.' };
   }
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('full_name, phone, role')
-    .eq('id', session.user.id)
-    .single();
+  let uploaderName = customUploaderName;
+  if (!uploaderName) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('full_name, phone, role')
+      .eq('id', session.user.id)
+      .single();
 
-  const uploaderName = profile?.full_name || profile?.phone || 'Bộ phận Kỹ thuật';
+    uploaderName = profile?.full_name || profile?.phone || 'Bộ phận Kỹ thuật';
+  }
 
   // 3. Prepare storage path
   const sanitizedName = file.name
@@ -215,6 +220,7 @@ export async function deleteEngineeringDocument(
     }
 
     await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
+    invalidateSignedUrl(STORAGE_BUCKET, filePath);
     return { success: true, error: null };
   } catch (err: any) {
     return { success: false, error: err.message || 'Lỗi khi xóa tài liệu.' };

@@ -65,30 +65,32 @@ serve(async (req) => {
       });
     }
 
-    const parts = file_path.split('/');
-    if (parts.length !== 3) {
-      return new Response(JSON.stringify({ error: 'Invalid file_path format. Expected <job_id>/<file_type>/<filename>' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const [jobId, fileType, fileName] = parts;
-    const allowedTypes = ['DRAWING', 'CHECK_SHEET', 'SETTING_SHEET', 'NG_PHOTO', 'OTHER'];
-    if (!allowedTypes.includes(fileType)) {
-      return new Response(JSON.stringify({ error: 'Invalid file_type in storage path' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    if (fileName.includes('..') || fileName.includes('\\')) {
+    if (file_path.includes('..') || file_path.includes('\\')) {
       return new Response(JSON.stringify({ error: 'Directory traversal detected' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // 4. Verify Job exists and is accessible
+    const parts = file_path.split('/');
+    if (parts.length < 3 || parts.length > 4) {
+      return new Response(JSON.stringify({ error: 'Invalid file_path format. Expected <job_id>/<file_type>/<filename> or <job_id>/<category>/<subfolder>/<filename>' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const jobId = parts[0];
+
+    // 4. Authorize caller against permitted roles
+    const permittedRoles = ['Admin', 'Planning', 'PE-MFG', 'QA', 'Drawing', 'Viewer', 'BD'];
+    if (!permittedRoles.includes(callerProfile.role)) {
+      return new Response(JSON.stringify({ error: 'Forbidden: role cannot access sample documents' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 5. Verify Job exists and is accessible
     const { data: job, error: jobErr } = await adminClient
       .from('jobs')
       .select('id, status')
@@ -109,47 +111,68 @@ serve(async (req) => {
       });
     }
 
-    // 5. Verify document association in attachments table (R4-03 / R4-04 / R7)
-    // Every accessible document MUST be registered in the attachments table and match the target job.
-    const { data: attachment, error: attachErr } = await adminClient
+    // 6. Verify document is registered in attachments, engineering_documents, operation_sample_photos, or qa_documents
+    const { data: attachment } = await adminClient
       .from('attachments')
       .select('id, job_id, file_path, file_type, owning_department, upload_status')
       .eq('file_path', file_path)
       .maybeSingle();
 
-    if (attachErr || !attachment) {
-      return new Response(JSON.stringify({ error: 'Attachment not found or not registered in attachments catalog' }), {
+    let isDocumentRegistered = false;
+
+    if (attachment) {
+      if (attachment.job_id !== jobId) {
+        return new Response(JSON.stringify({ error: 'Cross-job attachment mismatch detected' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (attachment.upload_status && attachment.upload_status !== 'READY') {
+        return new Response(JSON.stringify({ error: 'Attachment upload is not finalized (status is not READY)' }), {
+          status: 409,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      isDocumentRegistered = true;
+    } else {
+      // Check engineering_documents
+      const { data: engDoc } = await adminClient
+        .from('engineering_documents')
+        .select('id, job_id')
+        .eq('file_path', file_path)
+        .maybeSingle();
+
+      if (engDoc && engDoc.job_id === jobId) {
+        isDocumentRegistered = true;
+      } else {
+        // Check operation_sample_photos
+        const { data: samplePhoto } = await adminClient
+          .from('operation_sample_photos')
+          .select('id, job_id')
+          .eq('file_path', file_path)
+          .maybeSingle();
+
+        if (samplePhoto && samplePhoto.job_id === jobId) {
+          isDocumentRegistered = true;
+        } else {
+          // Check qa_documents
+          const { data: qaDoc } = await adminClient
+            .from('qa_documents')
+            .select('id, job_id')
+            .eq('file_path', file_path)
+            .maybeSingle();
+
+          if (qaDoc && qaDoc.job_id === jobId) {
+            isDocumentRegistered = true;
+          }
+        }
+      }
+    }
+
+    if (!isDocumentRegistered) {
+      return new Response(JSON.stringify({ error: 'Document not found or not registered in documents catalog' }), {
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (attachment.job_id !== jobId) {
-      return new Response(JSON.stringify({ error: 'Cross-job attachment mismatch detected' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // R7: enforce upload lifecycle status. Only finalized (READY) attachments can be accessed.
-    if (attachment.upload_status && attachment.upload_status !== 'READY') {
-      return new Response(JSON.stringify({ error: 'Attachment upload is not finalized (status is not READY)' }), {
-        status: 409,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // R6/R7: authorize the caller against the exact registered attachment, not only the JOB.
-    // Option A Document Access Policy: all active internal roles may read registered JOB evidence.
-    const permittedRoles = ['Admin', 'Planning', 'PE-MFG', 'QA'];
-    if (!permittedRoles.includes(callerProfile.role)) {
-      return new Response(JSON.stringify({ error: 'Forbidden: role cannot access sample documents' }), {
-        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-    if (attachment.file_type !== fileType || !attachment.owning_department) {
-      return new Response(JSON.stringify({ error: 'Attachment metadata does not match object path' }), {
-        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 

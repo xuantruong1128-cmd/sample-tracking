@@ -3,6 +3,7 @@ import type { Job, JobOperation } from '../types/database.types';
 import {
   UNIQUE_WORKCENTERS,
   getWorkcenterDescription,
+  isAutoTurnOperation,
   type WorkcenterOption,
 } from '../features/jobs/jobDisplayUtils';
 
@@ -74,9 +75,14 @@ export async function fetchWorkcenterMaster(): Promise<WorkcenterOption[]> {
     const unique: WorkcenterOption[] = [];
     for (const item of data) {
       const codeUpper = item.code.trim().toUpperCase();
+      let desc = item.description.trim();
+      // R4 FIX 01 Safeguard: CYGG is always Cylindrical Grinding, never Auto Turn
+      if (codeUpper === 'CYGG') {
+        desc = 'Cylindrical Grinding';
+      }
       if (!seen.has(codeUpper)) {
         seen.add(codeUpper);
-        unique.push({ code: item.code.trim(), description: item.description.trim() });
+        unique.push({ code: item.code.trim(), description: desc });
       }
     }
     return unique.length > 0 ? unique : UNIQUE_WORKCENTERS;
@@ -138,13 +144,20 @@ export function validateJobInput(input: CreateJobInput): { isValid: boolean; err
       return { isValid: false, error: `Thứ tự công đoạn tại bước thứ ${i + 1} không hợp lệ.` };
     }
 
-    // Cycle Time Target check
+    // R4 FIX 02: Auto Turn CT Target check
+    const isAutoTurn = isAutoTurnOperation(op);
     const rawCycle = op.planned_cycle_time_seconds ?? op.cycle_time;
-    if (rawCycle !== undefined && rawCycle !== null && rawCycle !== ('' as any)) {
-      const num = Number(rawCycle);
-      if (isNaN(num) || num <= 0) {
-        return { isValid: false, error: `Thời gian chu kỳ (Cycle Time Target) tại bước thứ ${i + 1} phải là số dương lớn hơn 0.` };
-      }
+    const num = rawCycle !== undefined && rawCycle !== null && rawCycle !== ('' as any) ? Number(rawCycle) : null;
+
+    if (isAutoTurn && (num === null || isNaN(num) || num <= 0)) {
+      return {
+        isValid: false,
+        error: `Công đoạn Auto Turn tại bước thứ ${i + 1} (OP${op.step_order || (i + 1) * 10}) bắt buộc phải nhập Thời gian chu kỳ mục tiêu (Cycle Time Target > 0).`,
+      };
+    }
+
+    if (num !== null && (isNaN(num) || num <= 0)) {
+      return { isValid: false, error: `Thời gian chu kỳ (Cycle Time Target) tại bước thứ ${i + 1} phải là số dương lớn hơn 0.` };
     }
   }
 
@@ -414,3 +427,148 @@ async function createJobWithRoutingDirectFallback(
     } as Job,
   };
 }
+
+export interface UpdateJobPlanningInput {
+  jobId: string;
+  partNo: string;
+  partName?: string;
+  customer?: string;
+  orderQty: number;
+  material: string;
+  materialSpec?: string;
+  plannedStartDate: string;
+  plannedFinishDate: string;
+  operations: Array<{
+    id?: string | null;
+    step_order: number;
+    workcenter_code?: string;
+    description?: string;
+    operation_name?: string;
+    planned_cycle_time_seconds?: number | null;
+    cycle_time?: number | string | null;
+    machine_no?: string | null;
+    planned_machine?: string | null;
+    remark?: string | null;
+  }>;
+}
+
+export interface UpdateJobPlanningResult {
+  success: boolean;
+  jobId?: string;
+  jobNo?: string;
+  message?: string;
+  error?: string;
+}
+
+/**
+ * Updates Job Planning & Routing atomically via update_job_planning_and_routing RPC (R1-01).
+ * Allowed for Planner, Planning Leader, and Admin until the first operation has been closed.
+ * Preserves existing PE-MFG and QA records.
+ */
+export async function updateJobPlanningAndRouting(
+  input: UpdateJobPlanningInput
+): Promise<UpdateJobPlanningResult> {
+  const trimmedPartNo = (input.partNo || '').trim();
+  if (!trimmedPartNo) {
+    return { success: false, error: 'Vui lòng nhập Mã chi tiết (Part Number).' };
+  }
+
+  if (typeof input.orderQty !== 'number' || isNaN(input.orderQty) || input.orderQty <= 0) {
+    return { success: false, error: 'Số lượng yêu cầu (Quantity) phải là số nguyên dương lớn hơn 0.' };
+  }
+
+  const trimmedMaterial = (input.material || '').trim();
+  if (!trimmedMaterial) {
+    return { success: false, error: 'Vui lòng nhập Vật liệu (Material).' };
+  }
+
+  if (!input.plannedStartDate || !input.plannedFinishDate) {
+    return { success: false, error: 'Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc kế hoạch.' };
+  }
+
+  if (input.plannedFinishDate < input.plannedStartDate) {
+    return {
+      success: false,
+      error: `Ngày kết thúc (${input.plannedFinishDate}) không được nhỏ hơn ngày bắt đầu (${input.plannedStartDate}).`,
+    };
+  }
+
+  if (!input.operations || input.operations.length === 0) {
+    return { success: false, error: 'Quy trình gia công (Routing) phải có ít nhất 1 công đoạn.' };
+  }
+
+  // R4 FIX 02: Validate Auto Turn operations require Cycle Time Target > 0
+  for (let i = 0; i < input.operations.length; i++) {
+    const op = input.operations[i];
+    const isAutoTurn = isAutoTurnOperation(op);
+    const rawCycle = op.planned_cycle_time_seconds ?? op.cycle_time;
+    const num = rawCycle !== undefined && rawCycle !== null && rawCycle !== ('' as any) ? Number(rawCycle) : null;
+    if (isAutoTurn && (num === null || isNaN(num) || num <= 0)) {
+      return {
+        success: false,
+        error: `Công đoạn Auto Turn (OP${op.step_order || (i + 1) * 10}) bắt buộc phải nhập Thời gian chu kỳ mục tiêu (Cycle Time Target > 0).`,
+      };
+    }
+  }
+
+  // Normalize operations payload
+  const normalizedOps = input.operations.map((op, index) => {
+    const stepOrder = op.step_order || (index + 1) * 10;
+    const wcCode = (op.workcenter_code || op.operation_name || '').trim();
+    const desc = (op.description || getWorkcenterDescription(wcCode) || op.operation_name || wcCode).trim();
+
+    let cycleTime: number | null = null;
+    const rawCycle = op.planned_cycle_time_seconds ?? op.cycle_time;
+    if (rawCycle !== undefined && rawCycle !== null && rawCycle !== ('' as any)) {
+      const num = Number(rawCycle);
+      if (!isNaN(num) && num > 0) {
+        cycleTime = num;
+      }
+    }
+
+    const machineNo = (op.machine_no || op.planned_machine || '').trim() || null;
+    const remark = (op.remark || '').trim() || null;
+
+    return {
+      id: op.id || null,
+      step_order: stepOrder,
+      workcenter_code: wcCode,
+      description: desc,
+      operation_name: desc,
+      planned_cycle_time_seconds: cycleTime,
+      machine_no: machineNo,
+      planned_machine: machineNo,
+      remark,
+    };
+  });
+
+  try {
+    const { data, error } = await supabase.rpc('update_job_planning_and_routing', {
+      p_job_id: input.jobId,
+      p_part_no: trimmedPartNo,
+      p_part_name: (input.partName || '').trim() || trimmedPartNo,
+      p_customer: (input.customer || '').trim(),
+      p_order_qty: input.orderQty,
+      p_material: trimmedMaterial,
+      p_material_spec: (input.materialSpec || '').trim() || null,
+      p_planned_start_date: input.plannedStartDate,
+      p_planned_finish_date: input.plannedFinishDate,
+      p_operations: normalizedOps,
+    });
+
+    if (error) {
+      return { success: false, error: error.message || 'Lỗi khi cập nhật Kế hoạch & Quy trình.' };
+    }
+
+    const res = data as any;
+    return {
+      success: Boolean(res?.success),
+      jobId: res?.job_id,
+      jobNo: res?.job_no,
+      message: res?.message || 'Cập nhật thành công.',
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Lỗi hệ thống khi cập nhật Kế hoạch.' };
+  }
+}
+

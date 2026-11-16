@@ -5,6 +5,7 @@ import { ENV } from '../../lib/env';
 import type { Job } from '../../types/database.types';
 import { DEMO_JOBS } from './jobDemoData';
 import { JobGeneralInfo } from './JobGeneralInfo';
+import { JobEditModal } from './JobEditModal';
 import { OperationAccordionList } from '../operations/OperationAccordionList';
 import { EngineeringDocumentsSection } from '../documents/EngineeringDocumentsSection';
 import { AdminDeleteJobModal } from '../../components/admin/AdminDeleteJobModal';
@@ -27,6 +28,7 @@ import {
   Trash2,
   CheckCircle2,
   AlertTriangle,
+  Edit3,
 } from 'lucide-react';
 
 export const JobDetailPage: React.FC = () => {
@@ -40,6 +42,7 @@ export const JobDetailPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Workflow V2: Close Job (Option B) Modal State
   const [confirmTicket, setConfirmTicket] = useState('');
@@ -79,7 +82,10 @@ export const JobDetailPage: React.FC = () => {
               *,
               ng_details(*)
             ),
-            qa_checks(*)
+            qa_checks(
+              *,
+              qa_ng_details(*)
+            )
           )
         `)
         .eq('id', id)
@@ -161,14 +167,18 @@ export const JobDetailPage: React.FC = () => {
     job.status === 'PURGED' ||
     Boolean(job.operations && job.operations.some((op) => op.status === 'CLOSED'));
 
+  const isViewer = permissions.isViewer(profile?.role);
   const canClose =
-    permissions.canCloseJob(profile?.role, profile?.is_department_leader) && job.status === 'ACTIVE';
+    !isViewer &&
+    permissions.canCloseJob(profile?.role, profile?.is_department_leader) &&
+    job.status === 'ACTIVE';
   const isAdmin = profile?.role === 'Admin';
   const isPlanningOwner =
     profile?.role === 'Planning' && Boolean(job.created_by && job.created_by === profile?.id);
   const isPlanningLeader =
     profile?.role === 'Planning' && Boolean(profile?.is_department_leader);
-  const canDelete = isAdmin || isPlanningLeader || isPlanningOwner;
+  const canDelete = !isViewer && (isAdmin || isPlanningLeader || isPlanningOwner);
+  const canEditPlanning = !isViewer && !isPlanningLocked && permissions.canEditJobPlanning(job, profile?.role);
 
   // Warnings & Pre-conditions for Close JOB (Option B)
   const unclosedOps = (job.operations || []).filter((op) => op.status !== 'CLOSED');
@@ -302,6 +312,19 @@ export const JobDetailPage: React.FC = () => {
             </Link>
           )}
 
+          {canEditPlanning && (
+            <button
+              type="button"
+              data-testid="top-edit-planning-button"
+              onClick={() => setShowEditModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 transition shadow-2xs border border-blue-200 ml-2"
+              title="Chỉnh sửa Kế hoạch &amp; Quy trình"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Sửa Kế hoạch</span>
+            </button>
+          )}
+
           {canClose && (
             <button
               type="button"
@@ -340,7 +363,12 @@ export const JobDetailPage: React.FC = () => {
 
       {/* SECTION 1: PLANNING INFORMATION (Compact 10-Field Grid) */}
       <section aria-label="Planning Information">
-        <JobGeneralInfo job={job} isPlanningLocked={isPlanningLocked} />
+        <JobGeneralInfo
+          job={job}
+          isPlanningLocked={isPlanningLocked}
+          canEdit={canEditPlanning}
+          onEditClick={() => setShowEditModal(true)}
+        />
       </section>
 
       {/* SECTION 2: OPERATIONS ACCORDION (OP10, OP20, OP30...) */}
@@ -700,6 +728,18 @@ export const JobDetailPage: React.FC = () => {
             navigate('/', {
               state: { deletedMessage: `Đã xóa thành công Lệnh sản xuất: ${deletedJobNo}` },
             });
+          }}
+        />
+      )}
+
+      {/* Edit Planning Modal */}
+      {showEditModal && (
+        <JobEditModal
+          job={job}
+          isOpen={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          onSuccess={() => {
+            loadJob();
           }}
         />
       )}

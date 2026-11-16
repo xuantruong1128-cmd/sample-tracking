@@ -94,7 +94,7 @@ const mockJobsDataset: Job[] = [
         job_id: 'job-2',
         step_order: 1,
         operation_name: 'Lathe Turning',
-        status: 'COMPLETED',
+        status: 'NOT_STARTED',
         created_at: '2026-10-11T08:00:00Z',
         updated_at: '2026-10-11T08:00:00Z',
       },
@@ -178,10 +178,10 @@ describe('SAMPLE TRACKING — UI-01: Dynamic Multi-Condition Job Filter Test Sui
   });
 
   // -------------------------------------------------------------------------
-  // 1. Status = Running
+  // 1. Status = Running, Active, Close
   // -------------------------------------------------------------------------
-  describe('Test 1: Status = Running', () => {
-    it('matches only ACTIVE jobs with at least one IN_PROGRESS operation', () => {
+  describe('Test 1: Status = Running, Active, Close', () => {
+    it('matches Running jobs that have started manufacturing', () => {
       const cond: FilterCondition = {
         id: 'c1',
         field: 'status',
@@ -190,15 +190,15 @@ describe('SAMPLE TRACKING — UI-01: Dynamic Multi-Condition Job Filter Test Sui
       };
 
       const results = filterJobs(mockJobsDataset, [cond]);
-      // job-1 has status: 'ACTIVE' and op-1-1: 'IN_PROGRESS' -> matches
-      // job-2 is ACTIVE but op-2-1 is COMPLETED and op-2-2 is NOT_STARTED -> does NOT match
+      // job-1 has status: 'ACTIVE' and op-1-1: 'IN_PROGRESS' -> matches Running
+      // job-2 is ACTIVE with all NOT_STARTED operations -> does NOT match Running (is Active)
       // job-3 is CLOSE -> does NOT match
       // job-4 is CLOSE -> does NOT match
       expect(results).toHaveLength(1);
       expect(results[0].job_no).toBe('JOB-2026-001');
     });
 
-    it('matches Active and Close correctly according to DB enum', () => {
+    it('matches Active and Close correctly according to display status', () => {
       const condActive: FilterCondition = {
         id: 'c_active',
         field: 'status',
@@ -206,7 +206,8 @@ describe('SAMPLE TRACKING — UI-01: Dynamic Multi-Condition Job Filter Test Sui
         value: 'ACTIVE',
       };
       const activeResults = filterJobs(mockJobsDataset, [condActive]);
-      expect(activeResults).toHaveLength(2); // job-1, job-2
+      expect(activeResults).toHaveLength(1); // job-2
+      expect(activeResults[0].job_no).toBe('JOB-2026-002');
 
       const condClose: FilterCondition = {
         id: 'c_close',
@@ -314,12 +315,12 @@ describe('SAMPLE TRACKING — UI-01: Dynamic Multi-Condition Job Filter Test Sui
           id: 'c6_2',
           field: 'status',
           operator: 'equal',
-          value: 'ACTIVE',
+          value: 'RUNNING',
         },
       ];
 
       const results = filterJobs(mockJobsDataset, conds);
-      // Both Toyota jobs are job-1 (ACTIVE) and job-3 (CLOSE) -> only job-1 matches
+      // Both Toyota jobs are job-1 (RUNNING) and job-3 (CLOSE) -> only job-1 matches
       expect(results).toHaveLength(1);
       expect(results[0].job_no).toBe('JOB-2026-001');
     });
@@ -341,7 +342,7 @@ describe('SAMPLE TRACKING — UI-01: Dynamic Multi-Condition Job Filter Test Sui
           id: 'c7_2',
           field: 'status',
           operator: 'equal',
-          value: 'ACTIVE',
+          value: 'RUNNING',
         },
         {
           id: 'c7_3',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { JobOperation, EngineeringDocCategory, EngineeringDocument } from '../../types/database.types';
+import { useAuth } from '../auth/AuthContext';
 import {
   uploadEngineeringDocument,
   isAllowedDocMime,
@@ -11,7 +12,16 @@ import {
   FileText,
   Loader2,
   AlertCircle,
+  Sliders,
+  CheckCircle2,
+  RotateCcw,
 } from 'lucide-react';
+import { ImageEditorModal } from '../../components/common/ImageEditorModal';
+import {
+  isProcessableImage,
+  formatFileSize,
+  type ProcessImageResult,
+} from '../../lib/imageProcessing';
 
 interface UploadDocumentModalProps {
   jobId: string;
@@ -32,6 +42,13 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  let profile = null;
+  try {
+    const auth = useAuth();
+    profile = auth?.profile;
+  } catch {
+    profile = null;
+  }
   if (!isOpen) return null;
 
   const [operationId, setOperationId] = useState<string>(
@@ -53,6 +70,9 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
   });
   const [remark, setRemark] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [showImageEditor, setShowImageEditor] = useState<boolean>(false);
+  const [optimizationStats, setOptimizationStats] = useState<ProcessImageResult | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -62,6 +82,8 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       if (!isAllowedDocMime(file.type, file.name)) {
         setErrorMessage('Định dạng tệp không được hỗ trợ. Chấp nhận: PDF, JPG, PNG, WebP, XLS, XLSX.');
         setSelectedFile(null);
+        setOriginalFile(null);
+        setOptimizationStats(null);
         return;
       }
       if (file.size > MAX_ENGINEERING_DOC_SIZE) {
@@ -69,11 +91,28 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
           `Dung lượng tệp ${(file.size / (1024 * 1024)).toFixed(2)}MB vượt quá giới hạn 15MB.`
         );
         setSelectedFile(null);
+        setOriginalFile(null);
+        setOptimizationStats(null);
         return;
       }
       setErrorMessage(null);
       setSelectedFile(file);
+      setOriginalFile(file);
+      setOptimizationStats(null);
     }
+  };
+
+  const handleRevertToOriginal = () => {
+    if (originalFile) {
+      setSelectedFile(originalFile);
+      setOptimizationStats(null);
+    }
+  };
+
+  const handleEditorConfirm = (processedFile: File, stats: ProcessImageResult) => {
+    setSelectedFile(processedFile);
+    setOptimizationStats(stats);
+    setShowImageEditor(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,6 +134,7 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
       version: version.trim() || 'v1',
       remark: remark.trim(),
       parentDocumentId: parentDocument?.id || null,
+      uploaderName: profile?.full_name || profile?.phone,
     });
 
     setIsUploading(false);
@@ -232,6 +272,49 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
                 </div>
               )}
             </div>
+
+            {/* Optional Image Editor Action for Drawings/Images */}
+            {selectedFile && isProcessableImage(selectedFile) && (
+              <div className="mt-2 p-2.5 bg-slate-50 border border-slate-200 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
+                {optimizationStats ? (
+                  <div className="flex items-center gap-1.5 text-emerald-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    <span>
+                      Đã tối ưu: <strong>{formatFileSize(optimizationStats.processedSize)}</strong>{' '}
+                      <span className="text-emerald-600">(-{optimizationStats.reductionPercent}%)</span>
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-slate-600">
+                    <p className="font-semibold text-[11px] text-slate-700">Tùy chọn tối ưu ảnh:</p>
+                    <p className="text-[10px] text-slate-500">Mặc định giữ ảnh gốc. Bấm bên cạnh nếu muốn cắt hoặc nén.</p>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setShowImageEditor(true)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-slate-300 hover:border-blue-400 hover:text-blue-600 rounded-md font-semibold text-slate-700 shadow-2xs transition text-xs"
+                  >
+                    <Sliders className="w-3.5 h-3.5 text-blue-600" />
+                    <span>{optimizationStats ? 'Chỉnh sửa lại' : 'Cắt & Nén ảnh'}</span>
+                  </button>
+
+                  {optimizationStats && (
+                    <button
+                      type="button"
+                      onClick={handleRevertToOriginal}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-white border border-slate-300 hover:text-amber-600 rounded-md font-semibold text-slate-600 transition text-xs"
+                      title="Khôi phục lại tệp ảnh gốc ban đầu"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Giữ ảnh gốc</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Remark */}
@@ -272,6 +355,16 @@ export const UploadDocumentModal: React.FC<UploadDocumentModalProps> = ({
           </div>
         </form>
       </div>
+
+      {/* MOBILE IMAGE CROP & COMPRESSION MODAL FOR DRAWINGS */}
+      <ImageEditorModal
+        isOpen={showImageEditor}
+        file={originalFile || selectedFile}
+        category="drawing"
+        allowOriginalOption={true}
+        onClose={() => setShowImageEditor(false)}
+        onConfirm={handleEditorConfirm}
+      />
     </div>
   );
 };

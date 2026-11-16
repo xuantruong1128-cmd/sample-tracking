@@ -1,20 +1,12 @@
 import { supabase } from '../lib/supabase';
-import type { UserRole } from '../types/auth';
+import type { Profile, UserRole } from '../types/database.types';
 
-export interface AdminUserItem {
-  id: string;
-  phone: string;
-  email?: string | null;
-  full_name: string;
-  role: UserRole;
-  department: string;
-  is_active: boolean;
-  must_change_password: boolean;
-  can_make_pe_decisions: boolean;
-  is_department_leader?: boolean;
-  created_at?: string;
-  updated_at?: string;
+export interface AdminUserListItem extends Profile {
+  auth_email?: string;
+  has_data?: boolean;
 }
+
+export type AdminUserItem = AdminUserListItem;
 
 export interface CreateUserInput {
   phone: string;
@@ -25,24 +17,37 @@ export interface CreateUserInput {
 }
 
 /**
- * Fetch list of all user profiles for Admin
+ * Helper to extract user-friendly error message from Edge Function response
  */
-export async function fetchAllUsers(): Promise<{ data: AdminUserItem[] | null; error: string | null }> {
+async function extractEdgeFunctionError(error: any): Promise<string> {
+  if (!error) return 'Đã xảy ra lỗi không xác định.';
+  try {
+    if (error.context && typeof error.context.json === 'function') {
+      const body = await error.context.json();
+      if (body?.error) return body.error;
+    }
+  } catch (_) {}
+  return error.message || 'Lỗi khi gọi Edge Function.';
+}
+
+/**
+ * Fetch all user profiles for Admin management
+ */
+export async function fetchAdminUsers(): Promise<{ data: Profile[]; error: string | null }> {
   try {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      return { data: null, error: error.message };
-    }
-
-    return { data: (data as AdminUserItem[]) || [], error: null };
+    if (error) return { data: [], error: error.message };
+    return { data: (data as Profile[]) || [], error: null };
   } catch (err: any) {
-    return { data: null, error: err.message || 'Lỗi khi tải danh sách người dùng.' };
+    return { data: [], error: err.message || 'Lỗi kết nối khi tải danh sách người dùng.' };
   }
 }
+
+export const fetchAllUsers = fetchAdminUsers;
 
 /**
  * Create a new user via admin-manage-user Edge Function
@@ -61,7 +66,7 @@ export async function createAdminUser(input: CreateUserInput): Promise<{ success
     });
 
     if (error) {
-      return { success: false, error: error.message || 'Lỗi khi tạo tài khoản.' };
+      return { success: false, error: await extractEdgeFunctionError(error) };
     }
     if (data?.error) {
       return { success: false, error: data.error };
@@ -86,7 +91,7 @@ export async function updateAdminUserName(userId: string, fullName: string): Pro
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) return { success: false, error: data.error };
 
     return { success: true };
@@ -108,7 +113,7 @@ export async function updateAdminUserPhone(userId: string, newPhone: string): Pr
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) return { success: false, error: data.error };
 
     return { success: true };
@@ -130,7 +135,7 @@ export async function updateAdminUserRole(userId: string, newRole: UserRole): Pr
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) return { success: false, error: data.error };
 
     return { success: true };
@@ -151,7 +156,7 @@ export async function toggleAdminUserStatus(userId: string, activate: boolean): 
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) return { success: false, error: data.error };
 
     return { success: true };
@@ -173,7 +178,7 @@ export async function resetAdminUserPassword(userId: string, newPassword?: strin
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) return { success: false, error: data.error };
 
     return { success: true };
@@ -194,7 +199,7 @@ export async function deleteAdminUser(userId: string): Promise<{ success: boolea
       },
     });
 
-    if (error) return { success: false, error: error.message };
+    if (error) return { success: false, error: await extractEdgeFunctionError(error) };
     if (data?.error) {
       return {
         success: false,
@@ -235,3 +240,33 @@ export async function setDepartmentLeader(
     return { success: false, error: err.message || 'Lỗi khi cập nhật chức vụ Trưởng bộ phận.' };
   }
 }
+
+/**
+ * Revoke all active devices for a user (Emergency Logout / Lost Device)
+ */
+export async function revokeAdminUserDevices(userId: string): Promise<{ success: boolean; error?: string; revokedCount?: number }> {
+  try {
+    const { data, error } = await supabase.rpc('admin_revoke_all_user_devices', {
+      p_target_user_id: userId,
+    });
+
+    if (error) {
+      // Fallback via Edge Function
+      const { data: edgeData, error: edgeErr } = await supabase.functions.invoke('admin-manage-user', {
+        body: {
+          action: 'revoke_devices',
+          user_id: userId,
+        },
+      });
+      if (edgeErr) return { success: false, error: await extractEdgeFunctionError(edgeErr) };
+      if (edgeData?.error) return { success: false, error: edgeData.error };
+      return { success: true, revokedCount: edgeData?.revoked_count };
+    }
+
+    if (data?.error) return { success: false, error: data.error };
+    return { success: true, revokedCount: data?.revoked_count };
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Lỗi khi thu hồi phiên thiết bị.' };
+  }
+}
+
